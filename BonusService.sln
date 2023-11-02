@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusService", "BonusServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusService.Test", "BonusService.Test\BonusService.Test.csproj", "{96F22065-273D-49AF-8D21-807BA1D20C62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BonusApi", "BonusApi\BonusApi.csproj", "{0AB3ECDB-C4A1-4F26-A4C6-75BF65B9572D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{96F22065-273D-49AF-8D21-807BA1D20C62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96F22065-273D-49AF-8D21-807BA1D20C62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96F22065-273D-49AF-8D21-807BA1D20C62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AB3ECDB-C4A1-4F26-A4C6-75BF65B9572D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AB3ECDB-C4A1-4F26-A4C6-75BF65B9572D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AB3ECDB-C4A1-4F26-A4C6-75BF65B9572D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AB3ECDB-C4A1-4F26-A4C6-75BF65B9572D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,10 @@
+using System.Text.Json.Serialization;
 using BonusService.Common;
 using BonusService.Postgres;
 using Correlate.DependencyInjection;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NLog.Web;
 
@@ -18,21 +22,22 @@ services.TryAddTransient<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
 services.AddHangfireService(configuration);
-// Add services to the container.
 
-builder.Services.AddControllers();
+services.AddFluentValidationAutoValidation();
+services.AddFluentValidationClientsideAdapters();
+services.AddValidatorsFromAssemblyContaining<Program>();
+services.AddFluentValidationRulesToSwagger();
+
+builder.Services.AddControllers().AddJsonOptions(opt=> opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApiDocument();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseOpenApi();
+app.UseSwaggerUi3();
 
 app.UseHttpsRedirection();
 
