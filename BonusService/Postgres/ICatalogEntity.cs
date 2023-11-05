@@ -7,7 +7,6 @@ namespace BonusService.Postgres;
 public interface ICatalogEntity : IHaveId, IHaveDateOfChange
 {
     public string Name { get; set; }
-    public bool IsDeleted { get; set; }
 }
 
 public interface IHaveId

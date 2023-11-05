@@ -17,7 +17,7 @@
 #pragma warning disable 8603 // Disable "CS8603 Possible null reference return"
 #pragma warning disable 8604 // Disable "CS8604 Possible null reference argument for parameter"
 
-namespace BonusApi.Contracts
+namespace BonusApi
 {
     using System = global::System;
 
@@ -25,34 +25,60 @@ namespace BonusApi.Contracts
     public partial interface IBonusClient
     {
         /// <summary>
-        /// Начисление/Списание бонусных баллов
+        /// Начисление бонусных баллов оператором
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ManualAccrualAsync(ManualBonusTransaction transaction);
+        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualDto transaction);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Начисление/Списание бонусных баллов
+        /// Начисление бонусных баллов оператором
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ManualAccrualAsync(ManualBonusTransaction transaction, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualDto transaction, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Начисление бонусных баллов сервисом оплаты
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ApiPayAsync(PayDto transaction);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Начисление бонусных баллов сервисом оплаты
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Списание бонусных баллов оператором
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ApiPayManualAsync(PayManualDto transaction);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Списание бонусных баллов оператором
+        /// </summary>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task ApiPayManualAsync(PayManualDto transaction, System.Threading.CancellationToken cancellationToken);
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ManualBonusTransaction
+    public partial class AccrualManualDto
     {
         [System.Text.Json.Serialization.JsonConstructor]
 
-        public ManualBonusTransaction(int? @bankId, int? @bonusSum, string? @description, System.Guid? @personId, System.Guid? @transactionId, System.Guid? @userId)
+        public AccrualManualDto(int? @bankId, string? @description, System.Guid? @personId, int? @sum, System.Guid? @transactionId, System.Guid? @userId)
 
         {
 
             this.PersonId = @personId;
 
-            this.BonusSum = @bonusSum;
-
             this.BankId = @bankId;
+
+            this.Sum = @sum;
 
             this.Description = @description;
 
@@ -66,15 +92,15 @@ namespace BonusApi.Contracts
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public System.Guid? PersonId { get; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("bonusSum")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? BonusSum { get; }
-
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         public int? BankId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Sum { get; }
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
 
@@ -99,12 +125,154 @@ namespace BonusApi.Contracts
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static ManualBonusTransaction FromJson(string data)
+        public static AccrualManualDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<ManualBonusTransaction>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<AccrualManualDto>(data, options);
+
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PayDto
+    {
+        [System.Text.Json.Serialization.JsonConstructor]
+
+        public PayDto(int? @bankId, string? @description, int? @ezsId, System.Guid? @personId, int? @sum, System.Guid? @transactionId)
+
+        {
+
+            this.PersonId = @personId;
+
+            this.BankId = @bankId;
+
+            this.Sum = @sum;
+
+            this.Description = @description;
+
+            this.TransactionId = @transactionId;
+
+            this.EzsId = @ezsId;
+
+        }
+        [System.Text.Json.Serialization.JsonPropertyName("personId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid? PersonId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? BankId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Sum { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Description { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid? TransactionId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ezsId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? EzsId { get; }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static PayDto FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<PayDto>(data, options);
+
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PayManualDto
+    {
+        [System.Text.Json.Serialization.JsonConstructor]
+
+        public PayManualDto(int? @bankId, string? @description, System.Guid? @personId, int? @sum, System.Guid? @transactionId, System.Guid? @userId)
+
+        {
+
+            this.PersonId = @personId;
+
+            this.BankId = @bankId;
+
+            this.Sum = @sum;
+
+            this.Description = @description;
+
+            this.TransactionId = @transactionId;
+
+            this.UserId = @userId;
+
+        }
+        [System.Text.Json.Serialization.JsonPropertyName("personId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid? PersonId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? BankId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Sum { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Description { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid? TransactionId { get; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("userId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Guid? UserId { get; }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static PayManualDto FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<PayManualDto>(data, options);
 
         }
 

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
 using Correlate.DependencyInjection;
@@ -18,6 +19,7 @@ services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
+
 services.TryAddTransient<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
@@ -28,13 +30,16 @@ services.AddFluentValidationClientsideAdapters();
 services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddFluentValidationRulesToSwagger();
 
-builder.Services.AddControllers().AddJsonOptions(opt=> opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+services.AddScoped<IBonusService, BonusService.Bonuses.BonusService>();
+
+
+builder.Services.AddControllers().AddJsonOptions(opt=>
+    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApiDocument();
 
 var app = builder.Build();
-
 
 app.UseOpenApi();
 app.UseSwaggerUi3();
@@ -48,3 +53,5 @@ app.MapControllers();
 app.ApplyPostgresMigrations();
 
 app.Run();
+
+public partial class Program { }

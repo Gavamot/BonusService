@@ -2,7 +2,7 @@ using Hangfire;
 using Hangfire.Common;
 using Hangfire.States;
 using Microsoft.Extensions.DependencyInjection;
-namespace BonusService.Test;
+namespace BonusService.Test.Common;
 
 public class FakeBackgroundJobClient : IBackgroundJobClient
 {
