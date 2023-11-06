@@ -33,11 +33,11 @@ services.AddFluentValidationRulesToSwagger();
 services.AddScoped<IBonusService, BonusService.Bonuses.BonusService>();
 
 
-builder.Services.AddControllers().AddJsonOptions(opt=>
+services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApiDocument();
+services.AddEndpointsApiExplorer();
+services.AddOpenApiDocument();
 
 var app = builder.Build();
 

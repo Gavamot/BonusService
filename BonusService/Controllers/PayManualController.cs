@@ -33,10 +33,11 @@ public class PayManualController : ControllerBase
     /// Списание бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    public async Task AccrualManual([FromServices]IBonusService bonusService, [FromBody]PayManualDto transaction)
+    public async Task<BaseResponseEmpty> AccrualManual([FromServices]IBonusService bonusService, [FromBody]PayManualDto transaction)
     {
         var data = new PayManualDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
         await bonusService.PayManualAsync(data);
+        return new BaseResponseEmpty();
     }
 }

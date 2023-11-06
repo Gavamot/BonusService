@@ -34,9 +34,10 @@ public class AccrualManualController : ControllerBase
     /// Начисление бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    public async Task AccrualManual([FromServices]IBonusService bonusService, [FromBody]AccrualManualDto transaction)
+    public async Task<BaseResponseEmpty> AccrualManual([FromServices]IBonusService bonusService, [FromBody]AccrualManualDto transaction)
     {
         var data = new AccrualManualDtoMapper().FromDto(transaction);
         await bonusService.AccrualManualAsync(data);
+        return new BaseResponseEmpty();
     }
 }

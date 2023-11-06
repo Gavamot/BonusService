@@ -38,7 +38,7 @@ public class Transaction
     public long BonusBase { get; set; }
     public int BonusSum { get; set; }
     public int? ProgramId { get; set; }
-    public virtual Program? Program { get; set; }
+    public virtual BonusProgram? Program { get; set; }
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>

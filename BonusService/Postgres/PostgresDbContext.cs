@@ -23,8 +23,8 @@ public static class PostgresDbContextExt
 // dotnet tool update --global dotnet-ef
 public class PostgresDbContext : DbContext
 {
-    public DbSet<Program> Programs { get; set; }
-    public DbSet<ProgramLevel> ProgramLevels  { get; set; }
+    public DbSet<BonusProgram> BonusPrograms { get; set; }
+    public DbSet<BonusProgramLevel> BonusProgramLevels  { get; set; }
     public DbSet<Transaction> Transactions  { get; set; }
     public DbSet<BalanceRegister> BalanceRegister  { get; set; }
 
@@ -37,9 +37,9 @@ public class PostgresDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Program>().HasMany(x=>x.ProgramLevels);
+        builder.Entity<BonusProgram>().HasMany(x=>x.ProgramLevels);
 
-        builder.Entity<ProgramLevel>().HasOne(x=>x.Program);
+        builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
 
         builder.Entity<Transaction>().HasOne(x => x.Program);
 

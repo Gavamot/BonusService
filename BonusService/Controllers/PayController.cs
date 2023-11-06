@@ -35,10 +35,11 @@ public class PayController : ControllerBase
     /// Начисление бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
-    public async Task Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
+    public async Task<BaseResponseEmpty> Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
     {
         var data = new PayDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
         await bonusService.PayAutoAsync(data);
+        return new BaseResponseEmpty();
     }
 }

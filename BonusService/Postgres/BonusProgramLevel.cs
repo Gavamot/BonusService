@@ -2,7 +2,7 @@
 #nullable enable
 namespace BonusService.Postgres;
 
-public class ProgramLevel : ICatalogEntity
+public class BonusProgramLevel : ICatalogEntity
 {
     public int Id { get; set; }
 
@@ -15,7 +15,7 @@ public class ProgramLevel : ICatalogEntity
     public int Level { get; set; }
 
     public int ProgramId { get; set; }
-    public virtual Program Program { get; set; }
+    public virtual BonusProgram BonusProgram { get; set; }
     /// <summary>
     /// Условие срабатывания программы например общая сумма в рублях
     /// </summary>
