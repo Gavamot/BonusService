@@ -11,7 +11,7 @@ public class BonusProgramRep : CatalogGenericRep<BonusProgram>, IBonusProgramRep
 
     }
 
-    public IQueryable<BonusProgram> GetAll(CancellationToken cs)
+    public override IQueryable<BonusProgram> GetAll()
     {
         return _db.BonusPrograms.Where(x => x.IsDeleted == false);
     }

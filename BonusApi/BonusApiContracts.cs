@@ -41,62 +41,97 @@ namespace BonusApi
         /// Начисление бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiPayAsync(PayDto transaction);
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Начисление бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Списание бонусных баллов оператором
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiPayManualAsync(PayManualDto transaction);
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayManualAsync(PayManualDto transaction);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
         /// Списание бонусных баллов оператором
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiPayManualAsync(PayManualDto transaction, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayManualAsync(PayManualDto transaction, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramsResponse> ApiBonusProgramGetAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramsResponse> ApiBonusProgramGetAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramResponse> ApiBonusProgramPostAsync(BonusProgram model);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramOf> ApiBonusProgramGetAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramResponse> ApiBonusProgramPostAsync(BonusProgram model, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramOf> ApiBonusProgramGetAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> ApiBonusProgramPutAsync(BonusProgram model);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> ApiBonusProgramPutAsync(BonusProgram model, System.Threading.CancellationToken cancellationToken);
-
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramResponse> ApiBonusProgramGetAsync(int id);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramPostAsync(BonusProgram model);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramResponse> ApiBonusProgramGetAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramPostAsync(BonusProgram model, System.Threading.CancellationToken cancellationToken);
 
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ApiBonusProgramDeleteAsync(int id);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramPutAsync(BonusProgram model);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<FileResponse> ApiBonusProgramDeleteAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramPutAsync(BonusProgram model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramGetAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgram> ApiBonusProgramGetAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiBonusProgramDeleteAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiBonusProgramDeleteAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevelOf> ApiBonusProgramLevelGetAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevelOf> ApiBonusProgramLevelGetAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelPostAsync(BonusProgramLevel model);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelPostAsync(BonusProgramLevel model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelPutAsync(BonusProgramLevel model);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelPutAsync(BonusProgramLevel model, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelGetAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseOfBonusProgramLevel> ApiBonusProgramLevelGetAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiBonusProgramLevelDeleteAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BaseResponseEmpty> ApiBonusProgramLevelDeleteAsync(int id, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -595,29 +630,6 @@ namespace BonusApi
             if (handler != null)
                 handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramsResponse : BaseResponseOfBonusProgramOf
-    {
-
-        public string ToJson()
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Serialize(this, options);
-
-        }
-        public static BonusProgramsResponse FromJson(string data)
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramsResponse>(data, options);
-
-        }
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1151,29 +1163,6 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramResponse : BaseResponseOfBonusProgram
-    {
-
-        public string ToJson()
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Serialize(this, options);
-
-        }
-        public static BonusProgramResponse FromJson(string data)
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramResponse>(data, options);
-
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BaseResponseOfBonusProgram : BaseResponseEmpty
     {
         private BonusProgram? _data = default!;
@@ -1215,6 +1204,289 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BaseResponseOfBonusProgramLevelOf : BaseResponseEmpty
+    {
+        private System.Collections.Generic.ICollection<BonusProgramLevel>? _data = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<BonusProgramLevel>? Data
+        {
+            get { return _data; }
+
+            set
+            {
+                if (_data != value)
+                {
+                    _data = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BaseResponseOfBonusProgramLevelOf FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BaseResponseOfBonusProgramLevelOf>(data, options);
+
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramLevel : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int? _id = default!;
+        private string? _name = default!;
+        private bool? _isDeleted = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
+        private int? _level = default!;
+        private int? _programId = default!;
+        private BonusProgram? _bonusProgram = default!;
+        private long? _condition = default!;
+        private int? _benefit = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Id
+        {
+            get { return _id; }
+
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Name
+        {
+            get { return _name; }
+
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("isDeleted")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public bool? IsDeleted
+        {
+            get { return _isDeleted; }
+
+            set
+            {
+                if (_isDeleted != value)
+                {
+                    _isDeleted = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? LastUpdated
+        {
+            get { return _lastUpdated; }
+
+            set
+            {
+                if (_lastUpdated != value)
+                {
+                    _lastUpdated = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("level")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Level
+        {
+            get { return _level; }
+
+            set
+            {
+                if (_level != value)
+                {
+                    _level = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("programId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? ProgramId
+        {
+            get { return _programId; }
+
+            set
+            {
+                if (_programId != value)
+                {
+                    _programId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public BonusProgram? BonusProgram
+        {
+            get { return _bonusProgram; }
+
+            set
+            {
+                if (_bonusProgram != value)
+                {
+                    _bonusProgram = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Условие срабатывания программы например общая сумма в рублях
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("condition")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? Condition
+        {
+            get { return _condition; }
+
+            set
+            {
+                if (_condition != value)
+                {
+                    _condition = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Получаемая выгода при срабатывании например в процентах или бонусах
+        /// </summary>
+
+        [System.Text.Json.Serialization.JsonPropertyName("benefit")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Benefit
+        {
+            get { return _benefit; }
+
+            set
+            {
+                if (_benefit != value)
+                {
+                    _benefit = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramLevel FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramLevel>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BaseResponseOfBonusProgramLevel : BaseResponseEmpty
+    {
+        private BonusProgramLevel? _data = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public BonusProgramLevel? Data
+        {
+            get { return _data; }
+
+            set
+            {
+                if (_data != value)
+                {
+                    _data = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BaseResponseOfBonusProgramLevel FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BaseResponseOfBonusProgramLevel>(data, options);
+
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     internal class DateFormatConverter : System.Text.Json.Serialization.JsonConverter<System.DateTimeOffset>
     {
         public override System.DateTimeOffset Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
@@ -1234,41 +1506,6 @@ namespace BonusApi
         }
     }
 
-    [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FileResponse : System.IDisposable
-    {
-        private System.IDisposable? _client;
-        private System.IDisposable? _response;
-
-        public int StatusCode { get; private set; }
-
-        public System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> Headers { get; private set; }
-
-        public System.IO.Stream Stream { get; private set; }
-
-        public bool IsPartial
-        {
-            get { return StatusCode == 206; }
-        }
-
-        public FileResponse(int statusCode, System.Collections.Generic.IReadOnlyDictionary<string, System.Collections.Generic.IEnumerable<string>> headers, System.IO.Stream stream, System.IDisposable? client, System.IDisposable? response)
-        {
-            StatusCode = statusCode;
-            Headers = headers;
-            Stream = stream;
-            _client = client;
-            _response = response;
-        }
-
-        public void Dispose()
-        {
-            Stream.Dispose();
-            if (_response != null)
-                _response.Dispose();
-            if (_client != null)
-                _client.Dispose();
-        }
-    }
 
 
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]

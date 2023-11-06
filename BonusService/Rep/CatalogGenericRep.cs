@@ -14,7 +14,7 @@ public class CatalogGenericRep<T> : ICatalogRep<T> where T : class, ICatalogEnti
         _dateTimeService = dateTimeService;
     }
 
-    public async Task<T> AddAsync(T entity, CancellationToken cs)
+    public async virtual Task<T> AddAsync(T entity, CancellationToken cs)
     {
         entity.LastUpdated = _dateTimeService.GetNow();
         await _db.Set<T>().AddAsync(entity, cs).ConfigureAwait(false);
@@ -22,7 +22,7 @@ public class CatalogGenericRep<T> : ICatalogRep<T> where T : class, ICatalogEnti
         return entity;
     }
 
-    public async Task<T> UpdateAsync(T entity, CancellationToken cs)
+    public async virtual Task<T> UpdateAsync(T entity, CancellationToken cs)
     {
         entity.LastUpdated = _dateTimeService.GetNow();
         _db.Set<T>().Update(entity);
@@ -30,7 +30,7 @@ public class CatalogGenericRep<T> : ICatalogRep<T> where T : class, ICatalogEnti
         return entity;
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cs)
+    public async virtual Task DeleteAsync(int id, CancellationToken cs)
     {
         var entity = await GetAsync(id, cs).ConfigureAwait(false);
         if(entity == null) return;
@@ -47,12 +47,12 @@ public class CatalogGenericRep<T> : ICatalogRep<T> where T : class, ICatalogEnti
         }
         await _db.SaveChangesAsync(cs).ConfigureAwait(false);
     }
-    public async Task<T?> GetAsync(int id, CancellationToken cs)
+    public async virtual Task<T?> GetAsync(int id, CancellationToken cs)
     {
         return await _db.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cs).ConfigureAwait(false);
     }
 
-    public IQueryable<T> GetAll(CancellationToken cs)
+    public virtual IQueryable<T> GetAll()
     {
         return _db.Set<T>().AsNoTracking();
     }

@@ -22,7 +22,7 @@ public class UnitTest1 : BonusTestApi
     [Fact]
     public async Task AccrualManual_Put100Bonus_BalanceIs100()
     {
-       await api.ApiAccrualManualAsync(dto);
+        await api.ApiAccrualManualAsync(dto);
     }
 
     [Fact]

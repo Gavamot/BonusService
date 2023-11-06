@@ -17,7 +17,7 @@ public class BonusProgramLevelController : ControllerBase
     [HttpGet]
     public async Task<BaseResponse<BonusProgramLevel[]>> GetAll(CancellationToken cs)
     {
-        var res = await _rep.GetAll(cs).ToArrayAsync(cs);
+        var res = await _rep.GetAll().ToArrayAsync(cs);
         return new BaseResponse<BonusProgramLevel[]>(res);
     }
 
