@@ -4,19 +4,20 @@ namespace BonusService.Postgres;
 /// <summary>
 /// Интерфейс для справочников
 /// </summary>
-public interface ICatalogEntity : IHaveId, IHaveDateOfChange
+public interface ICatalogEntity : IHaveDateOfChange
 {
+    int Id { get; set; }
     string Name { get; set; }
+}
+
+public interface IDocumentEntity : IHaveDateOfChange
+{
+    long Id { get; set; }
 }
 
 public interface IDeletable
 {
     bool IsDeleted { get; set; }
-}
-
-public interface IHaveId
-{
-    int Id { get; set; }
 }
 
 public interface IHaveDateOfChange

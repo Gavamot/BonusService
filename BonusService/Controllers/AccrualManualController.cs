@@ -24,7 +24,7 @@ public partial class AccrualManualDtoMapper
     public partial BonusManual FromDto(AccrualManualDto dto);
 }
 
-public record AccrualManualDto([Required]Guid PersonId, [Required]int BankId, [Required]int Sum, string Description, Guid TransactionId, Guid UserId);
+public record AccrualManualDto([Required]Guid PersonId, [Required]int BankId, [Required]int Sum, string Description, string TransactionId, Guid UserId);
 
 [ApiController]
 [Route("/api/[controller]")]

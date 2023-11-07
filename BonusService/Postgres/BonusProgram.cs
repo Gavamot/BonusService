@@ -11,7 +11,11 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public string Description { get; set; } = "";
     public DateOnly ActiveFrom { get; set; }
     public DateOnly? ActiveTo { get; set; }
-    public virtual List<Transaction> ProgramLevels { get; set; } = new();
+    public virtual List<BonusProgramLevel> ProgramLevels { get; set; } = new();
     public bool IsDeleted { get; set; }
     public DateTime LastUpdated { get; set; }
+    /// <summary>
+    /// Если валюта пуста то для всех валют елси нет то для указанных в массиве
+    /// </summary>
+    public List<int> BankId { get; set; } = new();
 }

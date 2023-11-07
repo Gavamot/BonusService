@@ -5,6 +5,19 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+	
+	<PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Version>0.1.2</Version>
+    <Authors>Sitronics</Authors>
+    <Company>Sitronics</Company>
+    <PackageDescription>Bonus_Api</PackageDescription>
+    <RepositoryUrl>https://gitlab.nvg.ru/EZS/bonusservice</RepositoryUrl>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\BonusService\BonusService.csproj" />

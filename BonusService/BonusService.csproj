@@ -48,7 +48,7 @@
 
     <ItemGroup>
       <Compile Update="Postgres\ICatalogEntity.cs">
-        <DependentUpon>PostgresDbContext.cs</DependentUpon>
+        <DependentUpon>BonusPostgresDbContext.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 

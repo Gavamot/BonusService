@@ -3,9 +3,9 @@ namespace BonusService.Postgres;
 /// <summary>
 /// Регистр остатки бонусов по счету пользователя
 /// </summary>
-public class BalanceRegister : IHaveId, IHaveDateOfChange
+public class BalanceRegister : IDocumentEntity
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public DateTime LastUpdated { get; set; }
     public int PersonId { get; set; }
 
@@ -14,4 +14,5 @@ public class BalanceRegister : IHaveId, IHaveDateOfChange
     /// Тип валюты
     /// </summary>
     public int BankId { get; set; }
+    public DateOnly Date { get; set; }
 }

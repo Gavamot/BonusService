@@ -24,7 +24,7 @@ public partial class PayDtoMapper
     public partial BonusAuto FromDto(PayDto dto);
 }
 
-public record PayDto(Guid PersonId, int BankId, int Sum, string Description, Guid TransactionId, int EzsId);
+public record PayDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, int EzsId);
 
 
 [ApiController]

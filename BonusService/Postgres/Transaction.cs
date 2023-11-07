@@ -20,13 +20,10 @@ public enum TransactionType
     Auto
 }
 
-public class Transaction
+public class Transaction : IDocumentEntity
 {
-    /// <summary>
-    /// Также является ключом идемпотентности
-    /// </summary>
-    public Guid Id { get; set; }
-    public int PersonId { get; set; }
+    public long Id { get; set; }
+    public Guid PersonId { get; set; }
     public DateTime LastUpdated { get; set; }
     /// <summary>
     /// Тип валюты
@@ -36,9 +33,9 @@ public class Transaction
     ///  База (например денежная сумма) с которой был начислен бонус 0 для ручных начислений
     /// </summary>
     public long BonusBase { get; set; }
-    public int BonusSum { get; set; }
-    public int? ProgramId { get; set; }
-    public virtual BonusProgram? Program { get; set; }
+    public long BonusSum { get; set; }
+    public int? BonusProgramId { get; set; }
+    //public virtual BonusProgram? Program { get; set; }
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>
@@ -52,4 +49,6 @@ public class Transaction
     public int? EzsId { get; set; }
 
     public TransactionType Type { get; set; }
+    public string TransactionId { get; set; } = "";
+
 }

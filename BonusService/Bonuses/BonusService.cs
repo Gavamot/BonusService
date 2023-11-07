@@ -1,7 +1,7 @@
 namespace BonusService.Bonuses;
 
-public record BonusAuto(Guid PersonId, int BankId, int Sum, string Description, Guid TransactionId, int? ProgramId = null, int? EzsId = null);
-public record BonusManual(Guid PersonId, int BankId, int Sum, string Description, Guid TransactionId, Guid UserId);
+public record BonusAuto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, int? ProgramId = null, int? EzsId = null);
+public record BonusManual(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, Guid UserId);
 
 public interface IBonusService
 {

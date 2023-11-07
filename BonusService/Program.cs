@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BonusService;
 using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
@@ -19,7 +20,6 @@ services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
-
 services.TryAddTransient<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
@@ -31,7 +31,9 @@ services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddFluentValidationRulesToSwagger();
 
 services.AddScoped<IBonusService, BonusService.Bonuses.BonusService>();
-
+services.AddScoped<IBonusProgramRep, BonusProgramRep>();
+services.AddScoped<MonthlySumBonusJob>();
+services.AddHostedService<RunBonusProgramsBackgroundService>();
 
 services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));

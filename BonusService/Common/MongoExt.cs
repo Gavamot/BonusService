@@ -63,7 +63,7 @@ public class MongoSession
 
 public class MongoUser
 {
-    public string? clientNodeId { get; set; }
+    public Guid? clientNodeId { get; set; }
 
     public string? clientLogin { get; set; }
 
@@ -72,11 +72,10 @@ public class MongoUser
 
 public class MongoOperation
 {
-    public double? calculatedPayment { get; set; }
+    public long? calculatedPayment { get; set; }
 }
 
 public class MongoTariff
 {
     public int? BankId { get; set; }
-    public int? CurrencyId { get; set; }
 }

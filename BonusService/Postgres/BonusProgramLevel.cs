@@ -8,8 +8,6 @@ public class BonusProgramLevel : ICatalogEntity
 
     public string Name { get; set; }
 
-    public bool IsDeleted { get; set; }
-
     public DateTime LastUpdated { get; set; }
 
     public int Level { get; set; }
@@ -25,4 +23,6 @@ public class BonusProgramLevel : ICatalogEntity
     /// </summary>
 
     public int Benefit { get; set; }
+
+    public string Description { get; set; } = "";
 }

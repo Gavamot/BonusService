@@ -23,7 +23,7 @@ public partial class PayManualDtoMapper
     public partial BonusManual FromDto(PayManualDto car);
 }
 
-public record PayManualDto(Guid PersonId, int BankId, int Sum, string Description, Guid TransactionId, Guid UserId);
+public record PayManualDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, Guid UserId);
 
 [ApiController]
 [Route("/api/[controller]")]

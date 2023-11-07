@@ -14,7 +14,7 @@ public class UnitTest1 : BonusTestApi
         PersonId = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662DA"),
         BankId = 1,
         UserId = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662DA"),
-        TransactionId = Guid.Parse("6B29FC40-CA47-1067-B31D-00DD010662DA"),
+        TransactionId = "manual_6B29FC40-CA47-1067-B31D-00DD010662DA",
         Sum = 100,
         Description = "На чай"
     };
@@ -28,6 +28,8 @@ public class UnitTest1 : BonusTestApi
     [Fact]
     public async Task AccrualManual_Negative()
     {
-        await api.ApiAccrualManualAsync(dto);
+        await api.ApiBonusProgramAsync();
+        //await api.
+        //await api.ApiAccrualManualAsync(dto);
     }
 }
