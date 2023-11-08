@@ -45,17 +45,17 @@ namespace BonusApi
         System.Threading.Tasks.Task<BaseResponseOfBonusProgramOf> ApiBonusProgramAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
-        /// Начисление бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction);
+        System.Threading.Tasks.Task<BaseResponseOfLong> ApiPayAsync(PayDto transaction);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Начисление бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BaseResponseOfLong> ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Списание бонусных баллов оператором
@@ -758,6 +758,47 @@ namespace BonusApi
             if (handler != null)
                 handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BaseResponseOfLong : BaseResponseEmpty
+    {
+        private long? _data = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? Data
+        {
+            get { return _data; }
+
+            set
+            {
+                if (_data != value)
+                {
+                    _data = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BaseResponseOfLong FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BaseResponseOfLong>(data, options);
+
+        }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]

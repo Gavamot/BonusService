@@ -30,11 +30,6 @@ services.AddFluentValidationClientsideAdapters();
 services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddFluentValidationRulesToSwagger();
 
-services.AddScoped<IBonusService, BonusService.Bonuses.BonusService>();
-services.AddScoped<IBonusProgramRep, BonusProgramRep>();
-services.AddScoped<MonthlySumBonusJob>();
-services.AddHostedService<RunBonusProgramsBackgroundService>();
-
 services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

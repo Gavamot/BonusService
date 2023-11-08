@@ -1,4 +1,4 @@
-using BonusApi;
+
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDisposable
 {
-    protected readonly BonusClient api;
+    //protected readonly BonusClient api;
     protected readonly FakeApplicationFactory<Program> Server;
     protected IServiceScope CreateScope() => Server.Services.CreateScope();
 
@@ -19,7 +19,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
         {
             AllowAutoRedirect = false
         });
-        api = new BonusClient(httpClient);
+        //api = new BonusClient(httpClient);
     }
 
     protected void InitPostgres(FakeApplicationFactory<Program> server)

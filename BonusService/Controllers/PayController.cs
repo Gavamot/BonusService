@@ -32,14 +32,14 @@ public record PayDto(Guid PersonId, int BankId, int Sum, string Description, str
 public class PayController : ControllerBase
 {
     /// <summary>
-    /// Начисление бонусных баллов сервисом оплаты
+    /// Списание бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
-    public async Task<BaseResponseEmpty> Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
+    public async Task<BaseResponse<long>> Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
     {
         var data = new PayDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
-        await bonusService.PayAutoAsync(data);
-        return new BaseResponseEmpty();
+        long res = await bonusService.PayAutoAsync(data);
+        return new BaseResponse<long>(res);
     }
 }

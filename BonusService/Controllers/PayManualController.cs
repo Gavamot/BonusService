@@ -37,7 +37,7 @@ public class PayManualController : ControllerBase
     {
         var data = new PayManualDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
-        await bonusService.PayManualAsync(data);
-        return new BaseResponseEmpty();
+        long res = await bonusService.PayManualAsync(data);
+        return new BaseResponse<long>(res);
     }
 }

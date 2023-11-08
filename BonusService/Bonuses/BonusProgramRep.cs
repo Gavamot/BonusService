@@ -1,5 +1,5 @@
 using BonusService.Postgres;
-namespace BonusService;
+namespace BonusService.Bonuses;
 
 public interface IBonusProgramRep
 {

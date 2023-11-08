@@ -207,20 +207,20 @@ namespace BonusApi
         }
 
         /// <summary>
-        /// Начисление бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction)
+        public virtual System.Threading.Tasks.Task<BaseResponseOfLong> ApiPayAsync(PayDto transaction)
         {
             return ApiPayAsync(transaction, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Начисление бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты
         /// </summary>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BaseResponseEmpty> ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<BaseResponseOfLong> ApiPayAsync(PayDto transaction, System.Threading.CancellationToken cancellationToken)
         {
             if (transaction == null)
                 throw new System.ArgumentNullException("transaction");
@@ -264,7 +264,7 @@ namespace BonusApi
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<BaseResponseEmpty>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<BaseResponseOfLong>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);

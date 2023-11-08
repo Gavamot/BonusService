@@ -1,3 +1,4 @@
+using BonusService.Bonuses;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc;
 namespace BonusService.Controllers;
@@ -13,7 +14,7 @@ public class BonusProgramController : ControllerBase
     }
 
     [HttpGet]
-    public BaseResponse<BonusProgram[]> Pay()
+    public BaseResponse<BonusProgram[]> GetAll()
     {
         var p = new [] { rep.Get() };
         return new BaseResponse<BonusProgram[]>(p);

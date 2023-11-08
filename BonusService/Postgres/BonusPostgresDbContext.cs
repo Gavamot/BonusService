@@ -13,6 +13,8 @@ public static class PostgresDbContextExt
 
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)
     {
+        var isNswagGenerator = Environment.GetEnvironmentVariable("NswagGen");
+        if (string.IsNullOrWhiteSpace(isNswagGenerator) == false) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         ctx.Database.EnsureCreated();
