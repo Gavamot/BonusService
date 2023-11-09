@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.Controllers;
 
-
-public class PayDtoValidator : AbstractValidator<PayDto>
+public sealed class PayDtoValidator : AbstractValidator<PayDto>
 {
     public PayDtoValidator()
     {
@@ -19,27 +18,27 @@ public class PayDtoValidator : AbstractValidator<PayDto>
 }
 
 [Mapper]
-public partial class PayDtoMapper
+public sealed partial class PayDtoMapper
 {
     public partial BonusAuto FromDto(PayDto dto);
 }
 
-public record PayDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, int EzsId);
+public sealed record PayDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, Guid EzsId);
 
 
 [ApiController]
 [Route("/api/[controller]")]
-public class PayController : ControllerBase
+public sealed class PayController : ControllerBase
 {
     /// <summary>
     /// Списание бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
-    public async Task<BaseResponse<long>> Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
+    public async Task<long> Pay([FromServices]IBonusService bonusService, [FromBody]PayDto transaction)
     {
         var data = new PayDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
         long res = await bonusService.PayAutoAsync(data);
-        return new BaseResponse<long>(res);
+        return res;
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.Controllers;
 
-public class AccrualManualDtoValidator : AbstractValidator<AccrualManualDto>
+public sealed class AccrualManualDtoValidator : AbstractValidator<AccrualManualDto>
 {
     public AccrualManualDtoValidator()
     {
@@ -19,25 +19,24 @@ public class AccrualManualDtoValidator : AbstractValidator<AccrualManualDto>
 }
 
 [Mapper]
-public partial class AccrualManualDtoMapper
+public sealed partial class AccrualManualDtoMapper
 {
     public partial BonusManual FromDto(AccrualManualDto dto);
 }
 
-public record AccrualManualDto([Required]Guid PersonId, [Required]int BankId, [Required]int Sum, string Description, string TransactionId, Guid UserId);
+public sealed record AccrualManualDto([Required]Guid PersonId, [Required]int BankId, [Required]int Sum, string Description, string TransactionId, Guid UserId);
 
 [ApiController]
 [Route("/api/[controller]")]
-public class AccrualManualController : ControllerBase
+public sealed class AccrualManualController : ControllerBase
 {
     /// <summary>
     /// Начисление бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    public async Task<BaseResponseEmpty> AccrualManual([FromServices]IBonusService bonusService, [FromBody]AccrualManualDto transaction)
+    public async Task AccrualManual([FromServices]IBonusService bonusService, [FromBody]AccrualManualDto transaction)
     {
         var data = new AccrualManualDtoMapper().FromDto(transaction);
         await bonusService.AccrualManualAsync(data);
-        return new BaseResponseEmpty();
     }
 }

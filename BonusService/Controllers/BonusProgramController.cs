@@ -5,7 +5,7 @@ namespace BonusService.Controllers;
 
 [ApiController]
 [Route("/api/[controller]")]
-public class BonusProgramController : ControllerBase
+public sealed class BonusProgramController : ControllerBase
 {
     private readonly IBonusProgramRep rep;
     public BonusProgramController(IBonusProgramRep rep)
@@ -14,9 +14,9 @@ public class BonusProgramController : ControllerBase
     }
 
     [HttpGet]
-    public BaseResponse<BonusProgram[]> GetAll()
+    public BonusProgram[] GetAll()
     {
         var p = new [] { rep.Get() };
-        return new BaseResponse<BonusProgram[]>(p);
+        return p;
     }
 }

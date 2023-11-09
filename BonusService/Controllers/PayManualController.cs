@@ -27,17 +27,17 @@ public record PayManualDto(Guid PersonId, int BankId, int Sum, string Descriptio
 
 [ApiController]
 [Route("/api/[controller]")]
-public class PayManualController : ControllerBase
+public sealed class PayManualController : ControllerBase
 {
     /// <summary>
     /// Списание бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    public async Task<BaseResponseEmpty> AccrualManual([FromServices]IBonusService bonusService, [FromBody]PayManualDto transaction)
+    public async Task<long> AccrualManual([FromServices]IBonusService bonusService, [FromBody]PayManualDto transaction)
     {
         var data = new PayManualDtoMapper().FromDto(transaction);
         data = data with { Sum = data.Sum * -1 };
         long res = await bonusService.PayManualAsync(data);
-        return new BaseResponse<long>(res);
+        return res;
     }
 }

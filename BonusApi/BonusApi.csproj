@@ -10,7 +10,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <Version>0.1.2</Version>
+    <Version>0.1.5</Version>
     <Authors>Sitronics</Authors>
     <Company>Sitronics</Company>
     <PackageDescription>Bonus_Api</PackageDescription>
@@ -18,10 +18,6 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\BonusService\BonusService.csproj" />
-    </ItemGroup>
     
     <ItemGroup>
       <PackageReference Include="NSwag.MSBuild" Version="14.0.0-preview009">
@@ -34,8 +30,8 @@
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
 
-    <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
+  <!--  <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
         <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Release;NswagGen=Y" Command="$(NSwagExe_Net70) run nswag.json /variables:Configuration=$(Configuration)" />
-    </Target>
+    </Target>-->
     
 </Project>

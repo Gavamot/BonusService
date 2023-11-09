@@ -20,11 +20,11 @@ public enum TransactionType
     Auto
 }
 
-public class Transaction : IDocumentEntity
+public class Transaction : IDocumentEntity, IBalanceKey
 {
     public long Id { get; set; }
     public Guid PersonId { get; set; }
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
     /// <summary>
     /// Тип валюты
     /// </summary>
@@ -46,7 +46,7 @@ public class Transaction : IDocumentEntity
     /// <summary>
     /// Заправка при расплате за которую списались бонусы. Если null то происходило списание в ручную либо по иным причинам например сгорели бонусы.
     /// </summary>
-    public int? EzsId { get; set; }
+    public Guid? EzsId { get; set; }
 
     public TransactionType Type { get; set; }
     public string TransactionId { get; set; } = "";

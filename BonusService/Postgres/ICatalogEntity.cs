@@ -22,5 +22,12 @@ public interface IDeletable
 
 public interface IHaveDateOfChange
 {
-    DateTime LastUpdated { get; set; }
+    DateTimeOffset LastUpdated { get; set; }
 }
+
+public interface IBalanceKey
+{
+    public Guid PersonId { get; }
+    public int BankId { get; }
+}
+record BalanceKey(Guid PersonId, int BankId): IBalanceKey { }

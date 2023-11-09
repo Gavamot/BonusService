@@ -8,7 +8,7 @@ public class BonusProgramLevel : ICatalogEntity
 
     public string Name { get; set; }
 
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
 
     public int Level { get; set; }
 

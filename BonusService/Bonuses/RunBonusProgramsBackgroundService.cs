@@ -1,4 +1,3 @@
-using BonusService;
 using BonusService.Bonuses;
 using Hangfire;
 
@@ -16,6 +15,7 @@ public class RunBonusProgramsBackgroundService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+
         var bp = _bonusProgramRep.Get();
         // https://crontab.guru/#0_9_1_*_*
         _scheduler.AddOrUpdate<MonthlySumBonusJob>("PeriodicalMonthlySumByLevels", x=> x.ExecuteAsync(), "0 9 1 * *");

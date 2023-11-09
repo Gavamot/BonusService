@@ -1,22 +1,28 @@
 namespace BonusService.Common;
 
-public record DateTimeInterval(DateTime from, DateTime to);
+public record DateTimeInterval(DateTimeOffset from, DateTimeOffset to);
 
 public interface IDateTimeService
 {
-    DateTime GetNow();
+    DateTimeOffset GetNow();
     DateTimeInterval GetCurrentMonth();
+    DateTimeOffset GetStartOfCurrentDay();
 }
 
 public class DateTimeService : IDateTimeService
 {
-    public DateTime GetNow() => DateTime.Now;
+    public DateTimeOffset GetNow() => DateTimeOffset.UtcNow;
+    private readonly static TimeSpan MoscowTimezone = new (3, 0, 0);
     public DateTimeInterval GetCurrentMonth()
     {
         var cur = GetNow();
-        var @from = new DateTime(cur.Year, cur.Month, cur.Day);
-        var @to = new DateTime(cur.Year, cur.Month, DateTime.DaysInMonth(cur.Year, cur.Month), 23, 59, 59);
+        var @from =  new DateTimeOffset(cur.Year, cur.Month, cur.Day, 0, 0, 0, cur.Offset);
+        var @to = @from.AddMonths(1);
         return new DateTimeInterval(@from, to);
     }
-
+    public DateTimeOffset GetStartOfCurrentDay()
+    {
+        var cur = GetNow();
+        return new DateTimeOffset(cur.Year, cur.Month, cur.Day, 0, 0, 0, cur.Offset);
+    }
 }

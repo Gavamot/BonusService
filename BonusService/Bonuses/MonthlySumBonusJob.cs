@@ -1,6 +1,5 @@
 using BonusService.Common;
 using BonusService.Postgres;
-using Hangfire.Storage;
 using Microsoft.EntityFrameworkCore;
 
 namespace BonusService.Bonuses;
@@ -58,10 +57,11 @@ public class MonthlySumBonusJob : AbstractJob
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
                 && x.user.chargingClientType == 0
-                && x.chargeEndTime >= curMonth.from && x.chargeEndTime <= curMonth.to)
-            .GroupBy(x => new { x.tariff!.BankId, x.user!.clientNodeId});
+                && x.chargeEndTime >= curMonth.from && x.chargeEndTime < curMonth.to)
+            .GroupBy(x => new { x.tariff!.BankId, x.user!.clientNodeId})
+            .AsNoTracking();
 
-        List<Transaction> transactions = new();
+        List<Transaction> transactions = new(4096);
         var bonusProgramId = _rep.Get().Id;
         foreach (var x in data)
         {
@@ -80,11 +80,10 @@ public class MonthlySumBonusJob : AbstractJob
                 LastUpdated = _dateTimeService.GetNow(),
                 UserId = null,
                 EzsId = null,
-                Description = $"Нашислено по {Name} за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
+                Description = $"Начислено по {Name} за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
             };
             transactions.Add(transaction);
         }
-        await _postgres.Transactions.AddRangeAsync(transactions);
-        await _postgres.SaveChangesAsync();
+        await _postgres.Transactions.BulkInsertAsync(transactions);
     }
 }

@@ -1,8 +1,8 @@
 #pragma warning disable CS8618
-using Hangfire.Storage;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Postgres;
 
+// dotnet ef migrations add InitialCreate --context PostgresDbContext
 public static class PostgresDbContextExt
 {
     public static IServiceCollection AddPostgres(this IServiceCollection services, IConfiguration configuration)
@@ -13,11 +13,10 @@ public static class PostgresDbContextExt
 
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)
     {
-        var isNswagGenerator = Environment.GetEnvironmentVariable("NswagGen");
-        if (string.IsNullOrWhiteSpace(isNswagGenerator) == false) return;
+        if (Program.IsNswagBuild()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        ctx.Database.EnsureCreated();
+        //ctx.Database.EnsureCreated();
         ctx.Database.Migrate();
     }
 }
@@ -45,7 +44,10 @@ public class PostgresDbContext : DbContext
         //builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
 
         //builder.Entity<Transaction>().HasOne(x => x.Program);
-        builder.Entity<Transaction>().HasIndex(x => x.TransactionId).IsUnique();
-        builder.Entity<BalanceRegister>().HasIndex(x => new { x.PersonId, x.BankId, x.Date }).IsUnique();
+        /*builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId }, "ffff");
+        builder.Entity<Transaction>().HasIndex(x => x.TransactionId, "ffff2222").IsUnique();
+
+        builder.Entity<BalanceRegister>().HasIndex(x => new { x.PersonId, x.BankId }, "ffff1");
+        builder.Entity<BalanceRegister>().HasIndex(x => new { x.PersonId, x.BankId, x.Date }, "ffff44444").IsUnique();*/
     }
 }

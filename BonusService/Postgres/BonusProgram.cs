@@ -9,11 +9,11 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public string Name { get; set; } = "";
     public ProgramTypes ProgramTypes { get; set; }
     public string Description { get; set; } = "";
-    public DateOnly ActiveFrom { get; set; }
-    public DateOnly? ActiveTo { get; set; }
+    public DateTimeOffset ActiveFrom { get; set; }
+    public DateTimeOffset? ActiveTo { get; set; }
     public virtual List<BonusProgramLevel> ProgramLevels { get; set; } = new();
     public bool IsDeleted { get; set; }
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
     /// <summary>
     /// Если валюта пуста то для всех валют елси нет то для указанных в массиве
     /// </summary>

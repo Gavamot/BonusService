@@ -12,6 +12,11 @@
         <PackageReference Include="FluentValidation" Version="11.8.0" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.11" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.11">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0-beta.3" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.13" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.13" />
@@ -19,7 +24,6 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.13" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
         <PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
         <PackageReference Include="Hangfire.Core" Version="1.8.6" />
@@ -30,9 +34,10 @@
         <PackageReference Include="NLog" Version="5.2.5" />
         <PackageReference Include="NLog.Extensions.Logging" Version="5.3.5" />
         <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
-        <PackageReference Include="NSwag.AspNetCore" Version="14.0.0-preview009" />
         <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+        <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="7.100.0.5" />
     </ItemGroup>
 
     <PropertyGroup>
@@ -48,7 +53,7 @@
 
     <ItemGroup>
       <Compile Update="Postgres\ICatalogEntity.cs">
-        <DependentUpon>BonusPostgresDbContext.cs</DependentUpon>
+        <DependentUpon>PostgresDbContext.cs</DependentUpon>
       </Compile>
     </ItemGroup>
 
