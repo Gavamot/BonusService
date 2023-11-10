@@ -17,22 +17,28 @@ public enum TransactionType
     /// <summary>
     /// Начислено/Списано Сервисом бонус автоматически (переодическое начисление, сгорели бонусы)
     /// </summary>
-    Auto
+    Auto,
+
+    /// <summary>
+    /// Консолидация оборотов по бонусному счету
+    /// </summary>
+    Shrink
 }
 
 public class Transaction : IDocumentEntity, IBalanceKey
 {
     public long Id { get; set; }
-    public Guid PersonId { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
     /// <summary>
     /// Тип валюты
     /// </summary>
+    public Guid PersonId { get; set; }
     public int BankId { get; set; }
+
     /// <summary>
     ///  База (например денежная сумма) с которой был начислен бонус 0 для ручных начислений
     /// </summary>
-    public long BonusBase { get; set; }
+    public long? BonusBase { get; set; }
     public long BonusSum { get; set; }
     public int? BonusProgramId { get; set; }
     //public virtual BonusProgram? Program { get; set; }
@@ -40,7 +46,6 @@ public class Transaction : IDocumentEntity, IBalanceKey
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>
     public Guid? UserId { get; set; }
-
     public string Description { get; set; } = "";
 
     /// <summary>
@@ -50,5 +55,4 @@ public class Transaction : IDocumentEntity, IBalanceKey
 
     public TransactionType Type { get; set; }
     public string TransactionId { get; set; } = "";
-
 }

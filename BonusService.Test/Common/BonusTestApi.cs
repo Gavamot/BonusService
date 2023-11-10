@@ -26,7 +26,6 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
     {
         using var scope = server.Services.CreateScope();
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.EnsureCreated();
         postgres.Database.Migrate();
     }
 

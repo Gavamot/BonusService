@@ -16,7 +16,6 @@ public static class PostgresDbContextExt
         if (Program.IsNswagBuild()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        //ctx.Database.EnsureCreated();
         ctx.Database.Migrate();
     }
 }
@@ -28,8 +27,6 @@ public class PostgresDbContext : DbContext
     //public DbSet<BonusProgram> BonusPrograms { get; set; }
     //public DbSet<BonusProgramLevel> BonusProgramLevels  { get; set; }
     public DbSet<Transaction> Transactions  { get; set; }
-    public DbSet<BalanceRegister> BalanceRegister  { get; set; }
-
     public PostgresDbContext(){ }
 
     public PostgresDbContext(DbContextOptions<PostgresDbContext> options): base(options)
@@ -44,10 +41,11 @@ public class PostgresDbContext : DbContext
         //builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
 
         //builder.Entity<Transaction>().HasOne(x => x.Program);
-        /*builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId }, "ffff");
-        builder.Entity<Transaction>().HasIndex(x => x.TransactionId, "ffff2222").IsUnique();
 
-        builder.Entity<BalanceRegister>().HasIndex(x => new { x.PersonId, x.BankId }, "ffff1");
-        builder.Entity<BalanceRegister>().HasIndex(x => new { x.PersonId, x.BankId, x.Date }, "ffff44444").IsUnique();*/
+
+        builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId });
+        builder.Entity<Transaction>().HasIndex(x => x.TransactionId)
+            .IncludeProperties(x=> new { x.BonusSum })
+            .IsUnique();
     }
 }

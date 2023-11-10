@@ -30,4 +30,5 @@ public interface IBalanceKey
     public Guid PersonId { get; }
     public int BankId { get; }
 }
-record BalanceKey(Guid PersonId, int BankId): IBalanceKey { }
+
+record BalanceKey(Guid PersonId, int BankId) : IBalanceKey;

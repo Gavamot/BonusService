@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BonusService.Bonuses;
 
+
 /// <summary>
 /// Начисление бонувов каждый календарный месяц(с 1 по последние число) по уровням от общей суммы затрат персоны
 /// https://rnd.sitronics.com/jira/browse/EZSPLAT-244
@@ -34,7 +35,7 @@ public class MonthlySumBonusJob : AbstractJob
     }
 
     private string GenerateTransactionId(int bankId, Guid PersonId, DateTimeInterval period)
-        => $"{programType.ToString()}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}";
+        => $"cashback_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay)
     {
@@ -70,8 +71,8 @@ public class MonthlySumBonusJob : AbstractJob
             if (bonus.sum <= 0) continue;
             var transaction = new Transaction()
             {
-                BankId = x.Key.BankId!.Value,
                 PersonId = x.Key.clientNodeId!.Value,
+                BankId = x.Key.BankId!.Value,
                 TransactionId = GenerateTransactionId(x.Key.BankId!.Value, x.Key.clientNodeId!.Value, curMonth),
                 BonusProgramId = bonusProgramId,
                 BonusBase = totalPay,

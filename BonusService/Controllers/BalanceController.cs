@@ -26,14 +26,8 @@ public sealed class GetPersonBalanceHandler : IRequestHandler<GetBalanceDto, lon
 
     public async ValueTask<long> Handle(GetBalanceDto request, CancellationToken cancellationToken)
     {
-        var register = await _postgres.BalanceRegister.Where(x => x.PersonId == request.PersonId && x.BankId == request.BankId)
-            .OrderByDescending(x=> x.Date)
-            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
-        var registerSum = register?.Sum ?? 0L;
-        DateTimeOffset date = register?.Date ?? DateTimeOffset.MinValue;
-        var restSum = await _postgres.Transactions.Where(x => x.PersonId == request.PersonId && x.BankId == request.BankId && x.LastUpdated >= date)
+        return await _postgres.Transactions.Where(x => x.PersonId == request.PersonId && x.BankId == request.BankId)
             .SumAsync(x=>x.BonusSum, cancellationToken: cancellationToken);
-        return registerSum + restSum;
     }
 }
 
