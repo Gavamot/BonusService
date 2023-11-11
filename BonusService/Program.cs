@@ -1,3 +1,4 @@
+using System.Data;
 using System.Text.Json.Serialization;
 using BonusService.Common;
 using BonusService.Postgres;
@@ -6,7 +7,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver.Linq;
@@ -72,37 +72,29 @@ app.MapControllers();
 app.ApplyPostgresMigrations();
 
 
+
 var s = app.Services.CreateScope();
 var _postgres = s.ServiceProvider.GetRequiredService<PostgresDbContext>();
 
-var a = _postgres.Transactions.Where(x => x.LastUpdated < DateTimeOffset.MinValue && x.BonusSum > 0)
-    .GroupBy(x => new { x.PersonId, x.BankId })
-    .Select(x => new { x.Key.PersonId, x.Key.BankId, Sum = x.Sum(y => y.BonusSum) })
-    .ToQueryString();
-var b = 1;
-/*
-var maxFiscalDate = await _postgres.BalanceRegister.MaxAsync(x => (DateTimeOffset?)x.Date) ?? DateTimeOffset.MinValue;
-var fiscalizedBalanceQuery = _postgres.BalanceRegister.Where(x=> x.Date == maxFiscalDate);
-var fiscalizedBalance = await fiscalizedBalanceQuery.AsNoTracking().ToDictionaryAsync(x => new BalanceKey(x.PersonId, x.BankId), x => new { x.PersonId, x.BankId, x.Date, x.Sum });
 
-var fiscalizedBalanceCount = await fiscalizedBalanceQuery.CountAsync();
-
-int chunkSize = 1000;
-for (int cur = 0; cur < fiscalizedBalanceCount; cur += chunkSize)
+var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+await _postgres.Transactions.BulkInsertAsync(new []{ new Transaction()
 {
-    fiscalizedBalanceQuery.Skip(cur).Take(chunkSize).ToArr;
-}
-var fiscalTransactionsQuery = _postgres.Transactions.Where(t => fiscalizedBalanceQuery.Any(r => t.PersonId == r.PersonId && t.BankId == r.BankId) && t.LastUpdated >= maxFiscalDate);
+    BonusSum = 1,
+    Description = "33",
+    TransactionId = "34422423423423",
+    LastUpdated = DateTimeOffset.UtcNow,
+    BonusBase = 11,
+    Type = TransactionType.Auto,
+    BankId = 1,
+    PersonId = Guid.NewGuid()
+}});
 
-
-
-var notFiscalTransactionsQuery = _postgres.Transactions.Where(t => fiscalizedBalanceQuery.Any(r => t.PersonId == r.PersonId && t.BankId == r.BankId) == false);
-*/
 
 
 
 app.Run();
-
+record a(Guid PersonId, int BankId);
 public partial class Program
 {
     public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;

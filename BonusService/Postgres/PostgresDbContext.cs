@@ -37,11 +37,7 @@ public class PostgresDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder builder)
     {
         //builder.Entity<BonusProgram>().HasMany(x=>x.ProgramLevels);
-
         //builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
-
-        //builder.Entity<Transaction>().HasOne(x => x.Program);
-
 
         builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId });
         builder.Entity<Transaction>().HasIndex(x => x.TransactionId)
