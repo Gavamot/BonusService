@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BonusService.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20231111210749_Initoal")]
+    [Migration("20231112091056_Initoal")]
     partial class Initoal
     {
         /// <inheritdoc />
@@ -49,6 +49,10 @@ namespace BonusService.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("EzsId")
                         .HasColumnType("uuid");
 
@@ -78,6 +82,17 @@ namespace BonusService.Migrations
                     b.HasIndex("PersonId", "BankId");
 
                     b.ToTable("Transactions");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Transaction");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("BonusService.Postgres.TransactionHistory", b =>
+                {
+                    b.HasBaseType("BonusService.Postgres.Transaction");
+
+                    b.HasDiscriminator().HasValue("TransactionHistory");
                 });
 #pragma warning restore 612, 618
         }

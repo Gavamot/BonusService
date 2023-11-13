@@ -91,8 +91,6 @@ await _postgres.Transactions.BulkInsertAsync(new []{ new Transaction()
 }});
 
 
-
-
 app.Run();
 record a(Guid PersonId, int BankId);
 public partial class Program

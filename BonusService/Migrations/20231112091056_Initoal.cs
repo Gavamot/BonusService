@@ -28,7 +28,8 @@ namespace BonusService.Migrations
                     Description = table.Column<string>(type: "text", nullable: false),
                     EzsId = table.Column<Guid>(type: "uuid", nullable: true),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    TransactionId = table.Column<string>(type: "text", nullable: false)
+                    TransactionId = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

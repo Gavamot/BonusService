@@ -14,41 +14,42 @@ public class TransactionShrinkerJob : AbstractJob
 {
     private readonly PostgresDbContext _postgres;
     private readonly IDateTimeService _dateTimeService;
-    private readonly ILogger<MonthlySumBonusJob> _logger;
     public override string Name => $"[Shrinker]";
 
     public TransactionShrinkerJob(
         PostgresDbContext postgres,
         IDateTimeService dateTimeService,
-        ILogger<MonthlySumBonusJob> logger) : base(logger)
+        ILogger<TransactionShrinkerJob> logger) : base(logger)
     {
         _postgres = postgres;
         _dateTimeService = dateTimeService;
-        _logger = logger;
     }
 
-    private record BalanceGroup(Guid PersonId, int BankId, long Sum);
+
     // https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics?tabs=with-di%2Cexpression-api-with-constant
     protected override async Task ExecuteJobAsync()
     {
         var curDay = _dateTimeService.GetStartOfCurrentDay();
-        var balance = _postgres.Transactions.Where(x => x.LastUpdated < curDay);
 
         // В данном алгоритме возвожно консолидация многих транзакций во многие дял каждого счета
         // Но зато работает быстро и решает задачу сжатия. Чем больше chunkSize тем меньше шансов на подобную ситуацию
-        int chunkSize = 500_000;
+        int chunkSize = 100_000;
         int cur = 0;
         int i = 1;
         int consolidationLength = 0;
 
+        logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Начат процесс консолидации транзакций на {curDay} с размером партиции {chunkSize}", curDay, chunkSize);
         do
         {
-            var transactions = await balance.Skip(cur).Take(chunkSize).AsNoTracking().ToArrayAsync();
+            var transactions = await _postgres.Transactions.Where(x => x.LastUpdated < curDay)
+                .Skip(cur).Take(chunkSize).AsNoTracking().ToArrayAsync();
+
+            consolidationLength = transactions.Length;
             cur += chunkSize;
+
             var consolidation = transactions.GroupBy(x => new { x.PersonId, x.BankId })
                 .Select(x => new { x.Key.PersonId, x.Key.BankId, BonusSum = x.Sum(y => y.BonusSum) }).ToArray();
             var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-
             try
             {
                 await _postgres.Transactions.BulkInsertAsync(consolidation.Select(x => new Transaction()
@@ -65,17 +66,17 @@ public class TransactionShrinkerJob : AbstractJob
                     UserId = null,
                     EzsId = null,
                 }));
+                await _postgres.TransactionHistory.BulkInsertAsync(transactions.Where(x => x.Type != TransactionType.Shrink)
+                    .Select(x => (TransactionHistory)x));
                 await _postgres.BulkDeleteAsync(transactions);
+                logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Даннные успешно сконсолидированы({consolidationLength}->{consolidation}) на {curDay} итерация {iteration} с размером партиции {chunkSize}", consolidationLength, consolidation, curDay, i, chunkSize);
                 i++;
                 await transactionDb.CommitAsync();
             }
             catch (Exception e)
             {
-                logger.
-                await transactionDb.RollbackAsync();
+                logger.LogError(AppEvents.TransactionShrinkerEvent, e, "Не удалось сконсолидировать на {curDay} итерация {iteration} с размером партиции {chunkSize}", curDay, i, chunkSize);
             }
         }while(consolidationLength == chunkSize);
-
-
     }
 }

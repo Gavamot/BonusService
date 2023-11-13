@@ -1,10 +1,11 @@
 
 using BonusService.Test.Common;
+using FluentAssertions;
 namespace BonusService.Test;
 
-public class UnitTest1 : BonusTestApi
+public class BonusProgramTest : BonusTestApi
 {
-    public UnitTest1(FakeApplicationFactory<Program> server) : base(server)
+    public BonusProgramTest(FakeApplicationFactory<Program> server) : base(server)
     {
 
     }
@@ -22,16 +23,10 @@ public class UnitTest1 : BonusTestApi
     */
 
     [Fact]
-    public async Task AccrualManual_Put100Bonus_BalanceIs100()
+    public async Task GetBonusProgram()
     {
-        //await api.ApiAccrualManualAsync(dto);
+        var programs = await api.ApiBonusProgramAsync();
+        programs.Should().NotBeNullOrEmpty();
     }
 
-    [Fact]
-    public async Task AccrualManual_Negative()
-    {
-        //await api.ApiBonusProgramAsync();
-        //await api.
-        //await api.ApiAccrualManualAsync(dto);
-    }
 }

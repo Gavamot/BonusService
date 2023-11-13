@@ -27,6 +27,7 @@ public class PostgresDbContext : DbContext
     //public DbSet<BonusProgram> BonusPrograms { get; set; }
     //public DbSet<BonusProgramLevel> BonusProgramLevels  { get; set; }
     public DbSet<Transaction> Transactions  { get; set; }
+    public DbSet<TransactionHistory> TransactionHistory  { get; set; }
     public PostgresDbContext(){ }
 
     public PostgresDbContext(DbContextOptions<PostgresDbContext> options): base(options)
@@ -39,6 +40,7 @@ public class PostgresDbContext : DbContext
         //builder.Entity<BonusProgram>().HasMany(x=>x.ProgramLevels);
         //builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
 
+        builder.Entity<TransactionHistory>();
         builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId });
         builder.Entity<Transaction>().HasIndex(x => x.TransactionId)
             .IncludeProperties(x=> new { x.BonusSum })
