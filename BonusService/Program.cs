@@ -1,5 +1,6 @@
 using System.Data;
 using System.Text.Json.Serialization;
+using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
 using Correlate.DependencyInjection;
@@ -19,6 +20,7 @@ var services = builder.Services;
 
 services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
 
+services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
@@ -52,7 +54,7 @@ services.AddMediator(opt =>
 });
 
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (IsNswagBuild())
 {
@@ -71,29 +73,11 @@ app.MapControllers();
 
 app.ApplyPostgresMigrations();
 
-
-
-var s = app.Services.CreateScope();
-var _postgres = s.ServiceProvider.GetRequiredService<PostgresDbContext>();
-
-
-var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-await _postgres.Transactions.BulkInsertAsync(new []{ new Transaction()
-{
-    BonusSum = 1,
-    Description = "33",
-    TransactionId = "34422423423423",
-    LastUpdated = DateTimeOffset.UtcNow,
-    BonusBase = 11,
-    Type = TransactionType.Auto,
-    BankId = 1,
-    PersonId = Guid.NewGuid()
-}});
-
-
 app.Run();
-record a(Guid PersonId, int BankId);
+
 public partial class Program
 {
+    public const string AppTest = nameof(AppTest);
+    public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
     public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
 }

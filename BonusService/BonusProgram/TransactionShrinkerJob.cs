@@ -49,7 +49,7 @@ public class TransactionShrinkerJob : AbstractJob
 
             var consolidation = transactions.GroupBy(x => new { x.PersonId, x.BankId })
                 .Select(x => new { x.Key.PersonId, x.Key.BankId, BonusSum = x.Sum(y => y.BonusSum) }).ToArray();
-            var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
             try
             {
                 await _postgres.Transactions.BulkInsertAsync(consolidation.Select(x => new Transaction()
@@ -76,6 +76,7 @@ public class TransactionShrinkerJob : AbstractJob
             catch (Exception e)
             {
                 logger.LogError(AppEvents.TransactionShrinkerEvent, e, "Не удалось сконсолидировать на {curDay} итерация {iteration} с размером партиции {chunkSize}", curDay, i, chunkSize);
+                await transactionDb.RollbackAsync();
             }
         }while(consolidationLength == chunkSize);
     }

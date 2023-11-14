@@ -6,7 +6,6 @@ public static class BonusExt
     {
         services.AddHostedService<RunBonusProgramsBackgroundService>();
         services.AddScoped<MonthlySumBonusJob>();
-        services.AddScoped<IBonusService, BonusService>();
         services.AddScoped<IBonusProgramRep, BonusProgramRep>();
         services.AddScoped<MonthlySumBonusJob>();
         return services;

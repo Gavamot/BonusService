@@ -13,7 +13,7 @@ public class RunBonusProgramsBackgroundService : BackgroundService
         _scheduler = scheduler;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken ct)
     {
 
         var bp = _bonusProgramRep.Get();

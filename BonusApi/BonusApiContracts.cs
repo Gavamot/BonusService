@@ -26,21 +26,30 @@ namespace BonusApi
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualDto? body);
+        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto? body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualDto? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto? body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiBalanceAsync(System.Guid personId, int? bankId);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiBalanceAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -53,26 +62,71 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayAsync(PayDto? body);
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayAsync(PayDto? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualDto? body);
+        System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualDto? body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayAllAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayPutAsync(OwnerMaxBonusPay body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayPutAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayPostAsync(OwnerMaxBonusPay body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayPostAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto? body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto? body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto? body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto? body, System.Threading.CancellationToken cancellationToken);
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class AccrualManualDto : System.ComponentModel.INotifyPropertyChanged
+    public partial class AccrualManualRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
         private System.Guid _personId = default!;
         private int? _bankId = default!;
@@ -197,12 +251,79 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static AccrualManualDto FromJson(string data)
+        public static AccrualManualRequestDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<AccrualManualDto>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<AccrualManualRequestDto>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BalanceResponseItemDto : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int? _bankId = default!;
+        private long? _sum = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? BankId
+        {
+            get { return _bankId; }
+
+            set
+            {
+                if (_bankId != value)
+                {
+                    _bankId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? Sum
+        {
+            get { return _sum; }
+
+            set
+            {
+                if (_sum != value)
+                {
+                    _sum = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BalanceResponseItemDto FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BalanceResponseItemDto>(data, options);
 
         }
 
@@ -302,7 +423,6 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("activeFrom")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
         public System.DateTimeOffset? ActiveFrom
         {
             get { return _activeFrom; }
@@ -320,7 +440,6 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("activeTo")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(DateFormatConverter))]
         public System.DateTimeOffset? ActiveTo
         {
             get { return _activeTo; }
@@ -624,7 +743,7 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GetBalanceDto : System.ComponentModel.INotifyPropertyChanged
+    public partial class GetBalanceByBankIdDto : System.ComponentModel.INotifyPropertyChanged
     {
         private System.Guid _personId = default!;
         private int? _bankId = default!;
@@ -673,12 +792,12 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static GetBalanceDto FromJson(string data)
+        public static GetBalanceByBankIdDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<GetBalanceDto>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<GetBalanceByBankIdDto>(data, options);
 
         }
 
@@ -693,14 +812,9 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PayDto : System.ComponentModel.INotifyPropertyChanged
+    public partial class GetPersonBalanceRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
         private System.Guid _personId = default!;
-        private int? _bankId = default!;
-        private int? _sum = default!;
-        private string _description = default!;
-        private string _transactionId = default!;
-        private System.Guid _ezsId = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
@@ -720,96 +834,6 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
-        public int? BankId
-        {
-            get { return _bankId; }
-
-            set
-            {
-                if (_bankId != value)
-                {
-                    _bankId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("sum")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
-        public int? Sum
-        {
-            get { return _sum; }
-
-            set
-            {
-                if (_sum != value)
-                {
-                    _sum = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("description")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string Description
-        {
-            get { return _description; }
-
-            set
-            {
-                if (_description != value)
-                {
-                    _description = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string TransactionId
-        {
-            get { return _transactionId; }
-
-            set
-            {
-                if (_transactionId != value)
-                {
-                    _transactionId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("ezsId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid EzsId
-        {
-            get { return _ezsId; }
-
-            set
-            {
-                if (_ezsId != value)
-                {
-                    _ezsId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         public string ToJson()
         {
 
@@ -818,12 +842,12 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static PayDto FromJson(string data)
+        public static GetPersonBalanceRequestDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<PayDto>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<GetPersonBalanceRequestDto>(data, options);
 
         }
 
@@ -838,7 +862,159 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PayManualDto : System.ComponentModel.INotifyPropertyChanged
+    public partial class GetPersonBalanceResponseDto : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Collections.Generic.ICollection<BalanceResponseItemDto>? _items = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<BalanceResponseItemDto>? Items
+        {
+            get { return _items; }
+
+            set
+            {
+                if (_items != value)
+                {
+                    _items = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static GetPersonBalanceResponseDto FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<GetPersonBalanceResponseDto>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class OwnerMaxBonusPay : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int? _id = default!;
+        private int? _ownerId = default!;
+        private int? _maxBonusPayPercentages = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? Id
+        {
+            get { return _id; }
+
+            set
+            {
+                if (_id != value)
+                {
+                    _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ownerId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? OwnerId
+        {
+            get { return _ownerId; }
+
+            set
+            {
+                if (_ownerId != value)
+                {
+                    _ownerId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("maxBonusPayPercentages")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? MaxBonusPayPercentages
+        {
+            get { return _maxBonusPayPercentages; }
+
+            set
+            {
+                if (_maxBonusPayPercentages != value)
+                {
+                    _maxBonusPayPercentages = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? LastUpdated
+        {
+            get { return _lastUpdated; }
+
+            set
+            {
+                if (_lastUpdated != value)
+                {
+                    _lastUpdated = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static OwnerMaxBonusPay FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<OwnerMaxBonusPay>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PayManualRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
         private System.Guid _personId = default!;
         private int? _bankId = default!;
@@ -963,12 +1139,175 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static PayManualDto FromJson(string data)
+        public static PayManualRequestDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<PayManualDto>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<PayManualRequestDto>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PayRequestDto : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Guid _personId = default!;
+        private int? _bankId = default!;
+        private long? _payment = default!;
+        private string _description = default!;
+        private string _transactionId = default!;
+        private System.Guid _ezsId = default!;
+        private int _ownerId = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("personId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Guid PersonId
+        {
+            get { return _personId; }
+
+            set
+            {
+                if (_personId != value)
+                {
+                    _personId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
+        public int? BankId
+        {
+            get { return _bankId; }
+
+            set
+            {
+                if (_bankId != value)
+                {
+                    _bankId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("payment")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
+        public long? Payment
+        {
+            get { return _payment; }
+
+            set
+            {
+                if (_payment != value)
+                {
+                    _payment = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Description
+        {
+            get { return _description; }
+
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public string TransactionId
+        {
+            get { return _transactionId; }
+
+            set
+            {
+                if (_transactionId != value)
+                {
+                    _transactionId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ezsId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Guid EzsId
+        {
+            get { return _ezsId; }
+
+            set
+            {
+                if (_ezsId != value)
+                {
+                    _ezsId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("ownerId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public int OwnerId
+        {
+            get { return _ownerId; }
+
+            set
+            {
+                if (_ownerId != value)
+                {
+                    _ownerId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static PayRequestDto FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<PayRequestDto>(data, options);
 
         }
 
@@ -989,26 +1328,6 @@ namespace BonusApi
         [System.Runtime.Serialization.EnumMember(Value = @"PeriodicalMonthlySumByLevels")]
         PeriodicalMonthlySumByLevels = 0,
 
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    internal class DateFormatConverter : System.Text.Json.Serialization.JsonConverter<System.DateTimeOffset>
-    {
-        public override System.DateTimeOffset Read(ref System.Text.Json.Utf8JsonReader reader, System.Type typeToConvert, System.Text.Json.JsonSerializerOptions options)
-        {
-            var dateTime = reader.GetString();
-            if (dateTime == null)
-            {
-                throw new System.Text.Json.JsonException("Unexpected JsonTokenType.Null");
-            }
-
-            return System.DateTimeOffset.Parse(dateTime);
-        }
-
-        public override void Write(System.Text.Json.Utf8JsonWriter writer, System.DateTimeOffset value, System.Text.Json.JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
-        }
     }
 
 

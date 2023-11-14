@@ -13,6 +13,7 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable(Program.AppTest, Program.AppTest);
         builder
             .UseTestServer()
             .UseEnvironment(Environments.Development)

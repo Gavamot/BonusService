@@ -13,6 +13,21 @@ namespace BonusService.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "OwnerMaxBonusPays",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OwnerId = table.Column<int>(type: "integer", nullable: false),
+                    MaxBonusPayPercentages = table.Column<int>(type: "integer", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OwnerMaxBonusPays", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -37,6 +52,12 @@ namespace BonusService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_OwnerMaxBonusPays_OwnerId",
+                table: "OwnerMaxBonusPays",
+                column: "OwnerId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_PersonId_BankId",
                 table: "Transactions",
                 columns: new[] { "PersonId", "BankId" });
@@ -52,6 +73,9 @@ namespace BonusService.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "OwnerMaxBonusPays");
+
             migrationBuilder.DropTable(
                 name: "Transactions");
         }

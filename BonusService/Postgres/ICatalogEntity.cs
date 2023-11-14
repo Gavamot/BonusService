@@ -1,18 +1,34 @@
 namespace BonusService.Postgres;
 
 #pragma warning disable CS8618
+
+
+public interface IDbEntity<T> : IHaveId<T>, IHaveDateOfChange { }
+
 /// <summary>
-/// Интерфейс для справочников
+/// Расширение справочников из других систем
 /// </summary>
-public interface ICatalogEntity : IHaveDateOfChange
+public interface IForeignCatalogEntity : IDbEntity<int>
 {
-    int Id { get; set; }
+    // В реализации будут поля для ключа в сторонней базе и какието расширения
+}
+
+/// <summary>
+///  Справочники
+/// </summary>
+public interface ICatalogEntity : IDbEntity<int>
+{
     string Name { get; set; }
 }
 
-public interface IDocumentEntity : IHaveDateOfChange
+/// <summary>
+/// Регулярно повторяющиеся документы
+/// </summary>
+public interface IDocumentEntity : IDbEntity<long> { }
+
+public interface IHaveId<T>
 {
-    long Id { get; set; }
+    public T Id { get; set; }
 }
 
 public interface IDeletable

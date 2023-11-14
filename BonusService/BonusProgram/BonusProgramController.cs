@@ -1,7 +1,7 @@
 using BonusService.Bonuses;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc;
-namespace BonusService.Controllers;
+namespace BonusService.BonuseProgramExecuter;
 
 [ApiController]
 [Route("/api/[controller]")]

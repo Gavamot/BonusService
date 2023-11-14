@@ -1,4 +1,3 @@
-
 using BonusApi;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -27,13 +26,13 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
     {
         using var scope = server.Services.CreateScope();
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.Migrate();
+        postgres.Database.EnsureCreated();
     }
 
     public void Dispose()
     {
         using var scope = Server.Services.CreateScope();
-        var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.Migrate();
+        using var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        postgres.Database.EnsureDeleted();
     }
 }

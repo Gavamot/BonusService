@@ -1,5 +1,6 @@
 #nullable enable
 
+using Mediator;
 namespace BonusService.Postgres;
 
 public enum TransactionType

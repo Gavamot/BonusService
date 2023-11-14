@@ -79,7 +79,7 @@ public class MonthlySumBonusJob : AbstractJob
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
-                LastUpdated = _dateTimeService.GetNow(),
+                LastUpdated = _dateTimeService.GetNowUtc(),
                 UserId = null,
                 EzsId = null,
                 Description = $"Начислено по {Name} за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
