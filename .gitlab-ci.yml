@@ -1,0 +1,28 @@
+# variables:
+#     # Специальные переменные проекта
+#     deployType: 'test'                    # Тип развертывания (test/dev/t246, возможно prod)
+#     commonName: 'Clumps'                  # Общее имя проекта
+#     dockerProjectName: 'clumps'           # Имя проекта в докер-реестре (допустимы только символы в нижнем регистре)
+#     assemblyDesc: 'Sitronics. Clumps.'    # Описание файла в манифесте сборки проекта
+#     bldProjName: 'CLMPS/Clumps.csproj'    # Имя файла проекта или решения для сборки dotnet   
+#     dockerfile: 'Dockerfile'              # Имя докерфайла
+#     targetNet: 'net5.0'                   # Целевая версия .net core для сборки
+#     # Параметры создания контейнера
+#     parameters: '--restart=always --cpus=0.7 --memory=1024m
+#             -e ASPNETCORE_URLS=http://+:9098 -p 9098:9098
+#             --link rabbitmq:rabbitmq
+#             --link mongodb:mongodb
+#             --link OpcServer:opcserver
+#             -v $PSS_PLATFORM_LOG:/app/log
+#             --network net --hostname $containerName
+#             --name $containerName'
+
+default:
+  tags:
+    - TestRunner
+
+include:
+    - project: 'EZS/Configs'
+      ref: master
+      file: 
+          - 'docker.yml'

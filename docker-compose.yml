@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  bonusservice:
+    build:
+      context: .
+      args:
+        - APPVERSION=${APPVERSION}
+    image: registry.gitlab.nvg.ru/ezs/bonusservice${TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}    
+    container_name: BonusService
+    hostname: BonusService
+    restart: always
+    networks:
+      - net
+    # ports:
+    # - "9098:9098"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: 1024M
+    ulimits:
+      core:
+        hard: 0
+        soft: 0
+
+networks:
+  net:
+    external: true

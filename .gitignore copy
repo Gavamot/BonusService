@@ -1,0 +1,7 @@
+/.vs
+bin
+obj
+NuGet.Config
+.idea
+appsettings.Local.json
+/CLMPS/appsettings.Local.json
