@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 namespace BonusService.Test.Common;
 
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
+    public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable(Program.AppTest, Program.AppTest);
@@ -19,7 +21,8 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
             .UseEnvironment(Environments.Development)
             .ConfigureServices(services =>
             {
-                ReplaceDbContext(services);
+                InfraHelper.RunPostgresContainer();
+                //ReplaceDbContext(services);
                 RemoveService<IBackgroundJobClient>(services);
                 services.AddSingleton<IBackgroundJobClient, FakeBackgroundJobClient>();
             });
@@ -38,10 +41,11 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
 
         services.AddDbContext<PostgresDbContext>(opt =>
         {
-            opt.UseNpgsql($"Host=localhost;Port=7777;Database=bonus_{Guid.NewGuid():N};Username=postgres");
+            opt.UseNpgsql($"Host=localhost;Port={InfraHelper.PostgresContainerPort};Database={DbName};Username=postgres");
         });
 
         RemoveService<DbContextOptions<MongoDbContext>>(services);
         RemoveService<MongoDbContext>(services);
+        services.AddMongoDB<MongoDbContext>($"mongodb://localhost:{InfraHelper.MongoContainerPort}?serverSelectionTimeoutMS=60000&connectTimeoutMS=7000&socketTimeoutMS=7000",DbName);
     }
 }

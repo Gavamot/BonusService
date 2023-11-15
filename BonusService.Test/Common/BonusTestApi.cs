@@ -1,4 +1,5 @@
 using BonusApi;
+using BonusService.Common;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -24,15 +25,24 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
 
     protected void InitPostgres(FakeApplicationFactory<Program> server)
     {
+        InfraHelper.RunPostgresContainer();
+
         using var scope = server.Services.CreateScope();
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.EnsureCreated();
+        postgres.Database.Migrate();
+
+        InfraHelper.RunMongo();
+        InfraHelper.CreateMongoDatabase(Server.DbName);
     }
 
     public void Dispose()
     {
         using var scope = Server.Services.CreateScope();
-        using var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();
+        InfraHelper.DropMongoDatabase(Server.DbName);
+
+        var hangfire = scope.ServiceProvider.GetRequiredService<HangfireServicesExt.HangfireDbContext>();
+        hangfire.Database.EnsureDeleted();
     }
 }

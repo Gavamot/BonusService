@@ -54,11 +54,5 @@
         <Link>.dockerignore</Link>
       </Content>
     </ItemGroup>
-    
-    <ItemGroup>
-      <Compile Update="Pay\PayCommonCommand.cs">
-        <DependentUpon>OwnerMaxBonusPayController.cs</DependentUpon>
-      </Compile>
-    </ItemGroup>
 
 </Project>

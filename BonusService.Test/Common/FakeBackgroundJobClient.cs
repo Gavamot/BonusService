@@ -14,24 +14,22 @@ public class FakeBackgroundJobClient : IBackgroundJobClient
     }
     public string Create(Job job, IState state)
     {
-        using (var scope = serviceProvider.CreateScope())
+        using var scope = serviceProvider.CreateScope();
+        object? instance = null;
+
+        if (!job.Method.IsStatic)
         {
-            object? instance = null;
+            instance = scope.ServiceProvider.GetService(job.Type);
 
-            if (!job.Method.IsStatic)
+            if (instance == null)
             {
-                instance = scope.ServiceProvider.GetService(job.Type);
-
-                if (instance == null)
-                {
-                    throw new InvalidOperationException(
-                        $"JobActivator returned NULL instance of the '{job.Type}' type.");
-                }
+                throw new InvalidOperationException(
+                    $"JobActivator returned NULL instance of the '{job.Type}' type.");
             }
-            var arguments = SubstituteArguments(job);
-            var res = job.Method.Invoke(instance, arguments);
-            return "1234";
         }
+        var arguments = SubstituteArguments(job);
+        var res = job.Method.Invoke(instance, arguments);
+        return "1234";
 
     }
 
@@ -45,7 +43,6 @@ public class FakeBackgroundJobClient : IBackgroundJobClient
         {
             var parameter = parameters[i];
             var argument = job.Args[i];
-
             var value = argument;
             result.Add(value);
         }

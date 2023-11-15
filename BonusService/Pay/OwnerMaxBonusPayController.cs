@@ -1,9 +1,21 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Common;
 using BonusService.Postgres;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Pay;
+
+
+public sealed class OwnerByPayValidator : AbstractValidator<OwnerMaxBonusPay>
+{
+    public OwnerByPayValidator()
+    {
+        RuleFor(x => x.OwnerId).NotEmpty();
+        RuleFor(x => x.MaxBonusPayPercentages).GreaterThanOrEqualTo(0).LessThanOrEqualTo(100);
+    }
+}
+
 
 public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 {

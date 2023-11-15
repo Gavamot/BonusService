@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace BonusService.Postgres;
 
 // dotnet ef migrations add InitialCreate --context PostgresDbContext
-public static class PostgresDbContextExt
+public static class PostgresExt
 {
     public static IServiceCollection AddPostgres(this IServiceCollection services, IConfiguration configuration)
     {

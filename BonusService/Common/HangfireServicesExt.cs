@@ -8,18 +8,19 @@ public static class HangfireServicesExt
 {
     private static string GetHangfireConnectionString(this IConfiguration configuration) => configuration.GetConnectionString("Hangfire") ?? throw new ArgumentException("ConnectionStrings.Hangfire not exist in configuration");
 
-    private static void CreateHangfireDbIfNotExist(string conStr)
+    /*private static void CreateHangfireDbIfNotExist(string conStr)
     {
         using var db = new HangfireDbContext(conStr);
         db.Database.EnsureCreated();
-    }
+    }*/
     public static IServiceCollection AddHangfireService(this IServiceCollection services, IConfiguration configuration)
     {
         var conStr = configuration.GetHangfireConnectionString();
         var delays = new [] { 1, 5, 10 };
+        services.AddDbContext<HangfireDbContext>(opt => opt.UseNpgsql(conStr));
         services.AddHangfire((provider, config) =>
         {
-            CreateHangfireDbIfNotExist(conStr);
+            //CreateHangfireDbIfNotExist(conStr);
             config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
@@ -42,15 +43,11 @@ public static class HangfireServicesExt
 
     public class HangfireDbContext : DbContext
     {
-        private readonly string conStr;
-        public HangfireDbContext(string conStr)
-        {
-            this.conStr = conStr;
-        }
+        public HangfireDbContext(){ }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public HangfireDbContext(DbContextOptions<HangfireDbContext> options): base(options)
         {
-            optionsBuilder.UseNpgsql(conStr);
+
         }
     }
 

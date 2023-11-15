@@ -1,17 +1,11 @@
-using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Testcontainers.PostgreSql;
 namespace BonusService.Test;
 
-
-public class ATest : BonusTestApi, IClassFixture<PostgresDbTestContainer>
+public class ATest : BonusTestApi, IDisposable
 {
-    private readonly PostgresDbTestContainer postgresDbContainer;
-    public ATest(FakeApplicationFactory<Program> server, PostgresDbTestContainer postgresDbContainer) : base(server)
+    public ATest(FakeApplicationFactory<Program> server) : base(server)
     {
-        this.postgresDbContainer = postgresDbContainer;
 
     }
 

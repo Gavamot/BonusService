@@ -40,11 +40,13 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 
     public async ValueTask<long> Handle(PayRequestDto command, CancellationToken ct)
     {
-        var owner = await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x => x.OwnerId == command.OwnerId, ct);
-        double cof = owner == null ? 1 :  owner.MaxBonusPayPercentages / 100.0;
         Transaction transaction = new PayDtoMapper().FromDto(command);
         transaction.Type = TransactionType.Auto;
-        transaction.BonusSum = (long)(command.Payment * cof);
+
+        var owner = await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x => x.OwnerId == command.OwnerId, ct);
+        var percentages = owner?.MaxBonusPayPercentages ?? 100;
+        var bonusSum = (command.Payment * percentages) / 100;
+        transaction.BonusSum = bonusSum;
         var res = await _mediator.Send(new PayTransactionRequest(transaction), ct);
         return res;
     }
