@@ -56,7 +56,6 @@ services.AddMediator(opt =>
     opt.ServiceLifetime = ServiceLifetime.Scoped;
 });
 
-
 WebApplication app = builder.Build();
 
 /*if (IsNswagBuild())
@@ -64,7 +63,6 @@ WebApplication app = builder.Build();
     app.UseOpenApi();
     app.UseSwaggerUi3();
 }*/
-
 
 app.UseSwagger();
 app.UseSwaggerUI(c=> c.SwaggerEndpoint("v1/swagger.json", "My API V1"));
