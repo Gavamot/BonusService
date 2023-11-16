@@ -10,7 +10,7 @@ public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
     public PayManualDtoValidator()
     {
         RuleFor(x => x.PersonId).NotEmpty();
-        RuleFor(x => x.Sum).GreaterThan(0).WithMessage("Сумма должна быть положительной");
+        RuleFor(x => x.BonusSum).GreaterThan(0).WithMessage("Сумма должна быть положительной");
         RuleFor(x => x.BankId).GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
@@ -18,7 +18,7 @@ public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
     }
 }
 
-public record PayManualRequestDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, Guid UserId);
+public record PayManualRequestDto(Guid PersonId, int BankId, long BonusSum, string Description, string TransactionId, Guid UserId);
 
 [Mapper]
 public partial class PayManualDtoMapper
@@ -42,7 +42,7 @@ public sealed class PayManualController : ControllerBase
     {
         Transaction transaction = new PayManualDtoMapper().FromDto(request);
         transaction.Type = TransactionType.Manual;
-        transaction.BonusSum = request.Sum;
+        transaction.BonusSum = request.BonusSum;
         long res = await mediator.Send(new PayTransactionRequest(transaction), ct);
         return res;
     }

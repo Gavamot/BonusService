@@ -8,13 +8,22 @@ namespace BonusService.Test.Common;
 
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
+    public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable(Program.AppTest, Program.AppTest);
         var config = new ConfigurationManager()
-            .AddJsonFile("appsettings.json")
+            .AddInMemoryCollection(new KeyValuePair<string, string?> []
+            {
+                new("ConnectionStrings:Hangfire", $"Host=localhost;Port=9999;Database=hangfire_{DbName};Username=postgres;Application Name=bonus-service"),
+                new("ConnectionStrings:Postgres", $"Host=localhost;Port=9999;Database={DbName};Username=postgres;Application Name=bonus-service"),
+                new("MongoConfig:ConnectionString", $"mongodb://localhost:9998?serverSelectionTimeoutMS=60000&connectTimeoutMS=7000&socketTimeoutMS=7000"),
+                new("MongoConfig:QueriesFolder", "/PssPlatform/Queries"),
+                new("MongoConfig:Database", "pssplatform"),
+            })
             .Build();
         builder
+            .UseConfiguration(config)
             .UseTestServer()
             .UseEnvironment(Environments.Production)
             .UseConfiguration(config)

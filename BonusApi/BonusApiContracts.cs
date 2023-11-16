@@ -130,7 +130,7 @@ namespace BonusApi
     {
         private System.Guid _personId = default!;
         private int? _bankId = default!;
-        private int? _sum = default!;
+        private long? _bonusSum = default!;
         private string _description = default!;
         private string _transactionId = default!;
         private System.Guid _userId = default!;
@@ -171,19 +171,19 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+        [System.Text.Json.Serialization.JsonPropertyName("bonusSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
-        public int? Sum
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
+        public long? BonusSum
         {
-            get { return _sum; }
+            get { return _bonusSum; }
 
             set
             {
-                if (_sum != value)
+                if (_bonusSum != value)
                 {
-                    _sum = value;
+                    _bonusSum = value;
                     RaisePropertyChanged();
                 }
             }
@@ -344,12 +344,16 @@ namespace BonusApi
         private string? _name = default!;
         private ProgramTypes? _programTypes = default!;
         private string? _description = default!;
-        private System.DateTimeOffset? _activeFrom = default!;
-        private System.DateTimeOffset? _activeTo = default!;
+        private System.DateTimeOffset? _dateStart = default!;
+        private System.DateTimeOffset? _dateStop = default!;
+        private System.Collections.Generic.ICollection<int>? _bankId = default!;
+        private string? _executionCron = default!;
+        private System.DateTimeOffset? _execTime = default!;
+        private FrequencyTypes? _frequencyType = default!;
+        private int? _frequencyValue = default!;
         private System.Collections.Generic.ICollection<BonusProgramLevel>? _programLevels = default!;
         private bool? _isDeleted = default!;
         private System.DateTimeOffset? _lastUpdated = default!;
-        private System.Collections.Generic.ICollection<int>? _bankId = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
@@ -420,35 +424,121 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activeFrom")]
+        [System.Text.Json.Serialization.JsonPropertyName("dateStart")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset? ActiveFrom
+        public System.DateTimeOffset? DateStart
         {
-            get { return _activeFrom; }
+            get { return _dateStart; }
 
             set
             {
-                if (_activeFrom != value)
+                if (_dateStart != value)
                 {
-                    _activeFrom = value;
+                    _dateStart = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activeTo")]
+        [System.Text.Json.Serialization.JsonPropertyName("dateStop")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset? ActiveTo
+        public System.DateTimeOffset? DateStop
         {
-            get { return _activeTo; }
+            get { return _dateStop; }
 
             set
             {
-                if (_activeTo != value)
+                if (_dateStop != value)
                 {
-                    _activeTo = value;
+                    _dateStop = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<int>? BankId
+        {
+            get { return _bankId; }
+
+            set
+            {
+                if (_bankId != value)
+                {
+                    _bankId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("executionCron")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? ExecutionCron
+        {
+            get { return _executionCron; }
+
+            set
+            {
+                if (_executionCron != value)
+                {
+                    _executionCron = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("execTime")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? ExecTime
+        {
+            get { return _execTime; }
+
+            set
+            {
+                if (_execTime != value)
+                {
+                    _execTime = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("frequencyType")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public FrequencyTypes? FrequencyType
+        {
+            get { return _frequencyType; }
+
+            set
+            {
+                if (_frequencyType != value)
+                {
+                    _frequencyType = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("frequencyValue")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? FrequencyValue
+        {
+            get { return _frequencyValue; }
+
+            set
+            {
+                if (_frequencyValue != value)
+                {
+                    _frequencyValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -505,23 +595,6 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("bankId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<int>? BankId
-        {
-            get { return _bankId; }
-
-            set
-            {
-                if (_bankId != value)
-                {
-                    _bankId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         public string ToJson()
         {
 
@@ -556,11 +629,11 @@ namespace BonusApi
         private string? _name = default!;
         private System.DateTimeOffset? _lastUpdated = default!;
         private int? _level = default!;
-        private int? _programId = default!;
+        private int? _bonusProgramId = default!;
         private BonusProgram? _bonusProgram = default!;
         private long? _condition = default!;
-        private int? _benefit = default!;
-        private string? _description = default!;
+        private int? _awardPercent = default!;
+        private int? _awardSum = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
@@ -630,18 +703,18 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("programId")]
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? ProgramId
+        public int? BonusProgramId
         {
-            get { return _programId; }
+            get { return _bonusProgramId; }
 
             set
             {
-                if (_programId != value)
+                if (_bonusProgramId != value)
                 {
-                    _programId = value;
+                    _bonusProgramId = value;
                     RaisePropertyChanged();
                 }
             }
@@ -681,35 +754,35 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("benefit")]
+        [System.Text.Json.Serialization.JsonPropertyName("awardPercent")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Benefit
+        public int? AwardPercent
         {
-            get { return _benefit; }
+            get { return _awardPercent; }
 
             set
             {
-                if (_benefit != value)
+                if (_awardPercent != value)
                 {
-                    _benefit = value;
+                    _awardPercent = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("description")]
+        [System.Text.Json.Serialization.JsonPropertyName("awardSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Description
+        public int? AwardSum
         {
-            get { return _description; }
+            get { return _awardSum; }
 
             set
             {
-                if (_description != value)
+                if (_awardSum != value)
                 {
-                    _description = value;
+                    _awardSum = value;
                     RaisePropertyChanged();
                 }
             }
@@ -740,6 +813,21 @@ namespace BonusApi
             if (handler != null)
                 handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum FrequencyTypes
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Month")]
+        Month = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Week")]
+        Week = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Day")]
+        Day = 2,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -914,7 +1002,7 @@ namespace BonusApi
     public partial class OwnerMaxBonusPay : System.ComponentModel.INotifyPropertyChanged
     {
         private int? _id = default!;
-        private int? _ownerId = default!;
+        private int _ownerId = default!;
         private int? _maxBonusPayPercentages = default!;
         private System.DateTimeOffset? _lastUpdated = default!;
 
@@ -937,8 +1025,8 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonPropertyName("ownerId")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? OwnerId
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public int OwnerId
         {
             get { return _ownerId; }
 
@@ -955,6 +1043,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("maxBonusPayPercentages")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.ComponentModel.DataAnnotations.Range(0, 100)]
         public int? MaxBonusPayPercentages
         {
             get { return _maxBonusPayPercentages; }
@@ -1018,7 +1107,7 @@ namespace BonusApi
     {
         private System.Guid _personId = default!;
         private int? _bankId = default!;
-        private int? _sum = default!;
+        private long? _bonusSum = default!;
         private string _description = default!;
         private string _transactionId = default!;
         private System.Guid _userId = default!;
@@ -1059,19 +1148,19 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("sum")]
+        [System.Text.Json.Serialization.JsonPropertyName("bonusSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
-        public int? Sum
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
+        public long? BonusSum
         {
-            get { return _sum; }
+            get { return _bonusSum; }
 
             set
             {
-                if (_sum != value)
+                if (_bonusSum != value)
                 {
-                    _sum = value;
+                    _bonusSum = value;
                     RaisePropertyChanged();
                 }
             }

@@ -1,3 +1,4 @@
+using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
@@ -10,7 +11,7 @@ public sealed class AccrualManualDtoValidator : AbstractValidator<AccrualManualR
     public AccrualManualDtoValidator()
     {
         RuleFor(x => x.PersonId).NotEmpty();
-        RuleFor(x => x.Sum).GreaterThan(0).WithMessage("Сумма должна быть положитьельной");
+        RuleFor(x => x.BonusSum).GreaterThan(0).WithMessage("Сумма должна быть положитьельной");
         RuleFor(x => x.BankId).GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
@@ -24,20 +25,24 @@ public sealed partial class AccrualManualDtoMapper
     public partial Transaction FromDto(AccrualManualRequestDto requestDto);
 }
 
-public sealed record AccrualManualRequestDto(Guid PersonId, int BankId, int Sum, string Description, string TransactionId, Guid UserId) : ICommand;
+public sealed record AccrualManualRequestDto(Guid PersonId, int BankId, long BonusSum, string Description, string TransactionId, Guid UserId) : ICommand;
 
 public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestDto>
 {
     private readonly PostgresDbContext _postgres;
-    public AccrualManualCommand(PostgresDbContext postgres)
+    private readonly IDateTimeService dateTimeService;
+    public AccrualManualCommand(PostgresDbContext postgres, IDateTimeService dateTimeService)
     {
         _postgres = postgres;
+        this.dateTimeService = dateTimeService;
     }
     public async ValueTask<Unit> Handle(AccrualManualRequestDto command, CancellationToken ct)
     {
         var transaction = new AccrualManualDtoMapper().FromDto(command);
         transaction.Type = TransactionType.Manual;
+        transaction.LastUpdated = dateTimeService.GetNowUtc();
         await _postgres.Transactions.AddAsync(transaction, ct);
+        await _postgres.SaveChangesAsync(ct);
         return Unit.Value;
     }
 }
@@ -52,7 +57,6 @@ public sealed class AccrualManualController : ControllerBase
     [HttpPost]
     public async Task AccrualManual([FromServices]IMediator mediator, [FromBody]AccrualManualRequestDto request, CancellationToken ct)
     {
-        var data = new AccrualManualDtoMapper().FromDto(request);
-        await mediator.Send(data,ct);
+        await mediator.Send(request,ct);
     }
 }
