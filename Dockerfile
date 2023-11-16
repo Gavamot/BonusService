@@ -22,7 +22,7 @@ RUN apt update -y && \
       rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/build /app/
-EXPOSE 5023
+EXPOSE 9098
 # HEALTHCHECK --interval=15s --timeout=15s --retries=3 \
 #     CMD netstat -an | grep 9098 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
 CMD ["dotnet","BonusService.dll"]
