@@ -14,7 +14,6 @@ public static class PostgresExt
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)
     {
         if (Program.IsNswagBuild()) return;
-        if (Program.IsAppTest()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         ctx.Database.Migrate();

@@ -8,11 +8,6 @@ public static class HangfireServicesExt
 {
     private static string GetHangfireConnectionString(this IConfiguration configuration) => configuration.GetConnectionString("Hangfire") ?? throw new ArgumentException("ConnectionStrings.Hangfire not exist in configuration");
 
-    /*private static void CreateHangfireDbIfNotExist(string conStr)
-    {
-        using var db = new HangfireDbContext(conStr);
-        db.Database.EnsureCreated();
-    }*/
     public static IServiceCollection AddHangfireService(this IServiceCollection services, IConfiguration configuration)
     {
         var conStr = configuration.GetHangfireConnectionString();
@@ -20,7 +15,10 @@ public static class HangfireServicesExt
         services.AddDbContext<HangfireDbContext>(opt => opt.UseNpgsql(conStr));
         services.AddHangfire((provider, config) =>
         {
-            //CreateHangfireDbIfNotExist(conStr);
+            using var scope = provider.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
+            db.Database.EnsureCreated();
+
             config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()

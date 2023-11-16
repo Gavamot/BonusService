@@ -13,6 +13,8 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver.Linq;
 using NLog.Web;
 
+Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
@@ -38,10 +40,11 @@ services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+/*
 if (IsNswagBuild())
 {
-    //services.AddOpenApiDocument();
-}
+    services.AddOpenApiDocument();
+}*/
 
 
 services.AddEndpointsApiExplorer();
@@ -56,11 +59,11 @@ services.AddMediator(opt =>
 
 WebApplication app = builder.Build();
 
-if (IsNswagBuild())
+/*if (IsNswagBuild())
 {
-    //app.UseOpenApi();
-    //app.UseSwaggerUi3();
-}
+    app.UseOpenApi();
+    app.UseSwaggerUi3();
+}*/
 
 
 app.UseSwagger();

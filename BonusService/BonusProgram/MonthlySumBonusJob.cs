@@ -42,9 +42,9 @@ public class MonthlySumBonusJob : AbstractJob
         var data =_rep.Get();
         var level = data.ProgramLevels.OrderByDescending(x => x.Level).FirstOrDefault(x=> x.Condition <= totalPay);
         if (level == null) return (0, 0);
-        double percentages = level.Benefit / 100.0;
-        long bonus =(long)(totalPay * percentages);
-        return new (level.Benefit, bonus);
+        double percentages = level.AwardSum / 100.0;
+        long bonus = (long)(totalPay * percentages);
+        return new (level.AwardSum, bonus);
     }
 
     protected override async Task ExecuteJobAsync()
