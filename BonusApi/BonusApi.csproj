@@ -20,7 +20,7 @@
   </PropertyGroup>
     
     <ItemGroup>
-      <PackageReference Include="NSwag.MSBuild" Version="14.0.0-preview009">
+      <PackageReference Include="NSwag.MSBuild" Version="14.0.0-preview010">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
