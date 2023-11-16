@@ -1,3 +1,6 @@
+using BonusService.Common;
+using FakeItEasy;
+using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -9,6 +12,8 @@ namespace BonusService.Test.Common;
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
     public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
+
+    public readonly IDateTimeService DateTimeService = A.Fake<IDateTimeService>();
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable(Program.AppTest, Program.AppTest);
@@ -29,8 +34,10 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
             .UseConfiguration(config)
             .ConfigureServices(services =>
             {
-                /*RemoveService<IBackgroundJobClient>(services);
-                services.AddSingleton<IBackgroundJobClient, FakeBackgroundJobClient>();*/
+                RemoveService<IBackgroundJobClient>(services);
+                services.AddSingleton<IBackgroundJobClient, FakeBackgroundJobClient>();
+                RemoveService<IDateTimeService>(services);
+                services.AddSingleton<IDateTimeService>(x=> DateTimeService);
             });
     }
 

@@ -3,7 +3,6 @@ using BonusService.Common;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
@@ -11,12 +10,25 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     public static class Q
     {
         public const string Description1 = "Описанье 1";
+        public const string Description2 = "Описанье 2";
         public readonly static Guid UserId1 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+        public readonly static Guid UserId2 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66af45");
         public const string TransactionId1 = "3fa85f64-5717-4562-b3fc-2c963f66af11";
+        public const string TransactionId2 = "3fa85f64-5717-4562-b3fc-2c963f66af12";
         public readonly static Guid PersonId1 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
         public readonly static Guid PersonId2 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa7");
         public const int BankIdRub = 1;
         public const  int BankIdKaz = 7;
+        public static readonly TimeSpan timezone = new(0, 0, 0);
+        public static DateTimeOffset [] DateTimeSequence =
+        {
+            new (2001, 1, 2, 3, 4, 5, timezone),
+            new (2001, 1, 3, 4, 5, 6, timezone),
+            new (2001, 2, 3, 5, 3, 1, timezone),
+            new (2002, 1, 2, 3, 4, 5, timezone),
+            new (2003, 1, 2, 21, 4, 5, timezone),
+            new (2004, 1, 2, 3, 4, 6, timezone),
+        };
     }
 
     protected readonly BonusClient api;

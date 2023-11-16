@@ -42,7 +42,6 @@ public sealed class PayManualController : ControllerBase
     {
         Transaction transaction = new PayManualDtoMapper().FromDto(request);
         transaction.Type = TransactionType.Manual;
-        transaction.BonusSum = request.BonusSum;
         long res = await mediator.Send(new PayTransactionRequest(transaction), ct);
         return res;
     }

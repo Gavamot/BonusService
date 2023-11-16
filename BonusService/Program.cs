@@ -28,7 +28,7 @@ services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
-services.TryAddTransient<IDateTimeService, DateTimeService>();
+services.TryAddSingleton<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
 services.AddHangfireService(configuration);

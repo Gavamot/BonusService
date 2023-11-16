@@ -3,6 +3,7 @@ using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.Controllers;
 
@@ -38,6 +39,8 @@ public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestD
     }
     public async ValueTask<Unit> Handle(AccrualManualRequestDto command, CancellationToken ct)
     {
+        var isTransactionExist = await _postgres.Transactions.AnyAsync(x=> x.TransactionId == command.TransactionId, cancellationToken: ct);
+        if(isTransactionExist) return Unit.Value;
         var transaction = new AccrualManualDtoMapper().FromDto(command);
         transaction.Type = TransactionType.Manual;
         transaction.LastUpdated = dateTimeService.GetNowUtc();
