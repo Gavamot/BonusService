@@ -8,7 +8,9 @@ public static class PostgresExt
     public static IServiceCollection AddPostgres(this IServiceCollection services, IConfiguration configuration)
     {
         var conStr = configuration.GetConnectionString("Postgres") ?? throw new Exception("ConnectionString:Postgres does not exist");
-        return services.AddDbContext<PostgresDbContext>(opt=> opt.UseNpgsql(conStr));
+        return services.AddDbContext<PostgresDbContext>(
+            opt=> opt.UseNpgsql(conStr)
+            );
     }
 
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)

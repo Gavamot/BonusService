@@ -2,7 +2,7 @@ using BonusService.Test.Common;
 using FluentAssertions;
 namespace BonusService.Test;
 
-public class ATest : BonusTestApi, IDisposable
+public class ATest : BonusTestApi
 {
     public ATest(FakeApplicationFactory<Program> server) : base(server)
     {

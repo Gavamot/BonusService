@@ -2,12 +2,12 @@ using BonusApi;
 using BonusService.Common;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test.Common;
 
-public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDisposable
+public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
 {
+    public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
     protected readonly BonusClient api;
     protected readonly FakeApplicationFactory<Program> Server;
     protected IServiceScope CreateScope() => Server.Services.CreateScope();
@@ -15,7 +15,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
         Server = server;
-        InitPostgres(server);
+        InitDatabases(server).GetAwaiter().GetResult();
         var httpClient = server.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
@@ -23,26 +23,28 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IDis
         api = new BonusClient(httpClient);
     }
 
-    protected void InitPostgres(FakeApplicationFactory<Program> server)
+    protected async Task InitDatabases(FakeApplicationFactory<Program> server)
     {
-        InfraHelper.RunPostgresContainer();
-
-        using var scope = server.Services.CreateScope();
-        var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.Migrate();
-
-        InfraHelper.RunMongo();
-        InfraHelper.CreateMongoDatabase(Server.DbName);
+        var postgres = InfraHelper.RunPostgresContainer();
+        var mongo = InfraHelper.RunMongo(DbName).ContinueWith((t) =>
+        {
+            InfraHelper.CreateMongoDatabase(DbName);
+        });
+        await Task.WhenAll(postgres, mongo);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         using var scope = Server.Services.CreateScope();
+
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Database.EnsureDeleted();
-        InfraHelper.DropMongoDatabase(Server.DbName);
+        var postgresDelete = postgres.Database.EnsureDeletedAsync();
 
         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireServicesExt.HangfireDbContext>();
-        hangfire.Database.EnsureDeleted();
+        var hangfireDelete = hangfire.Database.EnsureDeletedAsync();
+
+        var mongoDelete = InfraHelper.DropMongoDatabase(DbName);
+        var tasks = new [] { postgresDelete, hangfireDelete, mongoDelete };
+        await Task.WhenAll(tasks);
     }
 }
