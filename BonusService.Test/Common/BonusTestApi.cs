@@ -1,6 +1,7 @@
 using BonusApi;
 using BonusService.Common;
 using BonusService.Postgres;
+using FakeItEasy;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test.Common;
@@ -44,6 +45,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             AllowAutoRedirect = false
         });
         api = new BonusClient(httpClient);
+        A.CallTo(() => Server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
     }
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)

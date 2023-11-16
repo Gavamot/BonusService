@@ -3,18 +3,20 @@ using BonusService.Postgres;
 using BonusService.Test.Common;
 using FakeItEasy;
 using FluentAssertions;
+using Meziantou.Xunit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test;
 
+//[DisableParallelization]
 public class ManualAccrualTest : BonusTestApi
 {
-    public ManualAccrualTest(FakeApplicationFactory<Program> server) : base(server)
+    public ManualAccrualTest(FakeApplicationFactory<Program> server) : base(new FakeApplicationFactory<Program>())
     {
-        using var scope = Server.Services.CreateScope();
+        /*using var scope = Server.Services.CreateScope();
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         postgres.Transactions.BulkDelete(postgres.Transactions.ToArray());
-        A.CallTo(() => Server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
+        A.CallTo(() => Server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(BonusTestApi.Q.DateTimeSequence);*/
     }
 
     [Fact]
