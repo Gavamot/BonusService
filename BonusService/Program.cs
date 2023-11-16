@@ -1,4 +1,3 @@
-using System.Data;
 using System.Text.Json.Serialization;
 using BonusService.Bonuses;
 using BonusService.Common;
@@ -7,10 +6,8 @@ using Correlate.DependencyInjection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver.Linq;
 using NLog.Web;
 
 Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
@@ -18,6 +15,10 @@ Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCOR
 var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
+
+var urls= configuration.GetSection("Urls").Value;
+Console.WriteLine($"Running address is urls={urls}");
+
 var services = builder.Services;
 
 services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
