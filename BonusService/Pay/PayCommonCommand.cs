@@ -20,6 +20,7 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
         if (oldTransaction != null) return oldTransaction.BonusSum;
         var bonusBalance = await mediator.Send(new GetBalanceByBankIdDto(transaction.PersonId, transaction.BankId), ct);
         transaction.BonusSum = Math.Min(bonusBalance, transaction.BonusSum);
+        if (transaction.BonusSum <= 0) return 0;
         transaction.BonusSum *= -1;
         await _postgres.Transactions.AddAsync(transaction, ct);
         await _postgres.SaveChangesAsync(ct);
