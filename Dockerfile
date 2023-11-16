@@ -25,4 +25,4 @@ COPY --from=build /app/build /app/
 EXPOSE 9098
 # HEALTHCHECK --interval=15s --timeout=15s --retries=3 \
 #     CMD netstat -an | grep 9098 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
-CMD ["dotnet","bonusservice.dll"]
+CMD ["dotnet","BonusService.dll"]
