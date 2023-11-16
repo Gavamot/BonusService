@@ -27,13 +27,13 @@ spec:
         image: registry.gitlab.nvg.ru/ezs/bonusservice:latest
         imagePullPolicy: "Always"
         name: bonusservice
-        livenessProbe:
-          exec:
-            command:
-            - netstat -an | grep 9098 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
-          failureThreshold: 3
-          periodSeconds: 15
-          timeoutSeconds: 15        
+        # livenessProbe:
+        #   exec:
+        #     command:
+        #     - netstat -an | grep 9098 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
+        #   failureThreshold: 3
+        #   periodSeconds: 15
+        #   timeoutSeconds: 15        
         # ports:
         # - containerPort: 9098
         # resources:
@@ -46,8 +46,8 @@ spec:
       hostname: bonusservice
       restartPolicy: Always
       serviceAccountName: ""
-      volumes:
-      - name: ezs-log
-        persistentVolumeClaim:
-          claimName: ezs-log
+      # volumes:
+      # - name: ezs-log
+      #   persistentVolumeClaim:
+      #     claimName: ezs-log
 status: {}
