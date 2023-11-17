@@ -34,7 +34,7 @@ public class ManualPayTest : BonusTestApi
 
     private async Task<long> InitPayIfBalanceLessThenTransaction(long balance, long pay)
     {
-        await InitialBalanceTran1Person1BankRub(balance);
+        await InitTransactionTran1Person1BankRub(balance);
 
         var request = new PayManualRequestDto()
         {

@@ -37,7 +37,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         };
     }
 
-    protected async Task InitialBalanceTran1Person1BankRub(long bonusBalance)
+    protected async Task InitTransactionTran1Person1BankRub(long bonusBalance)
     {
         await postgres.Transactions.AddAsync(new Transaction()
         {

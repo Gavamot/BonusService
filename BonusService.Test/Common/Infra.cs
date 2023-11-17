@@ -30,7 +30,7 @@ public static class InfraHelper
 
     public static Task RunPostgresContainer()
     {
-        var dockerCmd = $"""docker run --name {PostgresContainerName} -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -d -p {PostgresContainerPort}:5432 postgres""";
+        var dockerCmd = $"""docker run --name {PostgresContainerName} -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -d -p {PostgresContainerPort}:5432 postgres -N 500""";
         return SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 
