@@ -8,12 +8,8 @@ namespace BonusService.Test;
 //[DisableParallelization]
 public class ManualAccrualTest : BonusTestApi
 {
-    public ManualAccrualTest(FakeApplicationFactory<Program> server) : base(new FakeApplicationFactory<Program>())
+    public ManualAccrualTest() : base(new FakeApplicationFactory<Program>())
     {
-        /*using var scope = Server.Services.CreateScope();
-        var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        postgres.Transactions.BulkDelete(postgres.Transactions.ToArray());
-        A.CallTo(() => Server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(BonusTestApi.Q.DateTimeSequence);*/
     }
 
     [Fact]
@@ -146,5 +142,72 @@ public class ManualAccrualTest : BonusTestApi
         transaction.BonusProgramId.Should().BeNull();
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.Skip(1).First());
+    }
+
+    [Fact]
+    public async Task WrongParameters_TrowsException()
+    {
+        async Task AccrualManualAsyncTrows(AccrualManualRequestDto request)
+        {
+            Func<Task> t = async () => await api.ApiAccrualManualAsync(request);
+            await t.Should().ThrowAsync<Exception>();
+        }
+
+        var request = new AccrualManualRequestDto()
+        {
+            Description = Q.Description1,
+            BonusSum = 1000L,
+            BankId = Q.BankIdRub,
+            PersonId = Q.PersonId1,
+            TransactionId = Q.TransactionId1,
+            UserId = Q.UserId1
+        };
+        request = request.ToJsonClone();
+        request.Description = "";
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.Description = null;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.Description = " "; // Tab
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.Description = "  "; // Spaces
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.BonusSum = 0;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.BonusSum = -1;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.BankId = 0;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.BankId = -1;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.PersonId = default;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.TransactionId = "";
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.TransactionId = null;
+        await AccrualManualAsyncTrows(request);
+
+        request = request.ToJsonClone();
+        request.UserId = default;
+        await AccrualManualAsyncTrows(request);
     }
 }
