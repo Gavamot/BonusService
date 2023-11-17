@@ -35,17 +35,56 @@ public sealed class GetPersonBalanceCommand : IRequestHandler<GetPersonBalanceRe
     }
 }
 
+
+public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanceByBankIdDto>
+{
+    public GetBalanceByBankIdDtoValidator()
+    {
+        RuleFor(x => x.PersonId).NotEmpty();
+        RuleFor(x => x.BankId).GreaterThan(0);
+    }
+}
+
+///  GetBalanceByBankId
+public sealed record GetBalanceByBankIdDto(Guid PersonId, int BankId) : IRequest<long>, IBalanceKey;
+
+public sealed class GetBalanceByBankIdHandler : IRequestHandler<GetBalanceByBankIdDto, long>
+{
+    private readonly PostgresDbContext _postgres;
+    public GetBalanceByBankIdHandler(PostgresDbContext postgres)
+    {
+        _postgres = postgres;
+    }
+
+    public async ValueTask<long> Handle(GetBalanceByBankIdDto request, CancellationToken ct)
+    {
+        return await _postgres.Transactions
+            .Where(x => x.PersonId == request.PersonId && x.BankId == request.BankId)
+            .SumAsync(x=>x.BonusSum, cancellationToken: ct);
+    }
+}
+
 [ApiController]
-[Route("/api/[controller]")]
+[Route("/api/[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {
     /// <summary>
     /// Получить баланс пользователя по всем валютам
     /// </summary>
     [HttpGet]
-    public async Task<GetPersonBalanceResponseDto> GetPersonBalance([FromServices]IMediator mediator, [FromQuery]GetPersonBalanceRequestDto request)
+    public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery]GetPersonBalanceRequestDto request)
     {
         var res = await mediator.Send(request);
+        return res;
+    }
+
+    /// <summary>
+    /// Получить баланс пользователя по конкретной валюте
+    /// </summary>
+    [HttpGet]
+    public async Task<long> Get([FromServices]IMediator mediator, [FromQuery]GetBalanceByBankIdDto data)
+    {
+        var res = await mediator.Send(data);
         return res;
     }
 }

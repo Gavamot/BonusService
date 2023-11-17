@@ -123,21 +123,21 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId)
+        public virtual System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId)
         {
-            return ApiBalanceAsync(personId, System.Threading.CancellationToken.None);
+            return ApiBalanceGetAllAsync(personId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken)
         {
             if (personId == null)
                 throw new System.ArgumentNullException("personId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/Balance?");
+            urlBuilder_.Append("api/Balance/GetAll?");
             urlBuilder_.Append(System.Uri.EscapeDataString("PersonId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             urlBuilder_.Length--;
 
@@ -202,21 +202,21 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId)
+        public virtual System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId)
         {
-            return ApiBalanceByBankIdAsync(personId, bankId, System.Threading.CancellationToken.None);
+            return ApiBalanceGetAsync(personId, bankId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken)
         {
             if (personId == null)
                 throw new System.ArgumentNullException("personId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/BalanceByBankId?");
+            urlBuilder_.Append("api/Balance/Get?");
             urlBuilder_.Append(System.Uri.EscapeDataString("PersonId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             if (bankId != null)
             {

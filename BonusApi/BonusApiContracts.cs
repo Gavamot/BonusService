@@ -35,21 +35,21 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId);
+        System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiBalanceByBankIdAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
