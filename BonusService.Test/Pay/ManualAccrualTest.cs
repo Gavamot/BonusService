@@ -2,10 +2,11 @@ using BonusApi;
 using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
+using Meziantou.Xunit;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Test;
 
-//[DisableParallelization]
+[DisableParallelization]
 public class ManualAccrualTest : BonusTestApi
 {
     public ManualAccrualTest() : base(new FakeApplicationFactory<Program>())

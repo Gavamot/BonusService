@@ -2,9 +2,11 @@ using BonusApi;
 using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
+using Meziantou.Xunit;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Test;
 
+[DisableParallelization]
 public class ManualPayTest : BonusTestApi
 {
     public ManualPayTest() : base(new FakeApplicationFactory<Program>())

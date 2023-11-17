@@ -1,8 +1,9 @@
 using BonusService.Test.Common;
 using FluentAssertions;
+using Meziantou.Xunit;
 namespace BonusService.Test;
 
-
+[DisableParallelization]
 public class BonusProgramTest : BonusTestApi
 {
     public BonusProgramTest(FakeApplicationFactory<Program> server) : base(server)

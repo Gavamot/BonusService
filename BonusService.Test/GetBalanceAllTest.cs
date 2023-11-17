@@ -4,6 +4,7 @@ using FluentAssertions;
 using Meziantou.Xunit;
 namespace BonusService.Test;
 
+[DisableParallelization]
 public class GetBalanceAllTest : BonusTestApi
 {
     public GetBalanceAllTest() : base(new FakeApplicationFactory<Program>())
