@@ -60,7 +60,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
     public async ValueTask DisposeAsync()
     {
-        using var scope = Server.Services.CreateScope();
+        using var scope = CreateScope();
 
         var postgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         var postgresDelete = postgres.Database.EnsureDeletedAsync();

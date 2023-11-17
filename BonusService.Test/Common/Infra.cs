@@ -54,6 +54,4 @@ public static class InfraHelper
         var dockerCmd = $"""docker exec -i {MongoContainerName} mongosh --eval 'use {dbName}' --eval  'db.dropDatabase()'""";
         return SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
-
-
 }
