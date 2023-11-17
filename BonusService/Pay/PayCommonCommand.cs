@@ -22,12 +22,12 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
         var oldTransaction = await _postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == transaction.TransactionId, cancellationToken: ct);
         if (oldTransaction != null) return oldTransaction.BonusSum;
         var bonusBalance = await mediator.Send(new GetBalanceByBankIdDto(transaction.PersonId, transaction.BankId), ct);
-        transaction.BonusSum = Math.Min(bonusBalance, transaction.BonusSum);
+        var bonusSum = Math.Min(bonusBalance, transaction.BonusSum);
+        if (bonusSum <= 0) return 0;
+        transaction.BonusSum = bonusSum * -1;
         transaction.LastUpdated = dateTimeService.GetNowUtc();
-        if (transaction.BonusSum <= 0) return 0;
-        transaction.BonusSum *= -1;
         await _postgres.Transactions.AddAsync(transaction, ct);
         await _postgres.SaveChangesAsync(ct);
-        return transaction.BonusSum;
+        return bonusSum;
     }
 }

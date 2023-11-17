@@ -26,8 +26,6 @@ public class ManualAccrualTest : BonusTestApi
             UserId = Q.UserId1
         };
         await api.ApiAccrualManualAsync(request);
-        using var scope = CreateScope();
-        var postgres = scope.GetRequiredService<PostgresDbContext>();
         var transaction = await postgres.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
@@ -68,8 +66,6 @@ public class ManualAccrualTest : BonusTestApi
 
         await api.ApiAccrualManualAsync(request);
 
-        using var scope = CreateScope();
-        var postgres = scope.GetRequiredService<PostgresDbContext>();
         var transaction = await postgres.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
@@ -111,9 +107,6 @@ public class ManualAccrualTest : BonusTestApi
         };
 
         await api.ApiAccrualManualAsync(request2);
-
-        using var scope = CreateScope();
-        var postgres = scope.GetRequiredService<PostgresDbContext>();
 
         var transactions = await postgres.Transactions.ToArrayAsync();
         transactions.Should().HaveCount(2);

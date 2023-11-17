@@ -19,7 +19,7 @@ public static class SystemTerminalHelper
         while (!proc.StandardOutput.EndOfStream) {
             Console.WriteLine (proc.StandardOutput.ReadLine());
         }
-        return proc.WaitForExitAsync();
+        return Task.CompletedTask;
     }
 }
 

@@ -16,7 +16,6 @@ public sealed class OwnerByPayValidator : AbstractValidator<OwnerMaxBonusPay>
     }
 }
 
-
 public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 {
     public OwnerByPayRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
@@ -29,43 +28,11 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 /// Справочник пользователей
 /// </summary>
 [ApiController]
-[Route("/api/[controller]")]
-public sealed class OwnerMaxBonusPayController : ControllerBase
+[Route("/api/[controller]/[action]")]
+public sealed class OwnerMaxBonusPayController : CrudController<OwnerMaxBonusPay>
 {
-    private readonly OwnerByPayRep rep;
-
-    public OwnerMaxBonusPayController(OwnerByPayRep rep)
+    public OwnerMaxBonusPayController(OwnerByPayRep rep) : base(rep)
     {
-        this.rep = rep;
-    }
 
-    [HttpGet("{id}")]
-    public async Task<OwnerMaxBonusPay> GetById([FromRoute][Required]int id, CancellationToken ct)
-    {
-        return await rep.GetAsync(id, ct);
-    }
-
-    [HttpGet("All")]
-    public async Task<OwnerMaxBonusPay[]> GetAll(CancellationToken ct)
-    {
-        return await rep.GetAll().ToArrayAsync(ct);
-    }
-
-    [HttpPut]
-    public async Task<OwnerMaxBonusPay> Add([Required]OwnerMaxBonusPay entity, CancellationToken ct)
-    {
-        return await rep.AddAsync(entity, ct);
-    }
-
-    [HttpPost]
-    public async Task<OwnerMaxBonusPay> Update([Required]OwnerMaxBonusPay entity, CancellationToken ct)
-    {
-        return await rep.UpdateAsync(entity, ct);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task Delete([FromRoute][Required]int id, CancellationToken ct)
-    {
-        await rep.DeleteAsync(id, ct);
     }
 }

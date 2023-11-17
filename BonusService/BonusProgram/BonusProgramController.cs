@@ -1,22 +1,18 @@
 using BonusService.Bonuses;
+using BonusService.Pay;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc;
 namespace BonusService.BonuseProgramExecuter;
 
 [ApiController]
-[Route("/api/[controller]")]
-public sealed class BonusProgramController : ControllerBase
+[Route("/api/[controller]/[action]")]
+public sealed class BonusProgramController : CrudController<BonusProgram>
 {
-    private readonly IBonusProgramRep rep;
-    public BonusProgramController(IBonusProgramRep rep)
+    private readonly IBonusProgramRep tempRep;
+    public BonusProgramController(IBonusProgramRep tempRep) : base(null) // Change later
     {
-        this.rep = rep;
+        this.tempRep = tempRep;
     }
 
-    [HttpGet]
-    public BonusProgram[] GetAll()
-    {
-        var p = new [] { rep.Get() };
-        return p;
-    }
+    public override async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
 }

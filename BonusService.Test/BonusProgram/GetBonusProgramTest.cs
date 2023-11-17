@@ -12,7 +12,7 @@ public class BonusProgramTest : BonusTestApi
     [Fact]
     public async Task GetBonusProgram()
     {
-        var programs = await api.ApiBonusProgramAsync();
+        var programs = await api.ApiBonusProgramGetAllAsync();
         programs.Should().NotBeNullOrEmpty();
     }
 
