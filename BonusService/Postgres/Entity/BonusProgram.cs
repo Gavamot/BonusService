@@ -54,11 +54,12 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public List<int> BankId { get; set; } = new();
 
     public string ExecutionCron { get; set; }
-    public DateTimeOffset? ExecTime { get; set; }
 
     public FrequencyTypes  FrequencyType { get; set; }
     public int  FrequencyValue { get; set; }
     public virtual List<BonusProgramLevel> ProgramLevels { get; set; } = new();
     public bool IsDeleted { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
+
+    public List<BonusProgramHistory> BonusProgramHistory { get; set; }
 }

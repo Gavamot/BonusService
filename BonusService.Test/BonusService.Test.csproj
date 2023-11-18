@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Correlate.AspNetCore" Version="5.1.0" />
+        <PackageReference Include="Correlate.AspNetCore" Version="5.2.0" />
         <PackageReference Include="Docker.DotNet" Version="3.125.15" />
         <PackageReference Include="FakeItEasy" Version="8.0.0" />
         <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />

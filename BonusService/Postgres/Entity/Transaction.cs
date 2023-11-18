@@ -54,6 +54,8 @@ public class Transaction : IDocumentEntity, IBalanceKey
     /// </summary>
     public Guid? EzsId { get; set; }
 
+    public int? OwnerId { get; set; }
+
     public TransactionType Type { get; set; }
     public string TransactionId { get; set; } = "";
 }

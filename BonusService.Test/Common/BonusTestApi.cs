@@ -11,19 +11,36 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 {
     public static class Q
     {
+        public static Transaction CreateTransaction(Guid personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()
+        {
+            Description = Q.Description1,
+            Type = TransactionType.Auto,
+            TransactionId = GetRandomTransactionId(),
+            PersonId = personId,
+            BankId = bankId,
+            BonusSum = sum,
+        };
+
+
+        public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
+        public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
+
+        public readonly static int OwnerId1 = 1;
+        public readonly static int OwnerId2 = 2;
+
         public const long Sum2000 = 2000;
         public const long Sum1000 = 1000;
         public const long Sum500 = 500;
         public const string Description1 = "Описанье 1";
         public const string Description2 = "Описанье 2";
-        public readonly static Guid UserId1 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
+        public readonly static Guid UserId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c963f66afa6");
         public readonly static Guid UserId2 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66af45");
         public const string TransactionId1 = "3fa85f64-5717-4562-b3fc-2c963f66af11";
-        public const string TransactionId2 = "3fa85f64-5717-4562-b3fc-2c963f66af12";
+        public const string TransactionId2 = "3fa85f64-5717-4562-b3fc-2c963fa6af12";
         public const string TransactionId3 = "33385f64-5717-4562-b3fc-2c963f66af12";
         public static string GetRandomTransactionId() => Guid.NewGuid().ToString("N");
-        public readonly static Guid PersonId1 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa6");
-        public readonly static Guid PersonId2 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66afa7");
+        public readonly static Guid PersonId1 = Guid.Parse("5fa85f64-5717-4562-b3fc-2c963f66afa6");
+        public readonly static Guid PersonId2 = Guid.Parse("6fa85f64-5717-4562-b3fc-2c963f66afa7");
         public const int BankIdRub = 1;
         public const  int BankIdKaz = 7;
         public static readonly TimeSpan timezone = new(0, 0, 0);
