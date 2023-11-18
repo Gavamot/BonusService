@@ -1,13 +1,11 @@
 using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
-using Meziantou.Xunit;
 namespace BonusService.Test;
 
-[DisableParallelization]
 public class GetBalanceAllTest : BonusTestApi
 {
-    public GetBalanceAllTest() : base(new FakeApplicationFactory<Program>())
+    public GetBalanceAllTest(FakeApplicationFactory<Program> server) : base(server)
     {
     }
 

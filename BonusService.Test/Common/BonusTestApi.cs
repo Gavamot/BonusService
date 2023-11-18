@@ -3,6 +3,7 @@ using BonusService.Common;
 using BonusService.Postgres;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test.Common;
 
@@ -70,7 +71,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
+        postgres.Database.EnsureDeleted();
+        postgres.Database.Migrate();
     }
+
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)
     {
