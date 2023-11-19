@@ -56,6 +56,13 @@ namespace BonusApi
             return ApiAccrualManualAsync(body, System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual void ApiAccrualManual(AccrualManualRequestDto? body)
+        {
+            System.Threading.Tasks.Task.Run(async () => await ApiAccrualManualAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -126,6 +133,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId)
         {
             return ApiBalanceGetAllAsync(personId, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual GetPersonBalanceResponseDto ApiBalanceGetAll(System.Guid personId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBalanceGetAllAsync(personId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -205,6 +219,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId)
         {
             return ApiBalanceGetAsync(personId, bankId, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual long ApiBalanceGet(System.Guid personId, int? bankId)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBalanceGetAsync(personId, bankId, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -290,6 +311,13 @@ namespace BonusApi
             return ApiBonusProgramGetAllAsync(System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Collections.Generic.ICollection<BonusProgram> ApiBonusProgramGetAll()
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBonusProgramGetAllAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -362,6 +390,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<BonusProgram> ApiBonusProgramGetByIdAsync(int id)
         {
             return ApiBonusProgramGetByIdAsync(id, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual BonusProgram ApiBonusProgramGetById(int id)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBonusProgramGetByIdAsync(id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -440,6 +475,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<BonusProgram> ApiBonusProgramAddAsync(BonusProgram body)
         {
             return ApiBonusProgramAddAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual BonusProgram ApiBonusProgramAdd(BonusProgram body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBonusProgramAddAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -523,6 +565,13 @@ namespace BonusApi
             return ApiBonusProgramUpdateAsync(body, System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual BonusProgram ApiBonusProgramUpdate(BonusProgram body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiBonusProgramUpdateAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -604,6 +653,13 @@ namespace BonusApi
             return ApiBonusProgramDeleteByIdAsync(id, System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual void ApiBonusProgramDeleteById(int id)
+        {
+            System.Threading.Tasks.Task.Run(async () => await ApiBonusProgramDeleteByIdAsync(id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -674,6 +730,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id)
         {
             return ApiOwnerMaxBonusPayGetByIdAsync(id, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual OwnerMaxBonusPay ApiOwnerMaxBonusPayGetById(int id)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiOwnerMaxBonusPayGetByIdAsync(id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -754,6 +817,13 @@ namespace BonusApi
             return ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Collections.Generic.ICollection<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetAll()
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -826,6 +896,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body)
         {
             return ApiOwnerMaxBonusPayAddAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual OwnerMaxBonusPay ApiOwnerMaxBonusPayAdd(OwnerMaxBonusPay body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiOwnerMaxBonusPayAddAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -909,6 +986,13 @@ namespace BonusApi
             return ApiOwnerMaxBonusPayUpdateAsync(body, System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual OwnerMaxBonusPay ApiOwnerMaxBonusPayUpdate(OwnerMaxBonusPay body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiOwnerMaxBonusPayUpdateAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -990,6 +1074,13 @@ namespace BonusApi
             return ApiOwnerMaxBonusPayDeleteByIdAsync(id, System.Threading.CancellationToken.None);
         }
 
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual void ApiOwnerMaxBonusPayDeleteById(int id)
+        {
+            System.Threading.Tasks.Task.Run(async () => await ApiOwnerMaxBonusPayDeleteByIdAsync(id, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
+        }
+
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -1060,6 +1151,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto? body)
         {
             return ApiPayAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual long ApiPay(PayRequestDto? body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiPayAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1138,6 +1236,13 @@ namespace BonusApi
         public virtual System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto? body)
         {
             return ApiPayManualAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual long ApiPayManual(PayManualRequestDto? body)
+        {
+            return System.Threading.Tasks.Task.Run(async () => await ApiPayManualAsync(body, System.Threading.CancellationToken.None)).GetAwaiter().GetResult();
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>

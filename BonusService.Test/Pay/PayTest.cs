@@ -2,6 +2,7 @@ using BonusApi;
 using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
+using FluentValidation;
 using MongoDB.Driver.Linq;
 using OwnerMaxBonusPay = BonusService.Postgres.OwnerMaxBonusPay;
 namespace BonusService.Test;
@@ -207,7 +208,7 @@ public class PayTest : BonusTestApi
     [InlineData(1000, 2000, 100, 1000)]
     [InlineData(1000, 1, 20, 1)]
     [InlineData(1000, 500, 20, 200)]
-    public async Task PayFromSumXPersonHasYBonusesWithZPercentages_MustPayN(long payX, long BalanceY, int PercentagesZ, long SpendN)
+    public void PayFromSumXPersonHasYBonusesWithZPercentages_MustPayN(long payX, long BalanceY, int PercentagesZ, long SpendN)
     {
         postgres.Transactions.AddRange(new []
         {
@@ -231,8 +232,9 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = 50
             });
 
-        await postgres.SaveChangesAsync();
-        var payed = await api.ApiPayAsync(new PayRequestDto()
+        postgres.SaveChanges();
+
+        var payed =  api.ApiPay(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -250,5 +252,84 @@ public class PayTest : BonusTestApi
         transaction.OwnerId.Should().Be(Q.OwnerId1);
         transaction.PersonId.Should().Be(Q.PersonId1);
         transaction.EzsId.Should().Be(Q.EzsId1);
+    }
+
+     [Fact]
+    public void WrongParameters_TrowsException()
+     {
+         void PayTrows(PayRequestDto request)
+         {
+             Assert.Throws<ApiException>( () =>
+            {
+                 api.ApiPay(request);
+            });
+        }
+
+        var requestOriginal = new PayRequestDto()
+        {
+            Description = Q.Description1,
+            Payment = Q.Sum1000,
+            BankId = Q.BankIdRub,
+            PersonId = Q.PersonId1,
+            TransactionId = Q.TransactionId1,
+            OwnerId = Q.OwnerId1,
+            EzsId = Q.EzsId1
+        };
+
+        var request = requestOriginal.ToJsonClone();
+        request.Description = "";
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.Description = null;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.Description = " "; // Tab
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.Description = "  "; // Spaces
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.Payment = 0;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.Payment = -1;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.BankId = 0;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.BankId = -1;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.PersonId = default;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.TransactionId = "";
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.TransactionId = null;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.OwnerId = default;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.OwnerId = 0;
+        PayTrows(request);
+
+        request = requestOriginal.ToJsonClone();
+        request.EzsId = default;
+        PayTrows(request);
     }
 }

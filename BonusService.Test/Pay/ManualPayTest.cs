@@ -154,7 +154,7 @@ public class ManualPayTest : BonusTestApi
             await t.Should().ThrowAsync<Exception>();
         }
 
-        var request = new PayManualRequestDto()
+        var requestOriginal = new PayManualRequestDto()
         {
             Description = Q.Description1,
             BonusSum = 1000L,
@@ -163,51 +163,51 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId1,
             UserId = Q.UserId1
         };
-        request = request.ToJsonClone();
+        var request = requestOriginal.ToJsonClone();
         request.Description = "";
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.Description = null;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.Description = " "; // Tab
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.Description = "  "; // Spaces
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.BonusSum = 0;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.BonusSum = -1;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.BankId = 0;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.BankId = -1;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.PersonId = default;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.TransactionId = "";
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.TransactionId = null;
         await PayManualAsyncTrows(request);
 
-        request = request.ToJsonClone();
+        request = requestOriginal.ToJsonClone();
         request.UserId = default;
         await PayManualAsyncTrows(request);
     }

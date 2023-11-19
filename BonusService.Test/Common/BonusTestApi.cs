@@ -70,7 +70,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         await postgres.SaveChangesAsync();
     }
 
-    protected readonly BonusClient api;
+    protected BonusClient api => new (server.CreateClient());
     protected readonly FakeApplicationFactory<Program> server;
     protected readonly IServiceScope scope;
     protected IServiceScope CreateScope() => server.Services.CreateScope();
@@ -84,7 +84,6 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         {
             AllowAutoRedirect = false
         });
-        api = new BonusClient(httpClient);
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
