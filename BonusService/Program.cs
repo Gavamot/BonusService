@@ -11,7 +11,6 @@ using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson;
 using NLog.Web;
 using PlatformWebApi.Identity.Settings;
 
