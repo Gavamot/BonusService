@@ -1,10 +1,12 @@
 using BonusService.Bonuses;
 using BonusService.Pay;
 using BonusService.Postgres;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace BonusService.BonuseProgramExecuter;
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]/[action]")]
 public sealed class BonusProgramController : ControllerBase//: CrudController<BonusProgram>
 {

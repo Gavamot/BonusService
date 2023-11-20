@@ -2,6 +2,7 @@ using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
@@ -51,6 +52,7 @@ public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestD
 }
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]")]
 public sealed class AccrualManualController : ControllerBase
 {

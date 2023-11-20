@@ -1,6 +1,7 @@
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Controllers;
@@ -65,6 +66,7 @@ public sealed class GetBalanceByBankIdHandler : IRequestHandler<GetBalanceByBank
 }
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {

@@ -1,6 +1,7 @@
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.Pay;
@@ -29,6 +30,7 @@ public partial class PayManualDtoMapper
 public sealed record PayTransactionRequest(Transaction transaction) : ICommand<long>;
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]")]
 public sealed class PayManualController : ControllerBase
 {

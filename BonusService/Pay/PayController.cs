@@ -1,6 +1,7 @@
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
@@ -52,6 +53,7 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 }
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]")]
 public sealed class PayController : ControllerBase
 {
@@ -59,6 +61,7 @@ public sealed class PayController : ControllerBase
     /// Списание бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
+    
     public async Task<long> Pay([FromServices]IMediator mediator, [FromBody]PayRequestDto request, CancellationToken ct)
     {
         long res = await mediator.Send(request, ct);
