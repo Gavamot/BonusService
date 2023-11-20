@@ -1,6 +1,8 @@
+using BonusService.Auth.Policy;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Controllers;
@@ -65,6 +67,7 @@ public sealed class GetBalanceByBankIdHandler : IRequestHandler<GetBalanceByBank
 }
 
 [ApiController]
+[Authorize]
 [Route("/api/[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {
@@ -72,6 +75,7 @@ public sealed class BalanceController : ControllerBase
     /// Получить баланс пользователя по всем валютам
     /// </summary>
     [HttpGet]
+    [Authorize(Policy = PolicyNames.BalanceRead)]
     public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery]GetPersonBalanceRequestDto request)
     {
         var res = await mediator.Send(request);
@@ -82,6 +86,7 @@ public sealed class BalanceController : ControllerBase
     /// Получить баланс пользователя по конкретной валюте
     /// </summary>
     [HttpGet]
+    [Authorize(Policy = PolicyNames.BalanceRead)]
     public async Task<long> Get([FromServices]IMediator mediator, [FromQuery]GetBalanceByBankIdDto data)
     {
         var res = await mediator.Send(data);
