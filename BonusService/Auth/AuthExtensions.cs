@@ -59,6 +59,7 @@ public static class AuthExtensions
 
             options.AddPolicy(PolicyNames.AccrualManualRead, PolicyConfigure.AccrualManualRead);
             options.AddPolicy(PolicyNames.AccrualManualWrite, PolicyConfigure.AccrualManualWrite);
+            options.AddPolicy(PolicyNames.AccrualManualExecute, PolicyConfigure.AccrualManualExecute);
 
             options.AddPolicy(PolicyNames.BalanceRead, PolicyConfigure.BalanceRead);
             options.AddPolicy(PolicyNames.BalanceWrite, PolicyConfigure.BalanceWrite);
@@ -74,6 +75,7 @@ public static class AuthExtensions
 
             options.AddPolicy(PolicyNames.PayRead, PolicyConfigure.PayRead);
             options.AddPolicy(PolicyNames.PayWrite, PolicyConfigure.PayWrite);
+            options.AddPolicy(PolicyNames.PayExecute, PolicyConfigure.PayWrite);
 
         });
         return services;

@@ -60,38 +60,7 @@ services.AddJwtAuthorization(configuration);
 services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-services.AddSwaggerGen(
-    c =>
-    {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-        c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
-        {
-            Description =
-                "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey
-        });
-
-        c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme, Id = "Bearer"
-                    },
-                    Scheme = "oauth2",
-                    Name = "Bearer",
-                    In = ParameterLocation.Header
-                },
-                new List<string>()
-            }
-        });
-
-    });
+services.AddSwagger();
 
 services.AddMediator(opt =>
 {
@@ -108,7 +77,11 @@ WebApplication app = builder.Build();
 app.Services.AuthInitJwtJey();
 
 app.UseSwagger();
-app.UseSwaggerUI(c=> c.SwaggerEndpoint("v1/swagger.json", "My API V1"));
+app.UseSwaggerUI(c=>
+{
+    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    c.EnableTryItOutByDefault();
+});
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

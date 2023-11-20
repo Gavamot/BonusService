@@ -61,7 +61,7 @@ public sealed class AccrualManualController : ControllerBase
     /// Начисление бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.AccrualManualExcec)]
+    [Authorize(Policy = PolicyNames.AccrualManualExecute)]
     public async Task AccrualManual([FromServices]IMediator mediator, [FromBody]AccrualManualRequestDto request, CancellationToken ct)
     {
         await mediator.Send(request,ct);
