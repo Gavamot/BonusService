@@ -40,7 +40,7 @@ public static class AuthExtensions
                             };
                         },
                         RoleClaimType = "Roles",
-                        NameClaimType = "Name"
+                        NameClaimType = "LevelName"
                     };
                 });
 

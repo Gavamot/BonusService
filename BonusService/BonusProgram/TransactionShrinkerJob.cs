@@ -27,7 +27,7 @@ public class TransactionShrinkerJob : AbstractJob
 
 
     // https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics?tabs=with-di%2Cexpression-api-with-constant
-    protected override async Task ExecuteJobAsync()
+    protected override async Task ExecuteJobAsync(object parameter)
     {
         var curDay = _dateTimeService.GetStartOfCurrentDay();
 
@@ -61,7 +61,7 @@ public class TransactionShrinkerJob : AbstractJob
                     TransactionId = $"shrinker_{x.PersonId:N}_{x.BankId}_{curDay}",
                     Description = $"Консолидация оборотов в разрезу бонусных счетов к {curDay:d.M.yyyy} итерация {i}",
                     Type = TransactionType.Shrink,
-                    BonusProgramId = null,
+                    BonusProgramId = 0,
                     BonusBase = null,
                     UserId = null,
                     EzsId = null,

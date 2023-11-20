@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
 namespace BonusService.Test;
 
 public static class Ext

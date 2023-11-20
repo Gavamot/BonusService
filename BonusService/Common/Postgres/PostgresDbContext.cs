@@ -16,8 +16,10 @@ public static class PostgresExt
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)
     {
         if(Program.IsNswagBuild()) return;
+        //if(Program.IsAppTest()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var a=  ctx.Database.GetConnectionString();
         ctx.Database.Migrate();
     }
 }
@@ -26,15 +28,14 @@ public static class PostgresExt
 // dotnet tool update --global dotnet-ef
 public class PostgresDbContext : DbContext
 {
-    //public DbSet<BonusProgram> BonusPrograms { get; set; }
-    //public DbSet<BonusProgramLevel> BonusProgramLevels  { get; set; }
     public DbSet<Transaction> Transactions  { get; set; }
     public DbSet<TransactionHistory> TransactionHistory  { get; set; }
     public DbSet<OwnerMaxBonusPay> OwnerMaxBonusPays { get; set; }
 
     public DbSet<BonusProgram> BonusPrograms { get; set; }
     public DbSet<BonusProgramLevel> BonusProgramsLevels { get; set; }
-    public BonusProgramHistory BonusProgramHistory { get; set; }
+    public DbSet<BonusProgramHistory> BonusProgramHistory { get; set; }
+
     public PostgresDbContext(){ }
 
     public PostgresDbContext(DbContextOptions<PostgresDbContext> options): base(options)
@@ -46,10 +47,10 @@ public class PostgresDbContext : DbContext
     {
         builder.Entity<BonusProgram>().HasMany(x=>x.ProgramLevels);
         builder.Entity<BonusProgram>().HasMany(x=>x.BonusProgramHistory);
+
         builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
         builder.Entity<BonusProgramHistory>().HasOne(x => x.BonusProgram);
 
-        builder.Entity<TransactionHistory>();
         builder.Entity<Transaction>().HasIndex(x => new { x.PersonId, x.BankId });
         builder.Entity<Transaction>().HasIndex(x => x.TransactionId)
             .IncludeProperties(x=> new { x.BonusSum })

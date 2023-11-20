@@ -43,23 +43,18 @@ public class BonusProgram : ICatalogEntity, IDeletable
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
-    public ProgramTypes ProgramTypes { get; set; }
+    public BonusProgramType BonusProgramType { get; set; }
     public string Description { get; set; } = "";
     public DateTimeOffset DateStart { get; set; }
     public DateTimeOffset? DateStop { get; set; }
-
-    /// <summary>
-    /// Если валюта пуста то для всех валют елси нет то для указанных в массиве
-    /// </summary>
-    public List<int> BankId { get; set; } = new();
+    public int BankId { get; set; }
 
     public string ExecutionCron { get; set; }
 
     public FrequencyTypes  FrequencyType { get; set; }
     public int  FrequencyValue { get; set; }
-    public virtual List<BonusProgramLevel> ProgramLevels { get; set; } = new();
     public bool IsDeleted { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
-
+    public List<BonusProgramLevel> ProgramLevels { get; set; }
     public List<BonusProgramHistory> BonusProgramHistory { get; set; }
 }

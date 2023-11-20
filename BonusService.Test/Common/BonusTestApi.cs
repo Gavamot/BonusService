@@ -21,7 +21,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             BonusSum = sum,
         };
 
-
+        public readonly static DateTimeInterval IntervalMoth1 = new DateTimeInterval(new DateTimeOffset(2000, 1, 1, 1, 1, 1, new TimeSpan(0)), new DateTimeOffset(2000, 2, 1, 1, 1, 1, new TimeSpan(0)));
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
 
@@ -80,11 +80,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     {
         this.server = server;
         InitDatabases(server).GetAwaiter().GetResult();
-        var httpClient = server.CreateClient(new WebApplicationFactoryClientOptions
-        {
-            AllowAutoRedirect = false
-        });
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
+        A.CallTo(() => this.server.DateTimeService.GetCurrentMonth()).ReturnsNextFromSequence(Q.IntervalMoth1);
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();

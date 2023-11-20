@@ -14,5 +14,7 @@ public sealed class BonusProgramController : ControllerBase//: CrudController<Bo
         this.tempRep = tempRep;
     }
     [HttpGet]
-    public new async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
+    public new async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] { tempRep.Get() };
+
+
 }

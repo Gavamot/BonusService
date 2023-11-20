@@ -9,16 +9,12 @@ namespace BonusService.Bonuses;
 /// Начисление бонувов каждый календарный месяц(с 1 по последние число) по уровням от общей суммы затрат персоны
 /// https://rnd.sitronics.com/jira/browse/EZSPLAT-244
 /// </summary>
-public class MonthlySumBonusJob : AbstractJob
+public class MonthlySumBonusJob : AbstractBonusProgramJob
 {
     private readonly IBonusProgramRep _rep;
     private readonly MongoDbContext _mongo;
     private readonly PostgresDbContext _postgres;
     private readonly IDateTimeService _dateTimeService;
-    private readonly ILogger<MonthlySumBonusJob> _logger;
-
-    public readonly ProgramTypes programType = ProgramTypes.PeriodicalMonthlySumByLevels;
-    public override string Name => "[Кешбэк]";
 
     public MonthlySumBonusJob(
         IBonusProgramRep rep,
@@ -31,11 +27,10 @@ public class MonthlySumBonusJob : AbstractJob
         _mongo = mongo;
         _postgres = postgres;
         _dateTimeService = dateTimeService;
-        _logger = logger;
     }
 
-    private string GenerateTransactionId(int bankId, Guid PersonId, DateTimeInterval period)
-        => $"cashback_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}";
+    private string GenerateTransactionId(int bonusProgram,  Guid PersonId,int bankId, DateTimeInterval period)
+        => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay)
     {
@@ -47,48 +42,58 @@ public class MonthlySumBonusJob : AbstractJob
         return new (level.AwardSum, bonus);
     }
 
-    protected override async Task ExecuteJobAsync()
+    protected override async Task ExecuteJobAsync(BonusProgram bonusProgram)
     {
+        int bonusProgramId = bonusProgram.Id;
+        int bankId = bonusProgram.BankId;
+
         var curMonth = _dateTimeService.GetCurrentMonth();
         var data = _mongo.Sessions.Where(x => x.status == 7
                 && x.user != null
                 && x.user.clientNodeId != null
+                && x.user.chargingClientType == 0
                 && x.tariff != null
                 && x.tariff.BankId != null
+                && x.tariff.BankId == bankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.user.chargingClientType == 0
                 && x.chargeEndTime >= curMonth.from && x.chargeEndTime < curMonth.to)
-            .GroupBy(x => new { x.tariff!.BankId, x.user!.clientNodeId})
+            .GroupBy(x => x.user!.clientNodeId)
             .AsNoTracking();
 
         var capacity = 4096;
         List<Transaction> transactions = new(4096);
-        var bonusProgramId = _rep.Get().Id;
 
-        foreach (var x in data)
+        var date = _dateTimeService.GetCurrentMonth().from;
+
+        foreach (var group in data)
         {
-            var totalPay = x.Sum(y => y.operation!.calculatedPayment ?? 0);
+            var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay);
             if (bonus.sum <= 0) continue;
+            var clientNodeId = group.Key!.Value;
             var transaction = new Transaction()
             {
-                PersonId = x.Key.clientNodeId!.Value,
-                BankId = x.Key.BankId!.Value,
-                TransactionId = GenerateTransactionId(x.Key.BankId!.Value, x.Key.clientNodeId!.Value, curMonth),
+                PersonId = clientNodeId,
+                BankId = bankId,
+                TransactionId = GenerateTransactionId(bonusProgramId, clientNodeId, bankId, curMonth),
                 BonusProgramId = bonusProgramId,
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
-                LastUpdated = _dateTimeService.GetNowUtc(),
+                LastUpdated = date,
                 UserId = null,
                 EzsId = null,
-                Description = $"Начислено по {Name} за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgram.Name}(банк={bankId}) за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
             };
             transactions.Add(transaction);
             if (transactions.Count >= 4096)
             {
-                await _postgres.Transactions.BulkInsertAsync(transactions);
+                await _postgres.Transactions.BulkInsertAsync(transactions, options =>
+                {
+                    options.InsertIfNotExists = true;
+                    options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
+                });
                 transactions = new List<Transaction>(capacity);
             }
         }

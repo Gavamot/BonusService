@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 namespace BonusService.Pay;
 
-
 public sealed class OwnerByPayValidator : AbstractValidator<OwnerMaxBonusPay>
 {
     public OwnerByPayValidator()

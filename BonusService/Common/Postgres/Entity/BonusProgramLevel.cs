@@ -13,7 +13,7 @@ public class BonusProgramLevel : ICatalogEntity
     public int Level { get; set; }
 
     public int BonusProgramId { get; set; }
-    public virtual BonusProgram BonusProgram { get; set; }
+    public BonusProgram BonusProgram { get; set; }
     /// <summary>
     /// Условие срабатывания программы например общая сумма в рублях
     /// </summary>

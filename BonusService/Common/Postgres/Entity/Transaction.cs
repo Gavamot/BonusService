@@ -41,7 +41,7 @@ public class Transaction : IDocumentEntity, IBalanceKey
     /// </summary>
     public long? BonusBase { get; set; }
     public long BonusSum { get; set; }
-    public int? BonusProgramId { get; set; }
+    public int BonusProgramId { get; set; }
     //public virtual BonusProgram? Program { get; set; }
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
@@ -57,5 +57,5 @@ public class Transaction : IDocumentEntity, IBalanceKey
     public int? OwnerId { get; set; }
 
     public TransactionType Type { get; set; }
-    public string TransactionId { get; set; } = "";
+    public string TransactionId { get; set; }
 }

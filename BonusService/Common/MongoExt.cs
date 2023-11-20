@@ -28,14 +28,10 @@ public static class MongoExt
 
 public class MongoDbContext : DbContext
 {
-    public DbSet<MongoSession> Sessions { get; init; }
+    public DbSet<MongoSession> Sessions { get; set; }
 
-    public static MongoDbContext Create(IMongoDatabase database) =>
-        new(new DbContextOptionsBuilder<MongoDbContext>()
-            .UseMongoDB(database.Client, database.DatabaseNamespace.DatabaseName)
-            .Options);
 
-    public MongoDbContext(DbContextOptions options) : base(options)
+    public MongoDbContext(DbContextOptions<MongoDbContext> options) : base(options)
     {
 
     }

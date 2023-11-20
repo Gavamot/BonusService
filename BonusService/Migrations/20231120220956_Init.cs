@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using BonusService.Postgres;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -9,17 +7,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BonusService.Migrations
 {
     /// <inheritdoc />
-    public partial class AddProgramms : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "OwnerId",
-                table: "Transactions",
-                type: "integer",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "BonusPrograms",
                 columns: table => new
@@ -27,11 +19,11 @@ namespace BonusService.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ProgramTypes = table.Column<int>(type: "integer", nullable: false),
+                    BonusProgramType = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     DateStart = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     DateStop = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    BankId = table.Column<List<int>>(type: "integer[]", nullable: false),
+                    BankId = table.Column<int>(type: "integer", nullable: false),
                     ExecutionCron = table.Column<string>(type: "text", nullable: false),
                     FrequencyType = table.Column<int>(type: "integer", nullable: false),
                     FrequencyValue = table.Column<int>(type: "integer", nullable: false),
@@ -44,15 +36,57 @@ namespace BonusService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "BonusProgramHistory",
+                name: "OwnerMaxBonusPays",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    OwnerId = table.Column<int>(type: "integer", nullable: false),
+                    MaxBonusPayPercentages = table.Column<int>(type: "integer", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OwnerMaxBonusPays", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Transactions",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    PersonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BankId = table.Column<int>(type: "integer", nullable: false),
+                    BonusBase = table.Column<long>(type: "bigint", nullable: true),
+                    BonusSum = table.Column<long>(type: "bigint", nullable: false),
+                    BonusProgramId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    EzsId = table.Column<Guid>(type: "uuid", nullable: true),
+                    OwnerId = table.Column<int>(type: "integer", nullable: true),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    TransactionId = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "BonusProgramHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     BonusProgramId = table.Column<int>(type: "integer", nullable: false),
                     ExecTimeStart = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ExecTimeEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    Info = table.Column<BonusProgramHistoryInfo>(type: "jsonb", nullable: false)
+                    BankId = table.Column<int>(type: "integer", nullable: false),
+                    TotalSum = table.Column<long>(type: "bigint", nullable: false),
+                    ClientCount = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -99,6 +133,24 @@ namespace BonusService.Migrations
                 name: "IX_BonusProgramsLevels_BonusProgramId",
                 table: "BonusProgramsLevels",
                 column: "BonusProgramId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OwnerMaxBonusPays_OwnerId",
+                table: "OwnerMaxBonusPays",
+                column: "OwnerId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_PersonId_BankId",
+                table: "Transactions",
+                columns: new[] { "PersonId", "BankId" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Transactions_TransactionId",
+                table: "Transactions",
+                column: "TransactionId",
+                unique: true)
+                .Annotation("Npgsql:IndexInclude", new[] { "BonusSum" });
         }
 
         /// <inheritdoc />
@@ -111,11 +163,13 @@ namespace BonusService.Migrations
                 name: "BonusProgramsLevels");
 
             migrationBuilder.DropTable(
-                name: "BonusPrograms");
+                name: "OwnerMaxBonusPays");
 
-            migrationBuilder.DropColumn(
-                name: "OwnerId",
-                table: "Transactions");
+            migrationBuilder.DropTable(
+                name: "Transactions");
+
+            migrationBuilder.DropTable(
+                name: "BonusPrograms");
         }
     }
 }

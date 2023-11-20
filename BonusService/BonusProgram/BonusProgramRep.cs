@@ -1,5 +1,4 @@
 using BonusService.Postgres;
-using MongoDB.Driver.Core.WireProtocol.Messages;
 namespace BonusService.Bonuses;
 
 public interface IBonusProgramRep
@@ -14,9 +13,10 @@ public class BonusProgramRep : IBonusProgramRep
         return new BonusProgram()
         {
             Id = 1,
+            BankId = 1,
             Name = "Кэшбэк",
             Description = "Начиляется 1 числа каждого месяца изходя из общей суммы затрат за предыдущий месяц",
-            ProgramTypes = ProgramTypes.PeriodicalMonthlySumByLevels,
+            BonusProgramType  = BonusProgramType.SpendMoney,
             DateStart = new DateTimeOffset(2023, 11, 1, 0,0, 0, TimeSpan.Zero),
             DateStop = null,
             IsDeleted = false,
@@ -63,8 +63,7 @@ public class BonusProgramRep : IBonusProgramRep
                     BonusProgramId = 1,
                     Level = 4,
                 }
-            },
-            BankId = new List<int>()
+            }
         };
     }
 }

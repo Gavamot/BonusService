@@ -62,6 +62,15 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -342,11 +351,11 @@ namespace BonusApi
     {
         private int? _id = default!;
         private string? _name = default!;
-        private ProgramTypes? _programTypes = default!;
+        private BonusProgramType? _bonusProgramType = default!;
         private string? _description = default!;
         private System.DateTimeOffset? _dateStart = default!;
         private System.DateTimeOffset? _dateStop = default!;
-        private System.Collections.Generic.ICollection<int>? _bankId = default!;
+        private int? _bankId = default!;
         private string? _executionCron = default!;
         private FrequencyTypes? _frequencyType = default!;
         private int? _frequencyValue = default!;
@@ -389,19 +398,19 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("programTypes")]
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramType")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public ProgramTypes? ProgramTypes
+        public BonusProgramType? BonusProgramType
         {
-            get { return _programTypes; }
+            get { return _bonusProgramType; }
 
             set
             {
-                if (_programTypes != value)
+                if (_bonusProgramType != value)
                 {
-                    _programTypes = value;
+                    _bonusProgramType = value;
                     RaisePropertyChanged();
                 }
             }
@@ -461,7 +470,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<int>? BankId
+        public int? BankId
         {
             get { return _bankId; }
 
@@ -609,6 +618,353 @@ namespace BonusApi
             var options = new System.Text.Json.JsonSerializerOptions();
 
             return System.Text.Json.JsonSerializer.Deserialize<BonusProgram>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramAchievementRequest : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Guid _personId = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("personId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public System.Guid PersonId
+        {
+            get { return _personId; }
+
+            set
+            {
+                if (_personId != value)
+                {
+                    _personId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementRequest FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementRequest>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramAchievementResponse : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? _items = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? Items
+        {
+            get { return _items; }
+
+            set
+            {
+                if (_items != value)
+                {
+                    _items = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementResponse FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponse>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramAchievementResponseItem : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int? _bonusProgramId = default!;
+        private string? _bonusProgramName = default!;
+        private BonusProgramType? _type = default!;
+        private string? _levelName = default!;
+        private long? _levelCondition = default!;
+        private int? _levelAwardPercent = default!;
+        private int? _levelAwardSum = default!;
+        private long? _currentSum = default!;
+        private string? _nextLevelName = default!;
+        private long? _nextLevelCondition = default!;
+        private int? _nextLevelAwardPercent = default!;
+        private int? _nextLevelAwardSum = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? BonusProgramId
+        {
+            get { return _bonusProgramId; }
+
+            set
+            {
+                if (_bonusProgramId != value)
+                {
+                    _bonusProgramId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramName")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? BonusProgramName
+        {
+            get { return _bonusProgramName; }
+
+            set
+            {
+                if (_bonusProgramName != value)
+                {
+                    _bonusProgramName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public BonusProgramType? Type
+        {
+            get { return _type; }
+
+            set
+            {
+                if (_type != value)
+                {
+                    _type = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelName")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? LevelName
+        {
+            get { return _levelName; }
+
+            set
+            {
+                if (_levelName != value)
+                {
+                    _levelName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelCondition")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? LevelCondition
+        {
+            get { return _levelCondition; }
+
+            set
+            {
+                if (_levelCondition != value)
+                {
+                    _levelCondition = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelAwardPercent")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? LevelAwardPercent
+        {
+            get { return _levelAwardPercent; }
+
+            set
+            {
+                if (_levelAwardPercent != value)
+                {
+                    _levelAwardPercent = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("levelAwardSum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? LevelAwardSum
+        {
+            get { return _levelAwardSum; }
+
+            set
+            {
+                if (_levelAwardSum != value)
+                {
+                    _levelAwardSum = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("currentSum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? CurrentSum
+        {
+            get { return _currentSum; }
+
+            set
+            {
+                if (_currentSum != value)
+                {
+                    _currentSum = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextLevelName")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? NextLevelName
+        {
+            get { return _nextLevelName; }
+
+            set
+            {
+                if (_nextLevelName != value)
+                {
+                    _nextLevelName = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextLevelCondition")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? NextLevelCondition
+        {
+            get { return _nextLevelCondition; }
+
+            set
+            {
+                if (_nextLevelCondition != value)
+                {
+                    _nextLevelCondition = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextLevelAwardPercent")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? NextLevelAwardPercent
+        {
+            get { return _nextLevelAwardPercent; }
+
+            set
+            {
+                if (_nextLevelAwardPercent != value)
+                {
+                    _nextLevelAwardPercent = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("nextLevelAwardSum")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? NextLevelAwardSum
+        {
+            get { return _nextLevelAwardSum; }
+
+            set
+            {
+                if (_nextLevelAwardSum != value)
+                {
+                    _nextLevelAwardSum = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementResponseItem FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponseItem>(data, options);
 
         }
 
@@ -1037,6 +1393,24 @@ namespace BonusApi
             if (handler != null)
                 handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum BonusProgramType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ChargedByCapacity")]
+        ChargedByCapacity = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ChargedByStations")]
+        ChargedByStations = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SpendMoney")]
+        SpendMoney = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Birthday")]
+        Birthday = 3,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1632,15 +2006,6 @@ namespace BonusApi
             if (handler != null)
                 handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum ProgramTypes
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"PeriodicalMonthlySumByLevels")]
-        PeriodicalMonthlySumByLevels = 0,
-
     }
 
 

@@ -34,7 +34,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.BonusSum.Should().Be(sum);
         transaction.UserId.Should().Be(Q.UserId1);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().BeNull();
+        transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.First());
     }
@@ -74,7 +74,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.BonusSum.Should().Be(sum);
         transaction.UserId.Should().Be(Q.UserId1);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().BeNull();
+        transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.First());
     }
@@ -119,7 +119,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.BonusSum.Should().Be(sum);
         transaction.UserId.Should().Be(Q.UserId1);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().BeNull();
+        transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
@@ -132,7 +132,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.BonusSum.Should().Be(sum2);
         transaction.UserId.Should().Be(Q.UserId2);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().BeNull();
+        transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.Skip(1).First());
     }
