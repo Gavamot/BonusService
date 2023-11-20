@@ -62,7 +62,8 @@ public class MonthlySumBonusJob : AbstractJob
             .GroupBy(x => new { x.tariff!.BankId, x.user!.clientNodeId})
             .AsNoTracking();
 
-        List<Transaction> transactions = new(5000);
+        var capacity = 4096;
+        List<Transaction> transactions = new(4096);
         var bonusProgramId = _rep.Get().Id;
 
         foreach (var x in data)
@@ -85,10 +86,10 @@ public class MonthlySumBonusJob : AbstractJob
                 Description = $"Начислено по {Name} за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
             };
             transactions.Add(transaction);
-            if (transactions.Count > 5000)
+            if (transactions.Count >= 4096)
             {
                 await _postgres.Transactions.BulkInsertAsync(transactions);
-
+                transactions = new List<Transaction>(capacity);
             }
         }
 
