@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
@@ -60,6 +61,7 @@ public sealed class AccrualManualController : ControllerBase
     /// Начисление бонусных баллов оператором
     /// </summary>
     [HttpPost]
+    [Authorize(Policy = PolicyNames.AccrualManualExcec)]
     public async Task AccrualManual([FromServices]IMediator mediator, [FromBody]AccrualManualRequestDto request, CancellationToken ct)
     {
         await mediator.Send(request,ct);

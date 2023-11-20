@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
@@ -40,6 +41,7 @@ public sealed class PayManualController : ControllerBase
     /// Оператор не может списывать бонусы в минус
     /// </summary>
     [HttpPost]
+    [Authorize(Policy = PolicyNames.AccrualManualExcec)]
     public async Task<long> AccrualManual([FromServices]IMediator mediator, [FromBody]PayManualRequestDto request, CancellationToken ct)
     {
         Transaction transaction = new PayManualDtoMapper().FromDto(request);

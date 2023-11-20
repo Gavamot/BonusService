@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
@@ -61,7 +62,7 @@ public sealed class PayController : ControllerBase
     /// Списание бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
-    
+    [Authorize(Policy = PolicyNames.PayExcec)]
     public async Task<long> Pay([FromServices]IMediator mediator, [FromBody]PayRequestDto request, CancellationToken ct)
     {
         long res = await mediator.Send(request, ct);

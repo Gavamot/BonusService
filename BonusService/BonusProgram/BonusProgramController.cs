@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using BonusService.Bonuses;
 using BonusService.Pay;
 using BonusService.Postgres;
@@ -16,5 +17,6 @@ public sealed class BonusProgramController : ControllerBase//: CrudController<Bo
         this.tempRep = tempRep;
     }
     [HttpGet]
+    [Authorize(Policy = PolicyNames.BonusProgramRead)]
     public new async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
 }
