@@ -1,4 +1,6 @@
+using System.Configuration;
 using System.Text.Json.Serialization;
+using BonusService.Auth;
 using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Pay;
@@ -10,6 +12,7 @@ using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
+using PlatformWebApi.Identity.Settings;
 
 Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 
@@ -49,11 +52,15 @@ if (IsNswagBuild())
     services.AddOpenApiDocument();
 }*/
 
+//auth
+services.Configure<IdentitySettings>(configuration.GetSection(nameof(IdentitySettings)));
+services.AddJwtAuthorization(configuration);
 
 
 services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-services.AddSwaggerGen(c=> c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" }));
+
+services.AddSwagger();
 
 services.AddMediator(opt =>
 {
@@ -67,10 +74,14 @@ WebApplication app = builder.Build();
     app.UseOpenApi();
     app.UseSwaggerUi3();
 }*/
+app.Services.AuthInitJwtJey();
 
 app.UseSwagger();
-app.UseSwaggerUI(c=> c.SwaggerEndpoint("v1/swagger.json", "My API V1"));
-
+app.UseSwaggerUI(c=>
+{
+    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    c.EnableTryItOutByDefault();
+});
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

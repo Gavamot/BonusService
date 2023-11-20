@@ -1,6 +1,7 @@
 using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace BonusService.Pay;
 
@@ -25,6 +26,7 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 /// Справочник пользователей
 /// </summary>
 [ApiController]
+[Authorize]
 [Route("/api/[controller]/[action]")]
 public sealed class OwnerMaxBonusPayController : CrudController<OwnerMaxBonusPay>
 {
