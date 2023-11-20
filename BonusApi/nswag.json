@@ -41,6 +41,8 @@
       "exposeJsonSerializerSettings": false,
       "clientClassAccessModifier": "public",
       "typeAccessModifier": "public",
+      "propertySetterAccessModifier": "",
+      "generateNativeRecords": false,
       "generateContractsOutput": true,
       "contractsNamespace": "BonusApi",
       "contractsOutputFilePath": "BonusApiContracts.cs",

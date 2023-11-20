@@ -5,7 +5,7 @@ namespace BonusService.Postgres;
 public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
 {
     Task<T> AddAsync(T entity, CancellationToken cs);
-    Task<T> UpdateAsync(T entity, CancellationToken cs);
+    Task<T> UpdateAsync(T entity, CancellationToken ct);
     Task DeleteAsync(int id, CancellationToken cs);
     Task<T?> GetAsync(int id, CancellationToken cs);
     IQueryable<T> GetAll();
@@ -28,12 +28,12 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T> where T : class, IHaveId<
         await _postgres.SaveChangesAsync(cs);
         return entity;
     }
-    public virtual async Task<T> UpdateAsync(T entity, CancellationToken cs)
+    public virtual async Task<T> UpdateAsync(T entity, CancellationToken ct)
     {
         entity.LastUpdated = _dateTimeService.GetNowUtc();
-        _postgres.Set<T>().Update(entity);
-        await _postgres.SaveChangesAsync(cs);
-        return entity;
+        var res =_postgres.Update(entity);
+        await _postgres.SaveChangesAsync(ct);
+        return res.Entity;
     }
     public virtual async Task DeleteAsync(int id, CancellationToken cs)
     {

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using BonusService.Bonuses;
 using BonusService.Common;
+using BonusService.Pay;
 using BonusService.Postgres;
 using Correlate.DependencyInjection;
 using FluentValidation;
@@ -25,6 +26,7 @@ var services = builder.Services;
 services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
 
 services.AddScoped<IBonusProgramRep, BonusProgramRep>();
+services.AddScoped<OwnerByPayRep>();
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 

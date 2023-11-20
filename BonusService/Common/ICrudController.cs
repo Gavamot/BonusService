@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,32 +22,33 @@ public abstract class CrudController<T> : ControllerBase, ICrudController<T> whe
         _rep = rep;
     }
 
-    [HttpGet("{id}")]
-    public virtual async Task<T> GetById([FromRoute][Required]int id, CancellationToken ct)
+    [HttpGet("{id:int}")]
+    public async Task<T?> GetById([FromRoute][Required]int id, CancellationToken ct)
     {
         return await _rep.GetAsync(id, ct);
     }
 
     [HttpGet]
-    public virtual async Task<T[]> GetAll(CancellationToken ct)
+    public async Task<T[]> GetAll(CancellationToken ct)
     {
         return await _rep.GetAll().ToArrayAsync(ct);
     }
 
     [HttpPut]
-    public virtual async Task<T> Add([Required]T entity, CancellationToken ct)
+    public async Task<T> Add([Required]T entity, CancellationToken ct)
     {
+        Response.StatusCode = StatusCodes.Status200OK;
         return await _rep.AddAsync(entity, ct);
     }
 
     [HttpPost]
-    public virtual async Task<T> Update([Required]T entity, CancellationToken ct)
+    public async Task<T> Update([Required]T entity, CancellationToken ct)
     {
         return await _rep.UpdateAsync(entity, ct);
     }
 
-    [HttpDelete("{id}")]
-    public virtual async Task DeleteById([FromRoute][Required]int id, CancellationToken ct)
+    [HttpDelete("{id:int}")]
+    public async Task DeleteById([FromRoute][Required]int id, CancellationToken ct)
     {
         await _rep.DeleteAsync(id, ct);
     }

@@ -6,13 +6,13 @@ namespace BonusService.BonuseProgramExecuter;
 
 [ApiController]
 [Route("/api/[controller]/[action]")]
-public sealed class BonusProgramController : CrudController<BonusProgram>
+public sealed class BonusProgramController : ControllerBase//: CrudController<BonusProgram>
 {
     private readonly IBonusProgramRep tempRep;
-    public BonusProgramController(IBonusProgramRep tempRep) : base(null) // Change later
+    public BonusProgramController(IBonusProgramRep tempRep)// Change later
     {
         this.tempRep = tempRep;
     }
-
-    public override async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
+    [HttpGet]
+    public new async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
 }

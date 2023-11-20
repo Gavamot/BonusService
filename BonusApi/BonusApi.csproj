@@ -29,8 +29,7 @@
     <PropertyGroup>
         <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     </PropertyGroup>
-
-  <!--  <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
+    <!--<Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Release' ">
         <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Release;NswagGen=Y" Command="$(NSwagExe_Net70) run nswag.json /variables:Configuration=$(Configuration)" />
     </Target>-->
     

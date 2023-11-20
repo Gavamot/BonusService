@@ -208,7 +208,7 @@ public class PayTest : BonusTestApi
     [InlineData(1000, 2000, 100, 1000)]
     [InlineData(1000, 1, 20, 1)]
     [InlineData(1000, 500, 20, 200)]
-    public void PayFromSumXPersonHasYBonusesWithZPercentages_MustPayN(long payX, long BalanceY, int PercentagesZ, long SpendN)
+    public async Task PayFromSumXPersonHasYBonusesWithZPercentages_MustPayN(long payX, long BalanceY, int PercentagesZ, long SpendN)
     {
         postgres.Transactions.AddRange(new []
         {
@@ -232,9 +232,9 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = 50
             });
 
-        postgres.SaveChanges();
+        await postgres.SaveChangesAsync();
 
-        var payed =  api.ApiPay(new PayRequestDto()
+        var payed = await  api.ApiPayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -255,14 +255,14 @@ public class PayTest : BonusTestApi
     }
 
      [Fact]
-    public void WrongParameters_TrowsException()
+    public async Task WrongParameters_TrowsException()
      {
          void PayTrows(PayRequestDto request)
          {
-             Assert.Throws<ApiException>( () =>
+             Assert.ThrowsAsync<ApiException>(async () =>
             {
-                 api.ApiPay(request);
-            });
+                 await api.ApiPayAsync(request);
+            }).GetAwaiter().GetResult();
         }
 
         var requestOriginal = new PayRequestDto()
