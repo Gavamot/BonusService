@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 namespace BonusService.Test.Common;
 
 public static class SystemTerminalHelper
@@ -16,9 +17,13 @@ public static class SystemTerminalHelper
         proc.StartInfo.UseShellExecute = false;
         proc.StartInfo.RedirectStandardOutput = true;
         proc.Start();
-        while (!proc.StandardOutput.EndOfStream) {
-            Console.WriteLine (proc.StandardOutput.ReadLine());
+        StringBuilder output = new StringBuilder();
+        while (!proc.StandardOutput.EndOfStream)
+        {
+            output.Append(proc.StandardOutput.ReadLine());
         }
+        var a = output.ToString();
+        Console.WriteLine(a);
         return Task.CompletedTask;
     }
 }
@@ -45,7 +50,7 @@ public static class InfraHelper
 
     public static Task CreateMongoDatabase(string dbName)
     {
-        var dockerCmd = $"""docker exec -i {MongoContainerName} mongosh use {dbName}""";
+        var dockerCmd = $"""docker exec -i {MongoContainerName} mongosh use --eval 'use {dbName}''""";
         return SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 

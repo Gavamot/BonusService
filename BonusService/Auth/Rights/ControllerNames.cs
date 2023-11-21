@@ -9,4 +9,5 @@ public static class ControllerNames
     public const string Pay = "Pay";
     public const string PayManual = "PayManual";
     public const string Car = "PayManual";
+    public const string BonusProgramAchievement = "BonusProgramAchievement";
 }

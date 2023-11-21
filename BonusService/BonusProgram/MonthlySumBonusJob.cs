@@ -1,6 +1,6 @@
 using BonusService.Common;
 using BonusService.Postgres;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 
 namespace BonusService.Bonuses;
 
@@ -48,7 +48,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         int bankId = bonusProgram.BankId;
 
         var curMonth = _dateTimeService.GetCurrentMonth();
-        var data = _mongo.Sessions.Where(x => x.status == 7
+        var data = _mongo.Sessions.AsQueryable().Where(x => x.status == 7
                 && x.user != null
                 && x.user.clientNodeId != null
                 && x.user.chargingClientType == 0
@@ -58,13 +58,12 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
                 && x.chargeEndTime >= curMonth.from && x.chargeEndTime < curMonth.to)
-            .GroupBy(x => x.user!.clientNodeId)
-            .AsNoTracking();
+            .GroupBy(x => x.user!.clientNodeId);
 
         var capacity = 4096;
         List<Transaction> transactions = new(4096);
 
-        var date = _dateTimeService.GetCurrentMonth().from;
+        var date = _dateTimeService. GetCurrentMonth().from;
 
         foreach (var group in data)
         {

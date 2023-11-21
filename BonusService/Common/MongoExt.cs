@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.EntityFrameworkCore.Extensions;
 namespace BonusService.Common;
 
 public class MongoConfig
@@ -19,18 +18,33 @@ public static class MongoExt
 {
     public static IServiceCollection AddMongoService(this IServiceCollection services, IConfiguration configuration)
     {
-        var config = configuration.GetRequiredSection(nameof(MongoConfig)).Get<MongoConfig>() ?? throw new AggregateException();
-        services.AddMongoDB<MongoDbContext>(config.ConnectionString, config.Database);
+        services.Configure<MongoConfig>(configuration.GetSection(nameof(MongoConfig)));
+
+        services.AddSingleton<MongoDbContext>(serviceProvider =>
+        {
+            var settings = serviceProvider.GetRequiredService<IOptions<MongoConfig>>().Value;
+            return new MongoDbContext(settings.ConnectionString, settings.Database);
+        });
+        //var config = configuration.GetRequiredSection(nameof(MongoConfig)).Get<MongoConfig>() ?? throw new AggregateException();
+        //services.AddMongoDB<MongoDbContext>(config.ConnectionString, config.Database);
         return services;
     }
 }
 
 
-public class MongoDbContext : DbContext
+public class MongoDbContext //: DbContext
 {
-    public DbSet<MongoSession> Sessions { get; set; }
+    public IMongoDatabase Database { get; init; }
+    public const string SessionCollection = "cp_sessions";
+    public MongoDbContext(string connectionString, string databaseName)
+    {
+        var client = new MongoClient(connectionString);
+        Database = client.GetDatabase(databaseName);
+    }
 
+    public IMongoCollection<MongoSession> Sessions => Database.GetCollection<MongoSession>(SessionCollection);
 
+    /*public DbSet<MongoSession> Sessions { get; set; }
     public MongoDbContext(DbContextOptions<MongoDbContext> options) : base(options)
     {
 
@@ -41,14 +55,14 @@ public class MongoDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<MongoSession>().ToCollection("cp_sessions");
 
-    }
+    }*/
 }
 
 public class MongoSession
 {
     public ObjectId _id { get; set; }
     public int? status { get; set; }
-    public DateTime? chargeEndTime { get; set; }
+    public DateTime chargeEndTime { get; set; }
 
     public MongoUser? user { get; set; }
 

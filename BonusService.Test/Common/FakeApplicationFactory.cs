@@ -1,11 +1,6 @@
-using BonusService.Auth.Policy;
 using BonusService.Common;
-using Dapper;
 using FakeItEasy;
-using GST.Fake.Authentication.JwtBearer;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -19,6 +14,7 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
     public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
 
     public readonly IDateTimeService DateTimeService = A.Fake<IDateTimeService>();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         Environment.SetEnvironmentVariable(Program.AppTest, Program.AppTest);
@@ -29,7 +25,7 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
                 new("ConnectionStrings:Postgres", $"Host=localhost;Port=9999;Database={DbName};Username=postgres;Application Name=bonus-service"),
                 new("MongoConfig:ConnectionString", $"mongodb://localhost:9998?serverSelectionTimeoutMS=60000&connectTimeoutMS=7000&socketTimeoutMS=7000"),
                 new("MongoConfig:QueriesFolder", "/PssPlatform/Queries"),
-                new("MongoConfig:Database", "pssplatform"),
+                new("MongoConfig:Database", $"{DbName}"),
             })
             .Build();
         builder

@@ -2,7 +2,6 @@ using BonusApi;
 using BonusService.Common;
 using BonusService.Postgres;
 using FakeItEasy;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test.Common;
@@ -75,6 +74,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     protected readonly IServiceScope scope;
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
+    protected readonly MongoDbContext mongo;
 
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
@@ -86,16 +86,16 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         postgres = scope.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();
         postgres.Database.Migrate();
+        //InfraHelper.CreateMongoDatabase(this.server.DbName).GetAwaiter().GetResult();
+        mongo = scope.GetRequiredService<MongoDbContext>();
+        mongo.Database.DropCollection(MongoDbContext.SessionCollection);
     }
 
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)
     {
         var postgres = InfraHelper.RunPostgresContainer();
-        var mongo = InfraHelper.RunMongo(this.server.DbName).ContinueWith((t) =>
-        {
-            InfraHelper.CreateMongoDatabase(this.server.DbName);
-        });
+        var mongo = InfraHelper.RunMongo(this.server.DbName);
         await Task.WhenAll(postgres, mongo);
     }
 

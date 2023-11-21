@@ -1,12 +1,13 @@
+using BonusService.Auth.Policy;
 using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using MongoDB.EntityFrameworkCore;
 
 namespace BonusService.BonuseProgramExecuter;
 
@@ -36,6 +37,7 @@ public sealed record BonusProgramAchievementResponseItem
 public sealed record BonusProgramAchievementResponse(BonusProgramAchievementResponseItem [] Items);
 public sealed record BonusProgramAchievementRequest(Guid PersonId) : IRequest<BonusProgramAchievementResponse>;
 
+
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
 {
     private readonly MongoDbContext _mongo;
@@ -54,20 +56,21 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     {
         var program = new BonusProgramRep().Get();
         var curMonth = _dateTimeService.GetCurrentMonth();
-        var payment = _mongo.Sessions.Where(x =>
+
+        var payment = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == 7
-                && x.user != null
                 && x.user.clientNodeId == request.PersonId
                 && x.user.chargingClientType == 0
                 && x.tariff != null
                 && x.tariff.BankId == program.BankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime>= curMonth.from && x.chargeEndTime< curMonth.to)
-            .Sum(x=> x.operation.calculatedPayment ?? 0);
-        var levels =  program.ProgramLevels.OrderByDescending(x => x.Level);
-        var curLevel = levels.First(x => x.Condition <= payment);
-        var nextLevel = levels.SkipWhile(x => x.Condition > payment).Skip(1).FirstOrDefault();
+                && x.chargeEndTime != null
+                && x.chargeEndTime>= curMonth.from.UtcDateTime && x.chargeEndTime< curMonth.to.UtcDateTime)
+            .Sum(x=>x.operation.calculatedPayment ?? 0);
+
+        var curLevel = program.ProgramLevels.OrderByDescending(x => x.Level).First(x => x.Condition <= payment);
+        var nextLevel = program.ProgramLevels.OrderBy(x => x.Level).SkipWhile(x => x.Condition <= payment).FirstOrDefault();
 
         return new BonusProgramAchievementResponse(new BonusProgramAchievementResponseItem []
         {
@@ -84,19 +87,21 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
                 LevelAwardSum = curLevel.AwardSum,
 
                 NextLevelCondition = nextLevel?.Condition,
-                NextLevelName = nextLevel.Name,
-                NextLevelAwardPercent = nextLevel.AwardPercent,
-                NextLevelAwardSum = nextLevel.AwardSum
+                NextLevelName = nextLevel?.Name,
+                NextLevelAwardPercent = nextLevel?.AwardPercent,
+                NextLevelAwardSum = nextLevel?.AwardSum
             }
         });
     }
 }
 
+[Authorize]
 [ApiController]
 [Route("/api/[controller]/[action]")]
 public sealed class BonusProgramAchievementController : ControllerBase
 {
     [HttpGet]
+    [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
     public async Task<BonusProgramAchievementResponse> GetPersonAchievement([FromServices] IMediator mediator, [FromQuery]BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);

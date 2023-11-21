@@ -77,6 +77,8 @@ public static class AuthExtensions
             options.AddPolicy(PolicyNames.PayRead, PolicyConfigure.PayRead);
             options.AddPolicy(PolicyNames.PayWrite, PolicyConfigure.PayWrite);
             options.AddPolicy(PolicyNames.PayExecute, PolicyConfigure.PayWrite);
+
+            options.AddPolicy(PolicyNames.GetBonusProgramAchievementRead, PolicyConfigure.BonusProgramAchievementExecute);
         });
 
 
