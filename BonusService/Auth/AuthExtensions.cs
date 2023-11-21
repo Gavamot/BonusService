@@ -16,6 +16,8 @@ public static class AuthExtensions
     public static IServiceCollection AddJwtAuthorization(this IServiceCollection services,
         IConfiguration configuration)
     {
+
+        services.Configure<IdentitySettings>(configuration.GetSection(nameof(IdentitySettings)));
         services.AddDbContext<IdentityPlatformDbContext>();
         services.AddAuthentication(opt =>
                 {
@@ -49,7 +51,6 @@ public static class AuthExtensions
                         NameClaimType = "LevelName"
                     };
                 });
-
         services.AddAuthorization(options =>
         {
             options.DefaultPolicy =
@@ -76,34 +77,32 @@ public static class AuthExtensions
             options.AddPolicy(PolicyNames.PayRead, PolicyConfigure.PayRead);
             options.AddPolicy(PolicyNames.PayWrite, PolicyConfigure.PayWrite);
             options.AddPolicy(PolicyNames.PayExecute, PolicyConfigure.PayWrite);
-
         });
+
+
         return services;
     }
 
     public static void AuthInitJwtJey(this IServiceProvider services)
     {
-        using (var scope = services.CreateScope())
+        if(Program.IsAppTest()) return;
+        using var scope = services.CreateScope();
+        var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
+        var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
+        var jwtKeyFromSettings = identitySettings.Value.TokenSettings.SecretKey;
+        if (jwtKeyFromSettings.IsNullOrEmpty())
         {
-            var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
-            var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
-            var jwtKeyFromSettings = identitySettings.Value.TokenSettings.SecretKey;
-            if (jwtKeyFromSettings.IsNullOrEmpty())
-            {
-                Console.WriteLine("Error JwtKeyGenerator init(). jwtKeyFromSettings Is Null Or Empty!");
-                Console.WriteLine("Выход из приложения exit(1), сервер ASPNET не запущен!");
-                Environment.Exit(1);
-            }
-
-            var identitySystemSole =
-                dbContextIdentity.IdentitySystem.FirstOrDefault(x => x.Name == IdentitySystemNames.SoleJwtKey);
-            if (identitySystemSole == null)
-                throw new Exception("Error: IdentitySystemSole is null. Runing autogen sole");
-
-            JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, identitySystemSole.Value);
+            Console.WriteLine("Error JwtKeyGenerator init(). jwtKeyFromSettings Is Null Or Empty!");
+            Console.WriteLine("Выход из приложения exit(1), bonus сервер не запущен!");
+            Environment.Exit(1);
         }
-        
+
+        var identitySystemSole =
+            dbContextIdentity.IdentitySystem.FirstOrDefault(x => x.Name == IdentitySystemNames.SoleJwtKey);
+        if (identitySystemSole == null)
+            throw new Exception("Error: IdentitySystemSole is null. Running autogen sole");
+
+        JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, identitySystemSole.Value);
     }
 
 }
-

@@ -53,7 +53,6 @@ if (IsNswagBuild())
 }*/
 
 //auth
-services.Configure<IdentitySettings>(configuration.GetSection(nameof(IdentitySettings)));
 services.AddJwtAuthorization(configuration);
 
 
@@ -74,6 +73,7 @@ WebApplication app = builder.Build();
     app.UseOpenApi();
     app.UseSwaggerUi3();
 }*/
+
 app.Services.AuthInitJwtJey();
 
 app.UseSwagger();
@@ -85,7 +85,11 @@ app.UseSwaggerUI(c=>
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
-app.MapControllers();
+var controllers = app.MapControllers();
+if (IsAppTest())
+{
+    controllers.AllowAnonymous();
+}
 
 app.ApplyPostgresMigrations();
 
@@ -95,5 +99,6 @@ public partial class Program
 {
     public const string AppTest = nameof(AppTest);
     public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
+    public static bool IsNotAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest));
     public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
 }

@@ -1,6 +1,11 @@
+using BonusService.Auth.Policy;
 using BonusService.Common;
+using Dapper;
 using FakeItEasy;
+using GST.Fake.Authentication.JwtBearer;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
