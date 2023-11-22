@@ -9,9 +9,9 @@
 
     <ItemGroup>
         <PackageReference Include="Correlate.AspNetCore" Version="5.2.0" />
-        <PackageReference Include="FluentValidation" Version="11.8.0" />
+        <PackageReference Include="FluentValidation" Version="11.8.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.0" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
         <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.11" />
         <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.11">
           <PrivateAssets>all</PrivateAssets>
