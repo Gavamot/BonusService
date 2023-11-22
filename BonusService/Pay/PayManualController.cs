@@ -34,7 +34,7 @@ public sealed record PayTransactionRequest(Transaction transaction) : ICommand<l
 
 [ApiController]
 [Authorize]
-[Route("/api/[controller]")]
+[Route("/[controller]")]
 public sealed class PayManualController : ControllerBase
 {
     /// <summary>

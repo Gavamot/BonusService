@@ -46,7 +46,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
@@ -80,7 +80,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(sum);
@@ -114,7 +114,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
@@ -164,7 +164,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition / 3 + curLevel.Condition / 3 + curLevel.Condition / 3 + 6);
@@ -197,7 +197,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
         res.LevelName.Should().Be(curLevel.Name);
         res.LevelCondition.Should().Be(curLevel.Condition);
@@ -268,7 +268,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         bonusPrograms.Should().NotBeNull();
     }
 
@@ -284,7 +284,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
         });
 
-        var bonusPrograms = await api.ApiBonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         bonusPrograms.Items.Count.Should().Be(1);
         var item = bonusPrograms.Items.First();
         item.CurrentSum.Should().Be(0);

@@ -60,7 +60,7 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 
 [ApiController]
 [Authorize]
-[Route("/api/[controller]")]
+[Route("/[controller]")]
 public sealed class PayController : ControllerBase
 {
     /// <summary>

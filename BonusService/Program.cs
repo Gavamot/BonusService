@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using BonusService.Auth;
 using BonusService.Bonuses;
@@ -48,8 +47,6 @@ services.AddHttpLogging(logging =>
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
-
-
 services.AddHealthChecks();
 services.TryAddSingleton<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
@@ -62,17 +59,9 @@ services.AddValidatorsFromAssemblyContaining<Program>();
 
 services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-/*
-if (IsNswagBuild())
-{
-    services.AddOpenApiDocument();
-}*/
 
-//auth
 services.AddJwtAuthorization(configuration);
-
 
 services.AddSwagger();
 
@@ -82,7 +71,6 @@ services.AddMediator(opt =>
 });
 
 WebApplication app = builder.Build();
-
 
 app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
@@ -99,10 +87,6 @@ app.UseHttpsRedirection();
 app.UseJwtAuthorization();
 
 var controllers = app.MapControllers();
-/*if (IsAllowDisableAuth())
-{
-    controllers.AllowAnonymous();
-}*/
 
 app.ApplyPostgresMigrations();
 

@@ -69,7 +69,7 @@ public sealed class GetBalanceByBankIdHandler : IRequestHandler<GetBalanceByBank
 
 [ApiController]
 [Authorize]
-[Route("/api/[controller]/[action]")]
+[Route("/[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {
     /// <summary>

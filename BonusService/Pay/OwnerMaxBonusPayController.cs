@@ -27,7 +27,7 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 /// </summary>
 [ApiController]
 [Authorize]
-[Route("/api/[controller]/[action]")]
+[Route("/[controller]/[action]")]
 public sealed class OwnerMaxBonusPayController : CrudController<OwnerMaxBonusPay>
 {
     public OwnerMaxBonusPayController(OwnerByPayRep rep) : base(rep)

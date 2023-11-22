@@ -12,7 +12,7 @@ public class GetBalanceTest : BonusTestApi
     [Fact]
     public async Task EmptyBonuses_ReturnEmptyList()
     {
-        var balance =  await api.ApiBalanceGetAsync(Q.PersonId1, Q.BankIdRub);
+        var balance =  await api.BalanceGetAsync(Q.PersonId1, Q.BankIdRub);
         balance.Should().Be(0);
     }
 
@@ -20,7 +20,7 @@ public class GetBalanceTest : BonusTestApi
     public async Task OneTransactionOneBalance_ReturnListWithOneBalance()
     {
         await InitTransactionTran1Person1BankRub(Q.Sum1000);
-        var balances =  await api.ApiBalanceGetAsync(Q.PersonId1, Q.BankIdRub);
+        var balances =  await api.BalanceGetAsync(Q.PersonId1, Q.BankIdRub);
         balances.Should().Be(Q.Sum1000);
     }
 
@@ -52,7 +52,7 @@ public class GetBalanceTest : BonusTestApi
             });
         await postgres.SaveChangesAsync();
 
-        var balance =  await api.ApiBalanceGetAsync(Q.PersonId1, Q.BankIdRub);
+        var balance =  await api.BalanceGetAsync(Q.PersonId1, Q.BankIdRub);
         balance.Should().Be(Q.Sum500 + Q.Sum1000 + Q.Sum2000);
     }
 }

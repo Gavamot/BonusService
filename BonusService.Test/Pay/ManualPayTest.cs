@@ -25,7 +25,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId1,
         };
 
-        var res = await api.ApiPayManualAsync(request);
+        var res = await api.PayManualAsync(request);
         res.Should().Be(0L);
 
         var isTransactionExist = await postgres.Transactions.AnyAsync();
@@ -45,7 +45,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId2,
         };
 
-        return await api.ApiPayManualAsync(request);
+        return await api.PayManualAsync(request);
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId3,
         };
 
-        var res =  await api.ApiPayManualAsync(request);
+        var res =  await api.PayManualAsync(request);
         res.Should().Be(0);
         var balance = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         balance.Should().BeNull();
@@ -132,7 +132,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId3,
         };
 
-        var res =  await api.ApiPayManualAsync(request);
+        var res =  await api.PayManualAsync(request);
         res.Should().Be(Q.Sum1000);
         var transaction = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         transaction.Should().NotBeNull();
@@ -146,7 +146,7 @@ public class ManualPayTest : BonusTestApi
     {
         async Task PayManualAsyncTrows(PayManualRequestDto request)
         {
-            Func<Task> t = async () => await api.ApiPayManualAsync(request);
+            Func<Task> t = async () => await api.PayManualAsync(request);
             await t.Should().ThrowAsync<Exception>();
         }
 

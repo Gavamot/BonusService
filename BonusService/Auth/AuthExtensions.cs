@@ -4,6 +4,7 @@ using BonusService.Auth.DbContext;
 using BonusService.Auth.Policy;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using PlatformWebApi.Identity.Settings;
@@ -16,9 +17,9 @@ public static class AuthExtensions
     public static IServiceCollection AddJwtAuthorization(this IServiceCollection services,
         IConfiguration configuration)
     {
-
         services.Configure<IdentitySettings>(configuration.GetSection(nameof(IdentitySettings)));
         services.AddDbContext<IdentityPlatformDbContext>();
+
         services.AddAuthentication(opt =>
                 {
                     opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -81,14 +82,12 @@ public static class AuthExtensions
             options.AddPolicy(PolicyNames.GetBonusProgramAchievementRead, PolicyConfigure.BonusProgramAchievementExecute);
         });
 
-
         return services;
     }
 
     public static void UseJwtAuthorization(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
-        var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
         var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
         var jwtKeyFromSettings = identitySettings.Value.TokenSettings.SecretKey;
         if (jwtKeyFromSettings.IsNullOrEmpty())
@@ -98,14 +97,28 @@ public static class AuthExtensions
             Environment.Exit(1);
         }
 
-        var identitySystemSole = dbContextIdentity.IdentitySystem.FirstOrDefault(x => x.Name == IdentitySystemNames.SoleJwtKey);
-        if (identitySystemSole == null)
-            throw new Exception("Error: IdentitySystemSole is null. Running autogen sole");
-
-        JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, identitySystemSole.Value);
+        string salt = GetSalt(app);
+        JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, salt);
 
         app.UseAuthentication();
         app.UseAuthorization();
+    }
+
+    private static string GetSalt(IApplicationBuilder app)
+    {
+        using var scope = app.ApplicationServices.CreateScope();
+        var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
+        if (Program.IsLocal() || Program.IsAppTest())
+        {
+           return "qB)4(KCIzvSQ4u7jX8s";
+        }
+        else
+        {
+            var identitySystemSole = dbContextIdentity.IdentitySystem.FirstOrDefault(x => x.Name == IdentitySystemNames.SoleJwtKey);
+            if (identitySystemSole == null)
+                throw new Exception("Error: IdentitySystemSole is null. Running autogen sole");
+            return identitySystemSole.Value;
+        }
     }
 
 }

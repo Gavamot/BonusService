@@ -98,7 +98,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
 [Authorize]
 [ApiController]
-[Route("/api/[controller]/[action]")]
+[Route("/[controller]/[action]")]
 public sealed class BonusProgramAchievementController : ControllerBase
 {
     [HttpGet]

@@ -8,7 +8,7 @@ namespace BonusService.BonuseProgramExecuter;
 
 [ApiController]
 [Authorize]
-[Route("/api/[controller]/[action]")]
+[Route("/[controller]/[action]")]
 public sealed class BonusProgramController : ControllerBase//: CrudController<BonusProgram>
 {
     private readonly IBonusProgramRep tempRep;

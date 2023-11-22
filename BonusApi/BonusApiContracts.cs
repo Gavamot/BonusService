@@ -24,6 +24,12 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NSwag", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial interface IBonusClient
     {
+        /// <summary>
+        /// Начисление бонусных баллов оператором
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task AccrualManualAsync(AccrualManualRequestDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -31,7 +37,14 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task AccrualManualAsync(AccrualManualRequestDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Получить баланс пользователя по всем валютам
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(System.Guid personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -39,7 +52,14 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Получить баланс пользователя по конкретной валюте
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> BalanceGetAsync(System.Guid personId, int bankId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -47,42 +67,77 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int bankId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<long> BalanceGetAsync(System.Guid personId, int bankId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> ApiBonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(System.Guid personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> OwnerMaxBonusPayGetAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> OwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Списание бонусных баллов сервисом оплаты
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> PayAsync(PayRequestDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -90,7 +145,16 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<long> PayAsync(PayRequestDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Списание бонусных баллов оператором
+        /// <br/>Возращает число списанных оператором бонусов.
+        /// <br/>Оператор не может списывать бонусы в минус
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> PayManualAsync(PayManualRequestDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -100,7 +164,7 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+        System.Threading.Tasks.Task<long> PayManualAsync(PayManualRequestDto body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -116,6 +180,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -133,6 +198,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
         public int BankId
         {
             get { return _bankId; }
@@ -150,6 +216,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
         public long BonusSum
         {
             get { return _bonusSum; }
@@ -167,6 +234,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("description")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string Description
         {
             get { return _description; }
@@ -184,6 +252,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string TransactionId
         {
             get { return _transactionId; }
@@ -228,13 +297,13 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BalanceResponseItemDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _bankId = default!;
-        private long _sum = default!;
+        private int? _bankId = default!;
+        private long? _sum = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BankId
+        public int? BankId
         {
             get { return _bankId; }
 
@@ -251,7 +320,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("sum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long Sum
+        public long? Sum
         {
             get { return _sum; }
 
@@ -295,25 +364,25 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgram : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _id = default!;
+        private int? _id = default!;
         private string? _name = default!;
-        private BonusProgramType _bonusProgramType = default!;
+        private BonusProgramType? _bonusProgramType = default!;
         private string? _description = default!;
-        private System.DateTimeOffset _dateStart = default!;
+        private System.DateTimeOffset? _dateStart = default!;
         private System.DateTimeOffset? _dateStop = default!;
-        private int _bankId = default!;
+        private int? _bankId = default!;
         private string? _executionCron = default!;
-        private FrequencyTypes _frequencyType = default!;
-        private int _frequencyValue = default!;
-        private bool _isDeleted = default!;
-        private System.DateTimeOffset _lastUpdated = default!;
+        private FrequencyTypes? _frequencyType = default!;
+        private int? _frequencyValue = default!;
+        private bool? _isDeleted = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
         private System.Collections.Generic.ICollection<BonusProgramLevel>? _programLevels = default!;
         private System.Collections.Generic.ICollection<BonusProgramHistory>? _bonusProgramHistory = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Id
+        public int? Id
         {
             get { return _id; }
 
@@ -348,7 +417,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public BonusProgramType BonusProgramType
+        public BonusProgramType? BonusProgramType
         {
             get { return _bonusProgramType; }
 
@@ -382,7 +451,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("dateStart")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset DateStart
+        public System.DateTimeOffset? DateStart
         {
             get { return _dateStart; }
 
@@ -416,7 +485,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BankId
+        public int? BankId
         {
             get { return _bankId; }
 
@@ -451,7 +520,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public FrequencyTypes FrequencyType
+        public FrequencyTypes? FrequencyType
         {
             get { return _frequencyType; }
 
@@ -468,7 +537,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("frequencyValue")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int FrequencyValue
+        public int? FrequencyValue
         {
             get { return _frequencyValue; }
 
@@ -485,7 +554,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("isDeleted")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool IsDeleted
+        public bool? IsDeleted
         {
             get { return _isDeleted; }
 
@@ -502,7 +571,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset LastUpdated
+        public System.DateTimeOffset? LastUpdated
         {
             get { return _lastUpdated; }
 
@@ -585,6 +654,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -678,14 +748,14 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgramAchievementResponseItem : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _bonusProgramId = default!;
+        private int? _bonusProgramId = default!;
         private string? _bonusProgramName = default!;
-        private BonusProgramType _type = default!;
+        private BonusProgramType? _type = default!;
         private string? _levelName = default!;
-        private long _levelCondition = default!;
-        private int _levelAwardPercent = default!;
-        private int _levelAwardSum = default!;
-        private long _currentSum = default!;
+        private long? _levelCondition = default!;
+        private int? _levelAwardPercent = default!;
+        private int? _levelAwardSum = default!;
+        private long? _currentSum = default!;
         private string? _nextLevelName = default!;
         private long? _nextLevelCondition = default!;
         private int? _nextLevelAwardPercent = default!;
@@ -694,7 +764,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BonusProgramId
+        public int? BonusProgramId
         {
             get { return _bonusProgramId; }
 
@@ -729,7 +799,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public BonusProgramType Type
+        public BonusProgramType? Type
         {
             get { return _type; }
 
@@ -763,7 +833,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("levelCondition")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long LevelCondition
+        public long? LevelCondition
         {
             get { return _levelCondition; }
 
@@ -780,7 +850,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("levelAwardPercent")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int LevelAwardPercent
+        public int? LevelAwardPercent
         {
             get { return _levelAwardPercent; }
 
@@ -797,7 +867,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("levelAwardSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int LevelAwardSum
+        public int? LevelAwardSum
         {
             get { return _levelAwardSum; }
 
@@ -814,7 +884,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("currentSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long CurrentSum
+        public long? CurrentSum
         {
             get { return _currentSum; }
 
@@ -926,19 +996,19 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgramHistory : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _id = default!;
-        private BonusProgram _bonusProgram = default!;
-        private int _bonusProgramId = default!;
-        private System.DateTimeOffset _execTimeStart = default!;
-        private System.DateTimeOffset _execTimeEnd = default!;
-        private int _bankId = default!;
-        private long _totalSum = default!;
-        private int _clientCount = default!;
+        private int? _id = default!;
+        private BonusProgram? _bonusProgram = default!;
+        private int? _bonusProgramId = default!;
+        private System.DateTimeOffset? _execTimeStart = default!;
+        private System.DateTimeOffset? _execTimeEnd = default!;
+        private int? _bankId = default!;
+        private long? _totalSum = default!;
+        private int? _clientCount = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Id
+        public int? Id
         {
             get { return _id; }
 
@@ -955,7 +1025,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public BonusProgram BonusProgram
+        public BonusProgram? BonusProgram
         {
             get { return _bonusProgram; }
 
@@ -972,7 +1042,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BonusProgramId
+        public int? BonusProgramId
         {
             get { return _bonusProgramId; }
 
@@ -989,7 +1059,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("execTimeStart")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset ExecTimeStart
+        public System.DateTimeOffset? ExecTimeStart
         {
             get { return _execTimeStart; }
 
@@ -1006,7 +1076,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("execTimeEnd")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset ExecTimeEnd
+        public System.DateTimeOffset? ExecTimeEnd
         {
             get { return _execTimeEnd; }
 
@@ -1023,7 +1093,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BankId
+        public int? BankId
         {
             get { return _bankId; }
 
@@ -1040,7 +1110,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("totalSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long TotalSum
+        public long? TotalSum
         {
             get { return _totalSum; }
 
@@ -1057,7 +1127,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("clientCount")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int ClientCount
+        public int? ClientCount
         {
             get { return _clientCount; }
 
@@ -1101,20 +1171,20 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgramLevel : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _id = default!;
+        private int? _id = default!;
         private string? _name = default!;
-        private System.DateTimeOffset _lastUpdated = default!;
-        private int _level = default!;
-        private int _bonusProgramId = default!;
-        private BonusProgram _bonusProgram = default!;
-        private long _condition = default!;
-        private int _awardPercent = default!;
-        private int _awardSum = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
+        private int? _level = default!;
+        private int? _bonusProgramId = default!;
+        private BonusProgram? _bonusProgram = default!;
+        private long? _condition = default!;
+        private int? _awardPercent = default!;
+        private int? _awardSum = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Id
+        public int? Id
         {
             get { return _id; }
 
@@ -1148,7 +1218,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset LastUpdated
+        public System.DateTimeOffset? LastUpdated
         {
             get { return _lastUpdated; }
 
@@ -1165,7 +1235,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("level")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Level
+        public int? Level
         {
             get { return _level; }
 
@@ -1182,7 +1252,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int BonusProgramId
+        public int? BonusProgramId
         {
             get { return _bonusProgramId; }
 
@@ -1199,7 +1269,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public BonusProgram BonusProgram
+        public BonusProgram? BonusProgram
         {
             get { return _bonusProgram; }
 
@@ -1220,7 +1290,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("condition")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long Condition
+        public long? Condition
         {
             get { return _condition; }
 
@@ -1241,7 +1311,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("awardPercent")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int AwardPercent
+        public int? AwardPercent
         {
             get { return _awardPercent; }
 
@@ -1258,7 +1328,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("awardSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int AwardSum
+        public int? AwardSum
         {
             get { return _awardSum; }
 
@@ -1341,6 +1411,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -1358,6 +1429,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
         public int BankId
         {
             get { return _bankId; }
@@ -1407,6 +1479,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -1500,15 +1573,15 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class OwnerMaxBonusPay : System.ComponentModel.INotifyPropertyChanged
     {
-        private int _id = default!;
+        private int? _id = default!;
         private int _ownerId = default!;
-        private int _maxBonusPayPercentages = default!;
-        private System.DateTimeOffset _lastUpdated = default!;
+        private int? _maxBonusPayPercentages = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int Id
+        public int? Id
         {
             get { return _id; }
 
@@ -1550,7 +1623,8 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("maxBonusPayPercentages")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int MaxBonusPayPercentages
+        [System.ComponentModel.DataAnnotations.Range(0, 100)]
+        public int? MaxBonusPayPercentages
         {
             get { return _maxBonusPayPercentages; }
 
@@ -1567,7 +1641,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset LastUpdated
+        public System.DateTimeOffset? LastUpdated
         {
             get { return _lastUpdated; }
 
@@ -1620,6 +1694,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -1637,6 +1712,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
         public int BankId
         {
             get { return _bankId; }
@@ -1654,6 +1730,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bonusSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
         public long BonusSum
         {
             get { return _bonusSum; }
@@ -1671,6 +1748,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("description")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string Description
         {
             get { return _description; }
@@ -1688,6 +1766,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string TransactionId
         {
             get { return _transactionId; }
@@ -1743,6 +1822,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid PersonId
         {
             get { return _personId; }
@@ -1760,6 +1840,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("bankId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1, int.MaxValue)]
         public int BankId
         {
             get { return _bankId; }
@@ -1777,6 +1858,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("payment")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Range(1D, double.MaxValue)]
         public long Payment
         {
             get { return _payment; }
@@ -1794,6 +1876,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("description")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string Description
         {
             get { return _description; }
@@ -1811,6 +1894,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("transactionId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public string TransactionId
         {
             get { return _transactionId; }
@@ -1828,6 +1912,7 @@ namespace BonusApi
         [System.Text.Json.Serialization.JsonPropertyName("ezsId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
         public System.Guid EzsId
         {
             get { return _ezsId; }

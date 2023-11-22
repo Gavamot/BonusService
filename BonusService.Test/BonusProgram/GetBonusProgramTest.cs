@@ -11,7 +11,7 @@ public class BonusProgramTest : BonusTestApi
     [Fact]
     public async Task GetAllBonusPrograms_GetNotEmptyArray()
     {
-        var programs = await api.ApiBonusProgramGetAllAsync();
+        var programs = await api.BonusProgramGetAllAsync();
         programs.Should().NotBeNullOrEmpty();
     }
 }

@@ -59,7 +59,7 @@ public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestD
 
 [ApiController]
 [Authorize]
-[Route("/api/[controller]")]
+[Route("/[controller]")]
 public sealed class AccrualManualController : ControllerBase
 {
     /// <summary>

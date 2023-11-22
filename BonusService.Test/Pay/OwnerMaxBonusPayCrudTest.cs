@@ -23,12 +23,12 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         });
         await postgres.SaveChangesAsync();
 
-        var ow1= await api.ApiOwnerMaxBonusPayGetByIdAsync(Q.OwnerId1);
+        var ow1= await api.OwnerMaxBonusPayGetByIdAsync(Q.OwnerId1);
         ow1.OwnerId.Should().Be(Q.OwnerId1);
         ow1.MaxBonusPayPercentages.Should().Be(10);
         ow1.Id.Should().BePositive();
 
-        var ow2 = await api.ApiOwnerMaxBonusPayGetByIdAsync(Q.OwnerId2);
+        var ow2 = await api.OwnerMaxBonusPayGetByIdAsync(Q.OwnerId2);
         ow2.OwnerId.Should().Be(Q.OwnerId2);
         ow2.MaxBonusPayPercentages.Should().Be(20);
         ow2.Id.Should().BePositive();
@@ -44,7 +44,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         });
         await postgres.SaveChangesAsync();
 
-        var owners= await api.ApiOwnerMaxBonusPayGetAllAsync();
+        var owners= await api.OwnerMaxBonusPayGetAllAsync();
         owners.Count.Should().Be(2);
         owners.First().Should().NotBeNull();
         owners.Last().Should().NotBeNull();
@@ -53,7 +53,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     [Fact]
     public async Task Add()
     {
-        var owner = await api.ApiOwnerMaxBonusPayAddAsync(new BonusApi.OwnerMaxBonusPay()
+        var owner = await api.OwnerMaxBonusPayAddAsync(new BonusApi.OwnerMaxBonusPay()
         {
             OwnerId = Q.OwnerId1,
             MaxBonusPayPercentages = 20
@@ -84,7 +84,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
 
         var id = postgres.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
 
-        var owner = await api.ApiOwnerMaxBonusPayUpdateAsync(new BonusApi.OwnerMaxBonusPay()
+        var owner = await api.OwnerMaxBonusPayUpdateAsync(new BonusApi.OwnerMaxBonusPay()
         {
             OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 50,Id = id
         });
@@ -117,7 +117,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
 
         var id = postgres.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
 
-        await api.ApiOwnerMaxBonusPayDeleteByIdAsync(id);
+        await api.OwnerMaxBonusPayDeleteByIdAsync(id);
 
         using var scope = CreateScope();
         var newPostgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();

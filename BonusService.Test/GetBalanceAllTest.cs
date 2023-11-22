@@ -12,7 +12,7 @@ public class GetBalanceAllTest : BonusTestApi
     [Fact]
     public async Task EmptyBonuses_ReturnEmptyList()
     {
-        var balance =  await api.ApiBalanceGetAllAsync(Q.PersonId1);
+        var balance =  await api.BalanceGetAllAsync(Q.PersonId1);
         balance.Items.Should().BeEmpty();
     }
 
@@ -20,7 +20,7 @@ public class GetBalanceAllTest : BonusTestApi
     public async Task OneTransactionOneBalance_ReturnListWithOneBalance()
     {
         await InitTransactionTran1Person1BankRub(Q.Sum1000);
-        var balances =  await api.ApiBalanceGetAllAsync(Q.PersonId1);
+        var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(1);
         var balance = balances.Items.First();
         balance.Sum.Should().Be(Q.Sum1000);
@@ -55,7 +55,7 @@ public class GetBalanceAllTest : BonusTestApi
         });
         await postgres.SaveChangesAsync();
 
-        var balances =  await api.ApiBalanceGetAllAsync(Q.PersonId1);
+        var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(1);
         var balance = balances.Items.First();
         balance.Sum.Should().Be(Q.Sum500 + Q.Sum1000 + Q.Sum2000);
@@ -90,7 +90,7 @@ public class GetBalanceAllTest : BonusTestApi
             });
         await postgres.SaveChangesAsync();
 
-        var balances =  await api.ApiBalanceGetAllAsync(Q.PersonId1);
+        var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(2);
         var balanceRus = balances.Items.FirstOrDefault(x=>x.BankId == Q.BankIdRub);
         balanceRus.Should().NotBeNull();
@@ -137,7 +137,7 @@ public class GetBalanceAllTest : BonusTestApi
             });
         await postgres.SaveChangesAsync();
 
-        var balances =  await api.ApiBalanceGetAllAsync(Q.PersonId1);
+        var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(2);
         var balanceRus = balances.Items.FirstOrDefault(x=>x.BankId == Q.BankIdRub);
         balanceRus.Should().NotBeNull();
