@@ -34,10 +34,12 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 {
     private readonly PostgresDbContext _postgres;
     private readonly IMediator _mediator;
-    public PayCommand(PostgresDbContext postgres, IMediator mediator)
+    private readonly ILogger<PayCommand> _logger;
+    public PayCommand(PostgresDbContext postgres, IMediator mediator, ILogger<PayCommand> logger)
     {
         _postgres = postgres;
         _mediator = mediator;
+        _logger = logger;
     }
 
     public async ValueTask<long> Handle(PayRequestDto command, CancellationToken ct)
@@ -48,7 +50,11 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
         var percentages = owner?.MaxBonusPayPercentages ?? 100;
         var bonusSum = (command.Payment * percentages) / 100;
         transaction.BonusSum = bonusSum;
+        _logger.LogInformation("Запрос на списание бонусов PersonId={PersonId} , BankId={BankId}, сумма платежа = {Payment}, максимальный размер для OwnerId={Percentages}%, сумма бонусов {bonusSum}",
+            transaction.PersonId, transaction.BankId,command.Payment, percentages, bonusSum);
         var res = await _mediator.Send(new PayTransactionRequest(transaction), ct);
+        _logger.LogInformation("Запрос на списание бонусов PersonId={PersonId} , BankId={BankId}, сумма платежа = {Payment}, максимальный размер для OwnerId={Percentages}%, сумма бонусов {bonusSum}",
+            transaction.PersonId, transaction.BankId,command.Payment, percentages, bonusSum);
         return res;
     }
 }
