@@ -47,7 +47,6 @@ services.AddHangfireService(configuration);
 services.AddFluentValidationAutoValidation();
 services.AddFluentValidationClientsideAdapters();
 services.AddValidatorsFromAssemblyContaining<Program>();
-services.AddFluentValidationRulesToSwagger();
 
 services.AddControllers().AddJsonOptions(opt=>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
@@ -62,9 +61,6 @@ if (IsNswagBuild())
 //auth
 services.AddJwtAuthorization(configuration);
 
-
-services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 services.AddSwagger();
 

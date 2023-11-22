@@ -1,4 +1,7 @@
+using System.Reflection;
+using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 namespace BonusService.Common;
 
@@ -6,6 +9,8 @@ public static class Extensions
 {
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
+        services.AddFluentValidationRulesToSwagger();
+        services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(
             c =>
             {
@@ -36,6 +41,11 @@ public static class Extensions
                         new List<string>()
                     }
                 });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+                c.IncludeXmlCommentsWithRemarks(xmlPath);
 
             });
         return services;

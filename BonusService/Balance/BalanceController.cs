@@ -43,7 +43,7 @@ public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanc
     public GetBalanceByBankIdDtoValidator()
     {
         RuleFor(x => x.PersonId).NotEmpty();
-        RuleFor(x => x.BankId).GreaterThan(0);
+        RuleFor(x => x.BankId).NotEmpty().GreaterThan(0);
     }
 }
 

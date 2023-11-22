@@ -13,8 +13,8 @@ public sealed class PayDtoValidator : AbstractValidator<PayRequestDto>
     public PayDtoValidator()
     {
         RuleFor(x => x.PersonId).NotEmpty();
-        RuleFor(x => x.Payment).GreaterThan(0).WithMessage("Сумма должна быть положительной");
-        RuleFor(x => x.BankId).GreaterThan(0);
+        RuleFor(x => x.Payment).NotEmpty().GreaterThan(0).WithMessage("Сумма должна быть положительной");
+        RuleFor(x => x.BankId).NotEmpty().GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
         RuleFor(x => x.EzsId).NotEmpty();

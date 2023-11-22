@@ -1,10 +1,7 @@
 using System.Data;
-using System.Security.Cryptography.X509Certificates;
 using BonusService.Common;
-using BonusService.Pay;
 using BonusService.Postgres;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver.Linq;
 using Riok.Mapperly.Abstractions;
 
 namespace BonusService.Bonuses;

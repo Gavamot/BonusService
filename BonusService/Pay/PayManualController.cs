@@ -12,8 +12,8 @@ public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
     public PayManualDtoValidator()
     {
         RuleFor(x => x.PersonId).NotEmpty();
-        RuleFor(x => x.BonusSum).GreaterThan(0).WithMessage("Сумма должна быть положительной");
-        RuleFor(x => x.BankId).GreaterThan(0);
+        RuleFor(x => x.BonusSum).NotEmpty().GreaterThan(0).WithMessage("Сумма должна быть положительной");
+        RuleFor(x => x.BankId).NotEmpty().GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
         RuleFor(x => x.UserId).NotEmpty();
