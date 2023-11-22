@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using BonusApi;
 using BonusService.Common;
 using BonusService.Postgres;
@@ -32,8 +33,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public const long Sum500 = 500;
         public const string Description1 = "Описанье 1";
         public const string Description2 = "Описанье 2";
-        public readonly static Guid UserId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c963f66afa6");
-        public readonly static Guid UserId2 = Guid.Parse("3fa85f64-5717-4562-b3fc-2c963f66af45");
+        public readonly static string UserName = "Admin";
         public const string TransactionId1 = "3fa85f64-5717-4562-b3fc-2c963f66af11";
         public const string TransactionId2 = "3fa85f64-5717-4562-b3fc-2c963fa6af12";
         public const string TransactionId3 = "33385f64-5717-4562-b3fc-2c963f66af12";
@@ -64,12 +64,20 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             TransactionId = Q.TransactionId1,
             Description = Q.Description1,
             Type = TransactionType.Manual,
-            UserId = Q.UserId1
+            UserName = Q.UserName
         });
         await postgres.SaveChangesAsync();
     }
 
-    protected BonusClient api => new (server.CreateClient());
+    protected BonusClient api
+    {
+        get
+        {
+            var client = server.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAwNjUyODQzLCJleHAiOjE3OTA2NTI4NDMsImlhdCI6MTcwMDY1Mjg0MywiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.C3zc6s9FH7emLZVpRyaulc_aw2QD4gNzaUNTLXVnj_FDhSQzDxijr7aWYrT3XT2gPziHYUFh8uBtIAY_nfQ3Mw");
+            return new BonusClient(client);
+        }
+    }
     protected readonly FakeApplicationFactory<Program> server;
     protected readonly IServiceScope scope;
     protected IServiceScope CreateScope() => server.Services.CreateScope();

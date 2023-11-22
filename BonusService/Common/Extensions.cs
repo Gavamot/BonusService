@@ -7,6 +7,10 @@ namespace BonusService.Common;
 
 public static class Extensions
 {
+    public static string GetUserName(this HttpContext httpContext)
+    {
+        return httpContext.User.Claims.First(x => x.Type == "name").Value;
+    }
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {
         services.AddFluentValidationRulesToSwagger();
@@ -20,34 +24,32 @@ public static class Extensions
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlCommentsWithRemarks(xmlPath);
 
-                if (Program.IsAllowDisableAuth() == false)
+                c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
                 {
-                    c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
-                    {
-                        Description =
-                            "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                        Name = "Authorization",
-                        In = ParameterLocation.Header,
-                        Type = SecuritySchemeType.ApiKey
-                    });
+                    Description =
+                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
 
-                    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
                     {
+                        new OpenApiSecurityScheme
                         {
-                            new OpenApiSecurityScheme
+                            Reference = new OpenApiReference
                             {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme, Id = "Bearer"
-                                },
-                                Scheme = "oauth2",
-                                Name = "Bearer",
-                                In = ParameterLocation.Header
+                                Type = ReferenceType.SecurityScheme, Id = "Bearer"
                             },
-                            new List<string>()
-                        }
-                    });
-                }
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
+                    }
+                });
+
 
 
             });

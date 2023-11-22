@@ -49,18 +49,17 @@ namespace BonusApi
         partial void PrepareRequest(System.Net.Http.HttpClient client, System.Net.Http.HttpRequestMessage request, System.Text.StringBuilder urlBuilder);
         partial void ProcessResponse(System.Net.Http.HttpClient client, System.Net.Http.HttpResponseMessage response);
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto? body)
-        {
-            return ApiAccrualManualAsync(body, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Начисление бонусных баллов оператором
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ApiAccrualManualAsync(AccrualManualRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/AccrualManual");
 
@@ -70,7 +69,7 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, typeof(AccrualManualRequestDto), _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -121,17 +120,13 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId)
-        {
-            return ApiBalanceGetAllAsync(personId, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Получить баланс пользователя по всем валютам
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetPersonBalanceResponseDto> ApiBalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (personId == null)
                 throw new System.ArgumentNullException("personId");
@@ -200,28 +195,24 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId)
-        {
-            return ApiBalanceGetAsync(personId, bankId, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Получить баланс пользователя по конкретной валюте
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int? bankId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<long> ApiBalanceGetAsync(System.Guid personId, int bankId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (personId == null)
                 throw new System.ArgumentNullException("personId");
 
+            if (bankId == null)
+                throw new System.ArgumentNullException("bankId");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Balance/Get?");
             urlBuilder_.Append(System.Uri.EscapeDataString("PersonId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            if (bankId != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("BankId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(bankId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
+            urlBuilder_.Append(System.Uri.EscapeDataString("BankId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(bankId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             urlBuilder_.Length--;
 
             var client_ = _httpClient;
@@ -283,17 +274,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> ApiBonusProgramGetAllAsync()
-        {
-            return ApiBonusProgramGetAllAsync(System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> ApiBonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> ApiBonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/BonusProgram/GetAll");
@@ -357,17 +341,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId)
-        {
-            return ApiBonusProgramAchievementGetPersonAchievementAsync(personId, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<BonusProgramAchievementResponse> ApiBonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (personId == null)
                 throw new System.ArgumentNullException("personId");
@@ -436,17 +413,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id)
-        {
-            return ApiOwnerMaxBonusPayGetByIdAsync(id, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -514,17 +484,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayGetAllAsync()
-        {
-            return ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> ApiOwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/OwnerMaxBonusPay/GetAll");
@@ -588,17 +551,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body)
-        {
-            return ApiOwnerMaxBonusPayAddAsync(body, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -612,7 +568,7 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, typeof(OwnerMaxBonusPay), _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -669,17 +625,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body)
-        {
-            return ApiOwnerMaxBonusPayUpdateAsync(body, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> ApiOwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (body == null)
                 throw new System.ArgumentNullException("body");
@@ -693,7 +642,7 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, typeof(OwnerMaxBonusPay), _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -750,17 +699,10 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteByIdAsync(int id)
-        {
-            return ApiOwnerMaxBonusPayDeleteByIdAsync(id, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ApiOwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -822,18 +764,17 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto? body)
-        {
-            return ApiPayAsync(body, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Списание бонусных баллов сервисом оплаты
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<long> ApiPayAsync(PayRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Pay");
 
@@ -843,7 +784,7 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, typeof(PayRequestDto), _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -900,18 +841,19 @@ namespace BonusApi
             }
         }
 
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto? body)
-        {
-            return ApiPayManualAsync(body, System.Threading.CancellationToken.None);
-        }
-
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Списание бонусных баллов оператором
+        /// <br/>Возращает число списанных оператором бонусов.
+        /// <br/>Оператор не может списывать бонусы в минус
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto? body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<long> ApiPayManualAsync(PayManualRequestDto body, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/PayManual");
 
@@ -921,7 +863,7 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, typeof(PayManualRequestDto), _settings.Value);
                     var content_ = new System.Net.Http.ByteArrayContent(json_);
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
@@ -1047,7 +989,7 @@ namespace BonusApi
                     var field = System.Reflection.IntrospectionExtensions.GetTypeInfo(value.GetType()).GetDeclaredField(name);
                     if (field != null)
                     {
-                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute))
+                        var attribute = System.Reflection.CustomAttributeExtensions.GetCustomAttribute(field, typeof(System.Runtime.Serialization.EnumMemberAttribute)) 
                             as System.Runtime.Serialization.EnumMemberAttribute;
                         if (attribute != null)
                         {
@@ -1059,7 +1001,7 @@ namespace BonusApi
                     return converted == null ? string.Empty : converted;
                 }
             }
-            else if (value is bool)
+            else if (value is bool) 
             {
                 return System.Convert.ToString((bool)value, cultureInfo).ToLowerInvariant();
             }

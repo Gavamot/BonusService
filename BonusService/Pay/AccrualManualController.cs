@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using BonusService.Auth.Policy;
 using BonusService.Common;
 using BonusService.Postgres;
@@ -18,7 +20,6 @@ public sealed class AccrualManualDtoValidator : AbstractValidator<AccrualManualR
         RuleFor(x => x.BankId).NotEmpty().GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
-        RuleFor(x => x.UserId).NotEmpty();
     }
 }
 
@@ -28,7 +29,7 @@ public sealed partial class AccrualManualDtoMapper
     public partial Transaction FromDto(AccrualManualRequestDto requestDto);
 }
 
-public sealed record AccrualManualRequestDto(Guid PersonId, int BankId, long BonusSum, string Description, string TransactionId, Guid UserId) : ICommand;
+public sealed record AccrualManualRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long BonusSum, [Required]string Description, [Required]string TransactionId,  [property: JsonIgnore]string UserName = "") : ICommand;
 
 public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestDto>
 {
@@ -41,7 +42,7 @@ public sealed class AccrualManualCommand : ICommandHandler<AccrualManualRequestD
         this.dateTimeService = dateTimeService;
         this.logger = logger;
     }
-    public async ValueTask<Unit> Handle(AccrualManualRequestDto command, CancellationToken ct)
+    public async ValueTask<Unit> Handle([Required]AccrualManualRequestDto command, CancellationToken ct)
     {
         var isTransactionExist = await postgres.Transactions.AnyAsync(x=> x.TransactionId == command.TransactionId, cancellationToken: ct);
         if(isTransactionExist) return Unit.Value;
@@ -66,8 +67,9 @@ public sealed class AccrualManualController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = PolicyNames.AccrualManualExecute)]
-    public async Task AccrualManual([FromServices]IMediator mediator, [FromBody]AccrualManualRequestDto request, CancellationToken ct)
+    public async Task AccrualManual([FromServices]IMediator mediator, [FromBody][Required]AccrualManualRequestDto request, CancellationToken ct)
     {
+        request = request with { UserName = HttpContext.GetUserName() };
         await mediator.Send(request,ct);
     }
 }

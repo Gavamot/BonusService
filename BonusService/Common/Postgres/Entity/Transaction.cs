@@ -46,7 +46,7 @@ public class Transaction : IDocumentEntity, IBalanceKey
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>
-    public Guid? UserId { get; set; }
+    public string? UserName { get; set; }
     public string Description { get; set; } = "";
 
     /// <summary>

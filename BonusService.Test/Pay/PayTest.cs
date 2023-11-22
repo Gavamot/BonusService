@@ -83,7 +83,7 @@ public class PayTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Payment);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.EzsId.Should().Be(Q.EzsId1);
-        transaction.UserId.Should().BeNull();
+        transaction.UserName.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.First());

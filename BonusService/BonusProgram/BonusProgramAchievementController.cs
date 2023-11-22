@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
 using BonusService.Bonuses;
 using BonusService.Common;
@@ -34,8 +35,8 @@ public sealed record BonusProgramAchievementResponseItem
     public int? NextLevelAwardPercent  { get; set; }
     public int? NextLevelAwardSum { get; set; }
 }
-public sealed record BonusProgramAchievementResponse(BonusProgramAchievementResponseItem [] Items);
-public sealed record BonusProgramAchievementRequest(Guid PersonId) : IRequest<BonusProgramAchievementResponse>;
+public sealed record BonusProgramAchievementResponse([Required]BonusProgramAchievementResponseItem [] Items);
+public sealed record BonusProgramAchievementRequest([Required]Guid PersonId) : IRequest<BonusProgramAchievementResponse>;
 
 
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
@@ -102,7 +103,7 @@ public sealed class BonusProgramAchievementController : ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
-    public async Task<BonusProgramAchievementResponse> GetPersonAchievement([FromServices] IMediator mediator, [FromQuery]BonusProgramAchievementRequest request, CancellationToken ct)
+    public async Task<BonusProgramAchievementResponse> GetPersonAchievement([FromServices] IMediator mediator, [FromQuery][Required]BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);
         return res;

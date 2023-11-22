@@ -23,7 +23,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
         await api.ApiAccrualManualAsync(request);
         var transaction = await postgres.Transactions.SingleAsync();
@@ -32,7 +31,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.BonusSum.Should().Be(sum);
-        transaction.UserId.Should().Be(Q.UserId1);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -50,7 +49,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
         await api.ApiAccrualManualAsync(request);
 
@@ -61,7 +59,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdKaz,
             PersonId = Q.PersonId2,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId2
         };
 
         await api.ApiAccrualManualAsync(request);
@@ -72,7 +69,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.BonusSum.Should().Be(sum);
-        transaction.UserId.Should().Be(Q.UserId1);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -90,7 +87,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
 
         await api.ApiAccrualManualAsync(request);
@@ -103,7 +99,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdKaz,
             PersonId = Q.PersonId2,
             TransactionId = Q.TransactionId2,
-            UserId = Q.UserId2
         };
 
         await api.ApiAccrualManualAsync(request2);
@@ -117,7 +112,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.BonusSum.Should().Be(sum);
-        transaction.UserId.Should().Be(Q.UserId1);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -130,7 +125,7 @@ public class ManualAccrualTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdKaz);
         transaction.BonusSum.Should().Be(sum2);
-        transaction.UserId.Should().Be(Q.UserId2);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -153,7 +148,6 @@ public class ManualAccrualTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
         request = request.ToJsonClone();
         request.Description = "";
@@ -197,10 +191,6 @@ public class ManualAccrualTest : BonusTestApi
 
         request = request.ToJsonClone();
         request.TransactionId = null;
-        await AccrualManualAsyncTrows(request);
-
-        request = request.ToJsonClone();
-        request.UserId = default;
         await AccrualManualAsyncTrows(request);
     }
 }

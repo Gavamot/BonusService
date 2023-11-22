@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
 using BonusService.Postgres;
 using FluentValidation;
@@ -28,7 +29,7 @@ public sealed partial class PayDtoMapper
     public partial Transaction FromDto(PayRequestDto requestDto);
 }
 
-public sealed record PayRequestDto(Guid PersonId, int BankId, long Payment, string Description, string TransactionId, Guid EzsId, int OwnerId) : ICommand<long>;
+public sealed record PayRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long Payment, [Required]string Description, [Required]string TransactionId, [Required]Guid EzsId, [Required]int OwnerId) : ICommand<long>;
 
 public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 {
@@ -67,7 +68,7 @@ public sealed class PayController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = PolicyNames.PayExecute)]
-    public async Task<long> Pay([FromServices]IMediator mediator, [FromBody]PayRequestDto request, CancellationToken ct)
+    public async Task<long> Pay([FromServices]IMediator mediator, [FromBody][Required]PayRequestDto request, CancellationToken ct)
     {
         long res = await mediator.Send(request, ct);
         return res;

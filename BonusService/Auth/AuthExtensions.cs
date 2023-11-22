@@ -87,7 +87,6 @@ public static class AuthExtensions
 
     public static void UseJwtAuthorization(this IApplicationBuilder app)
     {
-        if(Program.IsAllowDisableAuth()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
         var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
@@ -104,7 +103,6 @@ public static class AuthExtensions
             throw new Exception("Error: IdentitySystemSole is null. Running autogen sole");
 
         JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, identitySystemSole.Value);
-
 
         app.UseAuthentication();
         app.UseAuthorization();

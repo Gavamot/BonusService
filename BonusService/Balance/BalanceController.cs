@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
 using BonusService.Postgres;
 using FluentValidation;
@@ -15,9 +16,9 @@ public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetP
     }
 }
 
-public record GetPersonBalanceRequestDto(Guid PersonId) : IRequest<GetPersonBalanceResponseDto>;
-public record GetPersonBalanceResponseDto(BalanceResponseItemDto[] items);
-public record BalanceResponseItemDto(int BankId, long Sum);
+public record GetPersonBalanceRequestDto([Required]Guid PersonId) : IRequest<GetPersonBalanceResponseDto>;
+public record GetPersonBalanceResponseDto([Required]BalanceResponseItemDto[] items);
+public record BalanceResponseItemDto([Required]int BankId, [Required]long Sum);
 
 public sealed class GetPersonBalanceCommand : IRequestHandler<GetPersonBalanceRequestDto, GetPersonBalanceResponseDto>
 {
@@ -48,7 +49,7 @@ public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanc
 }
 
 ///  GetBalanceByBankId
-public sealed record GetBalanceByBankIdDto(Guid PersonId, int BankId) : IRequest<long>, IBalanceKey;
+public sealed record GetBalanceByBankIdDto([Required]Guid PersonId, [Required]int BankId) : IRequest<long>, IBalanceKey;
 
 public sealed class GetBalanceByBankIdHandler : IRequestHandler<GetBalanceByBankIdDto, long>
 {
@@ -76,7 +77,7 @@ public sealed class BalanceController : ControllerBase
     /// </summary>
     [HttpGet]
     [Authorize(Policy = PolicyNames.BalanceRead)]
-    public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery]GetPersonBalanceRequestDto request)
+    public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery][Required]GetPersonBalanceRequestDto request)
     {
         var res = await mediator.Send(request);
         return res;
@@ -87,7 +88,7 @@ public sealed class BalanceController : ControllerBase
     /// </summary>
     [HttpGet]
     [Authorize(Policy = PolicyNames.BalanceRead)]
-    public async Task<long> Get([FromServices]IMediator mediator, [FromQuery]GetBalanceByBankIdDto data)
+    public async Task<long> Get([FromServices]IMediator mediator, [FromQuery][Required]GetBalanceByBankIdDto data)
     {
         var res = await mediator.Send(data);
         return res;

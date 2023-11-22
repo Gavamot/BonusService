@@ -68,7 +68,7 @@ public class TransactionShrinkerJob : AbstractJob
                     Type = TransactionType.Shrink,
                     BonusProgramId = 0,
                     BonusBase = null,
-                    UserId = null,
+                    UserName = null,
                     EzsId = null,
                 }));
                 var mapper = new TransactionHistoryMapper();

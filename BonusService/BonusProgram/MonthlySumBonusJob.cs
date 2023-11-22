@@ -81,7 +81,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = date,
-                UserId = null,
+                UserName = null,
                 EzsId = null,
                 Description = $"Начислено по {bonusProgram.Name}(банк={bankId}) за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
             };

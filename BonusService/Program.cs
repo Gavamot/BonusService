@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text.Json.Serialization;
 using BonusService.Auth;
 using BonusService.Bonuses;
@@ -46,6 +47,7 @@ services.AddHttpLogging(logging =>
 //services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
+
 
 
 services.AddHealthChecks();
@@ -97,10 +99,10 @@ app.UseHttpsRedirection();
 app.UseJwtAuthorization();
 
 var controllers = app.MapControllers();
-if (IsAllowDisableAuth())
+/*if (IsAllowDisableAuth())
 {
     controllers.AllowAnonymous();
-}
+}*/
 
 app.ApplyPostgresMigrations();
 

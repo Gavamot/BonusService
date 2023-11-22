@@ -1,4 +1,7 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using BonusService.Auth.Policy;
+using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
@@ -16,11 +19,10 @@ public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
         RuleFor(x => x.BankId).NotEmpty().GreaterThan(0);
         RuleFor(x => x.Description).NotEmpty();
         RuleFor(x => x.TransactionId).NotEmpty();
-        RuleFor(x => x.UserId).NotEmpty();
     }
 }
 
-public record PayManualRequestDto(Guid PersonId, int BankId, long BonusSum, string Description, string TransactionId, Guid UserId);
+public record PayManualRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long BonusSum, [Required]string Description, [Required]string TransactionId, [property: JsonIgnore]string UserName = "");
 
 [Mapper]
 public partial class PayManualDtoMapper
@@ -42,8 +44,9 @@ public sealed class PayManualController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = PolicyNames.AccrualManualExecute)]
-    public async Task<long> AccrualManual([FromServices]IMediator mediator, [FromBody]PayManualRequestDto request, CancellationToken ct)
+    public async Task<long> AccrualManual([FromServices]IMediator mediator, [FromBody][Required]PayManualRequestDto request, CancellationToken ct)
     {
+        request = request with { UserName = HttpContext.GetUserName() };
         Transaction transaction = new PayManualDtoMapper().FromDto(request);
         transaction.Type = TransactionType.Manual;
         long res = await mediator.Send(new PayTransactionRequest(transaction), ct);

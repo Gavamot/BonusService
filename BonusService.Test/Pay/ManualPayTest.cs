@@ -23,7 +23,6 @@ public class ManualPayTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
 
         var res = await api.ApiPayManualAsync(request);
@@ -44,7 +43,6 @@ public class ManualPayTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId2,
-            UserId = Q.UserId1
         };
 
         return await api.ApiPayManualAsync(request);
@@ -61,7 +59,7 @@ public class ManualPayTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.BonusSum.Should().Be(Q.Sum500);
-        transaction.UserId.Should().Be(Q.UserId1);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -86,7 +84,7 @@ public class ManualPayTest : BonusTestApi
         transaction.Type.Should().Be(TransactionType.Manual);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.BonusSum.Should().Be(Q.Sum500 * -1);
-        transaction.UserId.Should().Be(Q.UserId1);
+        transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
         transaction.BonusProgramId.Should().Be(0);
         transaction.BonusBase.Should().BeNull();
@@ -113,7 +111,6 @@ public class ManualPayTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId3,
-            UserId = Q.UserId1
         };
 
         var res =  await api.ApiPayManualAsync(request);
@@ -133,7 +130,6 @@ public class ManualPayTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId3,
-            UserId = Q.UserId1
         };
 
         var res =  await api.ApiPayManualAsync(request);
@@ -161,7 +157,6 @@ public class ManualPayTest : BonusTestApi
             BankId = Q.BankIdRub,
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
-            UserId = Q.UserId1
         };
         var request = requestOriginal.ToJsonClone();
         request.Description = "";
@@ -205,10 +200,6 @@ public class ManualPayTest : BonusTestApi
 
         request = requestOriginal.ToJsonClone();
         request.TransactionId = null;
-        await PayManualAsyncTrows(request);
-
-        request = requestOriginal.ToJsonClone();
-        request.UserId = default;
         await PayManualAsyncTrows(request);
     }
 }
