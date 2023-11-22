@@ -14,8 +14,8 @@ services:
     restart: always
     networks:
       - net
-    # ports:
-    # - "9098:9098"
+    ports:
+    - "9100:9100"
     deploy:
       resources:
         limits:
