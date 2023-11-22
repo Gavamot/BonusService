@@ -29,9 +29,16 @@ services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation
 
 services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 services.AddScoped<OwnerByPayRep>();
+builder.Services.AddHttpLogging(logging =>
+{
+    logging.RequestBodyLogLimit = 64 * 1024;
+    logging.ResponseBodyLogLimit = 64 * 1024;
+});
 builder.Logging.ClearProviders();
+
 builder.Host.UseNLog();
 
+services.AddHealthChecks();
 services.TryAddSingleton<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
@@ -74,7 +81,9 @@ WebApplication app = builder.Build();
     app.UseSwaggerUi3();
 }*/
 
-app.Services.AuthInitJwtJey();
+app.UseHealthChecks("/healthz");
+app.UseHttpLogging();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseSwagger();
 app.UseSwaggerUI(c=>
@@ -82,8 +91,9 @@ app.UseSwaggerUI(c=>
     c.SwaggerEndpoint("v1/swagger.json", "My API V1");
     c.EnableTryItOutByDefault();
 });
+
 app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseJwtAuthorization();
 
 var controllers = app.MapControllers();
 if (IsAppTest())
@@ -98,7 +108,9 @@ app.Run();
 public partial class Program
 {
     public const string AppTest = nameof(AppTest);
+
     public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
+    public static bool IsLocalTest() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
     public static bool IsNotAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest));
     public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
 }

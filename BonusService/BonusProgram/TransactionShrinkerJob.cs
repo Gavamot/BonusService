@@ -1,11 +1,19 @@
 using System.Data;
 using System.Security.Cryptography.X509Certificates;
 using BonusService.Common;
+using BonusService.Pay;
 using BonusService.Postgres;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
+using Riok.Mapperly.Abstractions;
 
 namespace BonusService.Bonuses;
+
+[Mapper]
+public sealed partial class TransactionHistoryMapper
+{
+    public partial TransactionHistory FromTransaction(Transaction requestDto);
+}
 
 /// <summary>
 /// Так как записи не могут писатся задним чилом можно уплотнить их путем суммы всех значений
@@ -66,8 +74,9 @@ public class TransactionShrinkerJob : AbstractJob
                     UserId = null,
                     EzsId = null,
                 }));
+                var mapper = new TransactionHistoryMapper();
                 await _postgres.TransactionHistory.BulkInsertAsync(transactions.Where(x => x.Type != TransactionType.Shrink)
-                    .Select(x => (TransactionHistory)x));
+                    .Select(x => mapper.FromTransaction(x)));
                 await _postgres.BulkDeleteAsync(transactions);
                 logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Даннные успешно сконсолидированы({consolidationLength}->{consolidation}) на {curDay} итерация {iteration} с размером партиции {chunkSize}", consolidationLength, consolidation, curDay, i, chunkSize);
                 i++;

@@ -1,4 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=12f161c8_002D19e8_002D4774_002D9d30_002D198e82d70dde/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetMiddleLevel3Sessions_WorksCorrectly" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=42967cfb_002D364b_002D4d6f_002D95a8_002Daf0b96270857/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AccrualManual_Put100Bonus_BalanceIs100" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;ProjectFolder&gt;96F22065-273D-49AF-8D21-807BA1D20C62/d:BonusProgram&lt;/ProjectFolder&gt;&#xD;
 &lt;/SessionState&gt;</s:String>

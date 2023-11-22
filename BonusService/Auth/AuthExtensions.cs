@@ -85,10 +85,10 @@ public static class AuthExtensions
         return services;
     }
 
-    public static void AuthInitJwtJey(this IServiceProvider services)
+    public static void UseJwtAuthorization(this IApplicationBuilder app)
     {
-        if(Program.IsAppTest()) return;
-        using var scope = services.CreateScope();
+        if(Program.IsAppTest() || Program.IsLocalTest()) return;
+        using var scope = app.ApplicationServices.CreateScope();
         var dbContextIdentity = scope.ServiceProvider.GetRequiredService<IdentityPlatformDbContext>();
         var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
         var jwtKeyFromSettings = identitySettings.Value.TokenSettings.SecretKey;
@@ -105,6 +105,9 @@ public static class AuthExtensions
             throw new Exception("Error: IdentitySystemSole is null. Running autogen sole");
 
         JwtKeyProvider.SetJwtSecretKey(jwtKeyFromSettings, identitySystemSole.Value);
+
+        app.UseAuthentication();
+        app.UseAuthorization();
     }
 
 }
