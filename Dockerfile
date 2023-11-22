@@ -16,13 +16,13 @@ RUN \
     dotnet publish BonusService -c Release -o build -p:Product="BonusService" -p:AssemblyTitle="Sitronics. BonusService." \
    -p:InformationalVersion=$APPVERSION -p:FileVersion=$APPVERSION
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
-ENV ASPNETCORE_URLS=http://+:9098
+ENV ASPNETCORE_URLS=http://+:9100
 RUN apt update -y && \
       apt install -y --no-install-recommends net-tools && \
       rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/build /app/
-EXPOSE 9098
+EXPOSE 9100
 # HEALTHCHECK --interval=15s --timeout=15s --retries=3 \
 #     CMD netstat -an | grep 9098 > /dev/null; if [ 0 != $? ]; then exit 1; fi;
 CMD ["dotnet","BonusService.dll"]
