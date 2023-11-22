@@ -80,7 +80,7 @@ public class PayTest : BonusTestApi
         transaction.OwnerId.Should().Be(Q.OwnerId1);
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
-        transaction.Type.Should().Be(TransactionType.Auto);
+        transaction.Type.Should().Be(TransactionType.Payment);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.EzsId.Should().Be(Q.EzsId1);
         transaction.UserId.Should().BeNull();
