@@ -13,4 +13,5 @@
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fd6b9ce2_002D2055_002D4409_002D8898_002Dc1ea2625421b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PositiveCase #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	</wpf:ResourceDictionary>

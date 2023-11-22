@@ -53,8 +53,6 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
         _logger.LogInformation("Запрос на списание бонусов PersonId={PersonId} , BankId={BankId}, сумма платежа = {Payment}, максимальный размер для OwnerId={Percentages}%, сумма бонусов {bonusSum}",
             transaction.PersonId, transaction.BankId,command.Payment, percentages, bonusSum);
         var res = await _mediator.Send(new PayTransactionRequest(transaction), ct);
-        _logger.LogInformation("Запрос на списание бонусов PersonId={PersonId} , BankId={BankId}, сумма платежа = {Payment}, максимальный размер для OwnerId={Percentages}%, сумма бонусов {bonusSum}",
-            transaction.PersonId, transaction.BankId,command.Payment, percentages, bonusSum);
         return res;
     }
 }

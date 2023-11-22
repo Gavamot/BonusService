@@ -4,14 +4,15 @@ using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Pay;
 using BonusService.Postgres;
-using Correlate.DependencyInjection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NLog.Web;
 
 
-// TOKEN - eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAwNjUyODQzLCJleHAiOjE3OTA2NTI4NDMsImlhdCI6MTcwMDY1Mjg0MywiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.C3zc6s9FH7emLZVpRyaulc_aw2QD4gNzaUNTLXVnj_FDhSQzDxijr7aWYrT3XT2gPziHYUFh8uBtIAY_nfQ3Mw
+// TOKEN -
+// Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAwNjUyODQzLCJleHAiOjE3OTA2NTI4NDMsImlhdCI6MTcwMDY1Mjg0MywiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.C3zc6s9FH7emLZVpRyaulc_aw2QD4gNzaUNTLXVnj_FDhSQzDxijr7aWYrT3XT2gPziHYUFh8uBtIAY_nfQ3Mw
 Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,18 +23,41 @@ Console.WriteLine($"Running address is urls={urls}");
 
 var services = builder.Services;
 
-services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
 
 services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 services.AddScoped<OwnerByPayRep>();
-builder.Services.AddHttpLogging(logging =>
+
+services.AddCors(options =>
 {
+    options.AddPolicy("AllowAllHeaders",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+//builder.Logging.ClearProviders();
+services.AddLogging(opt =>
+{
+    opt.Configure(options =>
+    {
+        options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId | ActivityTrackingOptions.ParentId;
+    });
+});
+services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = HttpLoggingFields.All;
     logging.RequestBodyLogLimit = 64 * 1024;
     logging.ResponseBodyLogLimit = 64 * 1024;
 });
-//builder.Logging.ClearProviders();
 
+
+//services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
+builder.Logging.ClearProviders();
 builder.Host.UseNLog();
+
 
 services.AddHealthChecks();
 services.TryAddSingleton<IDateTimeService, DateTimeService>();
@@ -73,6 +97,9 @@ WebApplication app = builder.Build();
     app.UseOpenApi();
     app.UseSwaggerUi3();
 }*/
+
+app.UseCors(builder =>
+    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
