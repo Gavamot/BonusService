@@ -6,9 +6,9 @@ metadata:
   name: bonusservice
 spec:
   ports:
-  - name: "80"
-    port: 80
-    targetPort: 80
+  - name: "9098"
+    port: 9098
+    targetPort: 9098
   selector:
     io.kompose.service: bonusservice
 status:

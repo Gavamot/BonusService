@@ -15,7 +15,7 @@ services:
     networks:
       - net
     ports:
-    - "8080:80"
+    - "9098:9098"
     deploy:
       resources:
         limits:
