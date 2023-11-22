@@ -27,6 +27,8 @@ spec:
         image: registry.gitlab.nvg.ru/ezs/bonusservice:latest
         imagePullPolicy: "Always"
         name: bonusservice
+        ports:
+        - containerPort: 9100        
         # livenessProbe:
         #   exec:
         #     command:
