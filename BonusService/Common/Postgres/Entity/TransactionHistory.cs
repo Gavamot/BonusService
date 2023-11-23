@@ -15,7 +15,7 @@ public class TransactionHistory
     /// </summary>
     public long? BonusBase { get; set; }
     public long BonusSum { get; set; }
-    public int BonusProgramId { get; set; }
+    public int? BonusProgramId { get; set; }
     //public virtual BonusProgram? Program { get; set; }
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
