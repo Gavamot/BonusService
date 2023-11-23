@@ -90,7 +90,10 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+
+app.UseSwagger();
 // временный костыль до тех пор пока не сделаем apiGateaway
+/*
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local")
 {
     app.UseSwagger();
@@ -107,6 +110,7 @@ else
         });
     });
 }
+*/
 
 app.UseSwaggerUI(c=>
 {
