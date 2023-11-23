@@ -29,6 +29,17 @@ var services = builder.Services;
 services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 services.AddScoped<OwnerByPayRep>();
 
+services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllHeaders",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 //builder.Logging.ClearProviders();
 services.AddLogging(opt =>
 {
@@ -74,15 +85,16 @@ services.AddMediator(opt =>
 
 WebApplication app = builder.Build();
 
+app.UseCors(builder =>
+    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-
 // временный костыль до тех пор пока не сделаем apiGateaway
 if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local")
 {
-    app.UseSwagger();   
+    app.UseSwagger();
 }
 else
 {
@@ -94,7 +106,7 @@ else
         {
             swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" } };
         });
-    }); 
+    });
 }
 
 app.UseSwaggerUI(c=>
