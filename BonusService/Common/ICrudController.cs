@@ -7,7 +7,7 @@ namespace BonusService.Pay;
 
 public interface ICrudController<T>
 {
-    Task<T> GetById(int id, CancellationToken ct);
+    Task<T?> GetById(int id, CancellationToken ct);
     Task<T []> GetAll(CancellationToken ct);
     Task<T> Add(T entity, CancellationToken ct);
     Task<T> Update(T entity, CancellationToken ct);

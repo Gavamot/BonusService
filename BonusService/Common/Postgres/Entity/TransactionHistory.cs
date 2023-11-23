@@ -1,3 +1,4 @@
+#pragma warning disable CS8618
 namespace BonusService.Postgres;
 
 public class TransactionHistory

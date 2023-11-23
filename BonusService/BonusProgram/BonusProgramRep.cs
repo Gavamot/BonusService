@@ -20,7 +20,11 @@ public class BonusProgramRep : IBonusProgramRep
             DateStart = new DateTimeOffset(2023, 11, 1, 0,0, 0, TimeSpan.Zero),
             DateStop = null,
             IsDeleted = false,
+            ExecutionCron = "0 9 1 * *",
             LastUpdated = new DateTime(2023, 11, 1),
+            FrequencyType = FrequencyTypes.Month,
+            FrequencyValue = 1,
+            BonusProgramHistory = new List<BonusProgramHistory>(),
             ProgramLevels = new List<BonusProgramLevel>()
             {
                 new ()

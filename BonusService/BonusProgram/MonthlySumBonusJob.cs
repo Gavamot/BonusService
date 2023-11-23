@@ -13,20 +13,16 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
 {
     private readonly IBonusProgramRep _rep;
     private readonly MongoDbContext _mongo;
-    private readonly PostgresDbContext _postgres;
-    private readonly IDateTimeService _dateTimeService;
 
     public MonthlySumBonusJob(
         IBonusProgramRep rep,
         MongoDbContext mongo,
         PostgresDbContext postgres,
         IDateTimeService dateTimeService,
-        ILogger<MonthlySumBonusJob> logger) : base(logger)
+        ILogger<MonthlySumBonusJob> logger) : base(logger, postgres, dateTimeService)
     {
         _rep = rep;
         _mongo = mongo;
-        _postgres = postgres;
-        _dateTimeService = dateTimeService;
     }
 
     private string GenerateTransactionId(int bonusProgram,  Guid PersonId,int bankId, DateTimeInterval period)
@@ -35,14 +31,14 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
     private (int percentages, long sum) CalculateBonusSum(long totalPay)
     {
         var data =_rep.Get();
-        var level = data.ProgramLevels.OrderByDescending(x => x.Level).FirstOrDefault(x=> x.Condition <= totalPay);
+        var level = data.ProgramLevels.OrderByDescending(x => x.Level)
+            .FirstOrDefault(x=> x.Condition <= totalPay);
         if (level == null) return (0, 0);
-        double percentages = level.AwardSum / 100.0;
-        long bonus = (long)(totalPay * percentages);
+        long bonus = totalPay * level.AwardSum / 100L;
         return new (level.AwardSum, bonus);
     }
 
-    protected override async Task ExecuteJobAsync(BonusProgram bonusProgram)
+    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
@@ -63,13 +59,14 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         var capacity = 4096;
         List<Transaction> transactions = new(4096);
 
-        var date = _dateTimeService. GetCurrentMonth().from;
+        int clientBalanceCount = 0;
+        long totalBonusSum = 0;
 
         foreach (var group in data)
         {
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay);
-            if (bonus.sum <= 0) continue;
+            if (bonus.sum <= 0) { continue; }
             var clientNodeId = group.Key!.Value;
             var transaction = new Transaction()
             {
@@ -80,22 +77,35 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
-                LastUpdated = date,
+                LastUpdated = curMonth.from,
+                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId}) за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                OwnerId = null,
                 UserName = null,
                 EzsId = null,
-                Description = $"Начислено по {bonusProgram.Name}(банк={bankId}) за {curMonth.from.Month} месяц. С суммы платежей {totalPay}  процентов {bonus.percentages}.",
             };
             transactions.Add(transaction);
-            if (transactions.Count >= 4096)
+
+            clientBalanceCount++;
+            totalBonusSum += transaction.BonusSum;
+
+            if (transactions.Count < 4096) continue;
+            await _postgres.Transactions.BulkInsertAsync(transactions, options =>
             {
-                await _postgres.Transactions.BulkInsertAsync(transactions, options =>
-                {
-                    options.InsertIfNotExists = true;
-                    options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
-                });
-                transactions = new List<Transaction>(capacity);
-            }
+                options.InsertIfNotExists = true;
+                options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
+            });
+            transactions = new List<Transaction>(capacity);
         }
 
+        if (transactions.Any())
+        {
+            await _postgres.Transactions.BulkInsertAsync(transactions, options =>
+            {
+                options.InsertIfNotExists = true;
+                options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
+            });
+        }
+
+        return new BonusProgramJobResult(clientBalanceCount, bonusProgramId);
     }
 }

@@ -18,5 +18,5 @@ public sealed class BonusProgramController : ControllerBase//: CrudController<Bo
     }
     [HttpGet]
     [Authorize(Policy = PolicyNames.BonusProgramRead)]
-    public new async Task<BonusProgram []> GetAll(CancellationToken ct) => new [] {tempRep.Get()};
+    public BonusProgram[] GetAll(CancellationToken ct) => new [] {tempRep.Get()};
 }

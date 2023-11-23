@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+#pragma warning disable CS8618
 
 namespace BonusService.BonuseProgramExecuter;
 
@@ -42,7 +43,6 @@ public sealed record BonusProgramAchievementRequest([Required]Guid PersonId) : I
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
 {
     private readonly MongoDbContext _mongo;
-    private readonly PostgresDbContext _postgres;
     private readonly IDateTimeService _dateTimeService;
 
     public BonusProgramAchievementCommand(
@@ -58,17 +58,17 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         var program = new BonusProgramRep().Get();
         var curMonth = _dateTimeService.GetCurrentMonth();
 
-        var payment = _mongo.Sessions.AsQueryable().Where(x =>
+        var payment = await _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == 7
+                && x.user != null
                 && x.user.clientNodeId == request.PersonId
                 && x.user.chargingClientType == 0
                 && x.tariff != null
                 && x.tariff.BankId == program.BankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime != null
                 && x.chargeEndTime>= curMonth.from.UtcDateTime && x.chargeEndTime< curMonth.to.UtcDateTime)
-            .Sum(x=>x.operation.calculatedPayment ?? 0);
+            .SumAsync(x=> x!.operation!.calculatedPayment ?? 0, cancellationToken: ct);
 
         var curLevel = program.ProgramLevels.OrderByDescending(x => x.Level).First(x => x.Condition <= payment);
         var nextLevel = program.ProgramLevels.OrderBy(x => x.Level).SkipWhile(x => x.Condition <= payment).FirstOrDefault();
