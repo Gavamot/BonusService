@@ -6,6 +6,7 @@ using BonusService.Pay;
 using BonusService.Postgres;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NLog.Web;
@@ -86,9 +87,10 @@ app.UseSwaggerUI(c=>
 app.UseHttpsRedirection();
 app.UseJwtAuthorization();
 
-var controllers = app.MapControllers();
-
+app.MapControllers();
 app.ApplyPostgresMigrations();
+
+app.UseHangfireDashboard();
 
 app.Run();
 
