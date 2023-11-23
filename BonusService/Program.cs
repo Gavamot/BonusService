@@ -50,7 +50,7 @@ services.AddLogging(opt =>
 });
 services.AddHttpLogging(logging =>
 {
-    logging.LoggingFields = HttpLoggingFields.All;
+    logging.LoggingFields = HttpLoggingFields.Request;
     logging.RequestBodyLogLimit = 64 * 1024;
     logging.ResponseBodyLogLimit = 64 * 1024;
 });
@@ -88,7 +88,6 @@ WebApplication app = builder.Build();
 app.UseCors("AllowAllHeaders");
 
 app.UseHealthChecks("/healthz");
-app.UseHttpLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // временный костыль до тех пор пока не сделаем apiGateaway
@@ -115,6 +114,7 @@ app.UseSwaggerUI(c=>
     c.EnableTryItOutByDefault();
 });
 
+app.UseHttpLogging();
 app.UseHttpsRedirection();
 app.UseJwtAuthorization();
 
