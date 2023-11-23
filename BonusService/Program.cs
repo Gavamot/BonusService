@@ -77,16 +77,11 @@ app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.UseSwagger(c =>
+app.UseSwagger();
+app.UseSwaggerUI(c=>
 {
-    c.RouteTemplate = "/api/bonus/swagger/{documentName}/swagger.json";
-});
-var swaggerUrl = "api/bonus/swagger";
-app.UseSwaggerUI(options =>
-{
-    options.RoutePrefix= swaggerUrl;
-    options.SwaggerEndpoint(url: "/api/bonus/swagger/v1/swagger.json", name: "Bonus Web API V1");
-    options.EnableTryItOutByDefault();
+    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    c.EnableTryItOutByDefault();
 });
 
 app.UseHttpsRedirection();
