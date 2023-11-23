@@ -9,6 +9,7 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.OpenApi.Models;
 using NLog.Web;
 
 
@@ -77,7 +78,25 @@ app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.UseSwagger();
+
+// временный костыль до тех пор пока не сделаем apiGateaway
+if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local")
+{
+    app.UseSwagger();   
+}
+else
+{
+    app.UseSwagger(c =>
+    {
+        var basePath = "/api/bonus/";
+        c.RouteTemplate = "swagger/{documentName}/swagger.json";
+        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        {
+            swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" } };
+        });
+    }); 
+}
+
 app.UseSwaggerUI(c=>
 {
     c.SwaggerEndpoint("v1/swagger.json", "My API V1");
