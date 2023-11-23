@@ -61,7 +61,7 @@ public class ManualPayTest : BonusTestApi
         transaction.BonusSum.Should().Be(Q.Sum500);
         transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().Be(0);
+        transaction.BonusProgramId.Should().BeNull();
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(default);
     }
@@ -86,7 +86,7 @@ public class ManualPayTest : BonusTestApi
         transaction.BonusSum.Should().Be(Q.Sum500 * -1);
         transaction.UserName.Should().Be(Q.UserName);
         transaction.EzsId.Should().BeNull();
-        transaction.BonusProgramId.Should().Be(0);
+        transaction.BonusProgramId.Should().BeNull();
         transaction.BonusBase.Should().BeNull();
         transaction.LastUpdated.Should().Be(Q.DateTimeSequence.First());
     }
