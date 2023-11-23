@@ -9,6 +9,7 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using NLog.Web;
 
@@ -48,17 +49,16 @@ services.AddLogging(opt =>
         options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId | ActivityTrackingOptions.ParentId;
     });
 });
-services.AddHttpLogging(logging =>
-{
-    logging.LoggingFields = HttpLoggingFields.Request;
-    logging.RequestBodyLogLimit = 64 * 1024;
-    logging.ResponseBodyLogLimit = 64 * 1024;
-});
-
-
 //services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
+services.AddHttpLogging(logging =>
+{
+    logging.LoggingFields = HttpLoggingFields.RequestQuery | HttpLoggingFields.RequestHeaders | HttpLoggingFields.RequestBody | HttpLoggingFields.ResponseBody | HttpLoggingFields.ResponseStatusCode;
+    logging.RequestHeaders.Add(HeaderNames.Authorization);
+    logging.RequestBodyLogLimit = 64 * 1024;
+    logging.ResponseBodyLogLimit = 64 * 1024;
+});
 
 services.AddHealthChecks();
 services.TryAddSingleton<IDateTimeService, DateTimeService>();
