@@ -85,8 +85,8 @@ services.AddMediator(opt =>
 
 WebApplication app = builder.Build();
 
-app.UseCors(builder =>
-    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors("AllowAllHeaders");
+
 app.UseHealthChecks("/healthz");
 app.UseHttpLogging();
 app.UseMiddleware<ErrorHandlingMiddleware>();
