@@ -26,7 +26,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
     }
 
     private string GenerateTransactionId(int bonusProgram,  Guid PersonId,int bankId, DateTimeInterval period)
-        => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}";
+        => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay)
     {
@@ -64,6 +64,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
 
         foreach (var group in data)
         {
+            var login = group.First().user.clientLogin ?? "null";
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay);
             if (bonus.sum <= 0) { continue; }
@@ -78,13 +79,14 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = curMonth.from,
-                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId}) за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 OwnerId = null,
                 UserName = null,
                 EzsId = null,
             };
             transactions.Add(transaction);
 
+            _logger.LogInformation($"Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов");
             clientBalanceCount++;
             totalBonusSum += transaction.BonusSum;
 
@@ -92,8 +94,9 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
             await _postgres.Transactions.BulkInsertAsync(transactions, options =>
             {
                 options.InsertIfNotExists = true;
-                options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
+                options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
+
             transactions = new List<Transaction>(capacity);
         }
 
@@ -102,10 +105,9 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
             await _postgres.Transactions.BulkInsertAsync(transactions, options =>
             {
                 options.InsertIfNotExists = true;
-                options.ColumnPrimaryKeyExpression = x => new { x.PersonId, x.BankId, x.LastUpdated, x.BonusProgramId };
+                options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
         }
-
         return new BonusProgramJobResult(clientBalanceCount, bonusProgramId);
     }
 }
