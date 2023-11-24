@@ -16,7 +16,7 @@ public class DateTimeService : IDateTimeService
     public DateTimeInterval GetCurrentMonth()
     {
         var cur = GetNowUtc();
-        var @from =  new DateTimeOffset(cur.Year, cur.Month, cur.Day, 0, 0, 0, cur.Offset);
+        var @from =  new DateTimeOffset(cur.Year, cur.Month, 1, 0, 0, 0, cur.Offset);
         var @to = @from.AddMonths(1);
         return new DateTimeInterval(@from, to);
     }

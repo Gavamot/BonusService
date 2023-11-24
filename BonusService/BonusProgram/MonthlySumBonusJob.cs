@@ -70,6 +70,8 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
             var bonus = CalculateBonusSum(totalPay);
             if (bonus.sum <= 0) { continue; }
             var clientNodeId = group.Key!.Value;
+
+            // Все
             var transaction = new Transaction()
             {
                 PersonId = clientNodeId,
