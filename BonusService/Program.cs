@@ -10,6 +10,8 @@ using Hangfire;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using NLog.Web;
 
 
@@ -41,6 +43,8 @@ services.AddCors(options =>
 });
 
 //builder.Logging.ClearProviders();
+//services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
+builder.Logging.ClearProviders();
 services.AddLogging(opt =>
 {
     opt.Configure(options =>
@@ -48,12 +52,10 @@ services.AddLogging(opt =>
         options.ActivityTrackingOptions = ActivityTrackingOptions.TraceId | ActivityTrackingOptions.SpanId | ActivityTrackingOptions.ParentId;
     });
 });
-//services.AddCorrelate(options => options.RequestHeaders = new []{ "X-Correlation-ID" });
-builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 services.AddHttpLogging(logging =>
 {
-    logging.LoggingFields = HttpLoggingFields.RequestQuery | HttpLoggingFields.RequestHeaders | HttpLoggingFields.RequestBody | HttpLoggingFields.ResponseBody | HttpLoggingFields.ResponseStatusCode;
+    logging.LoggingFields = HttpLoggingFields.RequestPath | HttpLoggingFields.ResponseStatusCode; //HttpLoggingFields.RequestQuery | HttpLoggingFields.RequestHeaders | HttpLoggingFields.RequestBody | HttpLoggingFields.ResponseBody | HttpLoggingFields.ResponseStatusCode;
     logging.RequestHeaders.Add(HeaderNames.Authorization);
     logging.RequestBodyLogLimit = 64 * 1024;
     logging.ResponseBodyLogLimit = 64 * 1024;
@@ -95,31 +97,14 @@ app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseSwagger();
-// временный костыль до тех пор пока не сделаем apiGateaway
-/*
-if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local")
-{
-    app.UseSwagger();
-}
-else
-{
-    app.UseSwagger(c =>
-    {
-        var basePath = "/api/bonus/";
-        c.RouteTemplate = "swagger/{documentName}/swagger.json";
-        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-        {
-            swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" } };
-        });
-    });
-}
-*/
-
 app.UseSwaggerUI(c=>
 {
     c.SwaggerEndpoint("v1/swagger.json", "My API V1");
     c.EnableTryItOutByDefault();
 });
+
+app.UseHangfireDashboard();
+app.UseHangfireServer();
 
 app.UseHttpLogging();
 app.UseHttpsRedirection();
@@ -139,8 +124,8 @@ AddPostgresSeed(app.Services);
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 GlobalConfiguration.Configuration.UseActivator(new HangfireServicesExt.HangfireActivator(scopeFactory));
 
-app.UseHangfireDashboard();
-app.UseHangfireServer();
+using var scope1 = app.Services.CreateScope();
+var mongo = scope1.ServiceProvider.GetRequiredService<MongoDbContext>();
 app.Run();
 
 public partial class Program

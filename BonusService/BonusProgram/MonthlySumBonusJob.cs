@@ -1,5 +1,6 @@
 using BonusService.Common;
 using BonusService.Postgres;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
 namespace BonusService.Bonuses;
@@ -44,7 +45,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         int bankId = bonusProgram.BankId;
 
         var curMonth = _dateTimeService.GetCurrentMonth();
-
+        //curMonth = new DateTimeInterval(curMonth.from.AddMonths(-1), curMonth.to.AddMonths(-1));
         var data = _mongo.Sessions.AsQueryable().Where(x => x.status == 7
                 && x.user != null
                 && x.user.clientNodeId != null
@@ -56,6 +57,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 && x.operation.calculatedPayment > 0
                 && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
+
 
         var capacity = 4096;
         List<Transaction> transactions = new(4096);
@@ -69,9 +71,13 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay);
             if (bonus.sum <= 0) { continue; }
-            var clientNodeId = group.Key!.Value;
 
-            // Все
+            if (!Guid.TryParse(group.Key, out Guid clientNodeId))
+            {
+                _logger.LogWarning("Не могу распарсить user!.clientNodeId из монги в ГУИД ({clientNodeId})", group.Key);
+                continue;
+            }
+
             var transaction = new Transaction()
             {
                 PersonId = clientNodeId,

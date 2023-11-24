@@ -2,12 +2,11 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BonusService.Postgres;
-using Microsoft.EntityFrameworkCore;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
-public record BonusProgramJobResult(int clientBalanceCount, long totalSum);
+public record BonusProgramJobResult(int clientBalanceCount, long totalBonusSum);
 public abstract class AbstractBonusProgramJob
 {
     protected readonly ILogger _logger;
@@ -40,9 +39,9 @@ public abstract class AbstractBonusProgramJob
                 ExecTimeStart = interval.from,
                 ExecTimeEnd = interval.to,
                 DurationMilliseconds = stopwatch.ElapsedMilliseconds,
-
-                ClientCount = bonusProgramJobResult.clientBalanceCount,
-                TotalSum = bonusProgramJobResult.totalSum,
+                ClientBalancesCount = bonusProgramJobResult.clientBalanceCount,
+                TotalBonusSum = bonusProgramJobResult.totalBonusSum,
+                LastUpdated = _dateTimeService.GetNowUtc(),
             };
 
             await _postgres.BonusProgramHistory.AddAsync(history);

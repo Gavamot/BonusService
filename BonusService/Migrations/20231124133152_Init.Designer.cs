@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BonusService.Migrations
 {
     [DbContext(typeof(PostgresDbContext))]
-    [Migration("20231122100236_TransactionHistory")]
-    partial class TransactionHistory
+    [Migration("20231124133152_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,8 +88,11 @@ namespace BonusService.Migrations
                     b.Property<int>("BonusProgramId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ClientCount")
+                    b.Property<int>("ClientBalancesCount")
                         .HasColumnType("integer");
+
+                    b.Property<long>("DurationMilliseconds")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTimeOffset>("ExecTimeEnd")
                         .HasColumnType("timestamp with time zone");
@@ -97,7 +100,10 @@ namespace BonusService.Migrations
                     b.Property<DateTimeOffset>("ExecTimeStart")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("TotalSum")
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("TotalBonusSum")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -183,7 +189,7 @@ namespace BonusService.Migrations
                     b.Property<long?>("BonusBase")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("BonusProgramId")
+                    b.Property<int?>("BonusProgramId")
                         .HasColumnType("integer");
 
                     b.Property<long>("BonusSum")
@@ -212,8 +218,8 @@ namespace BonusService.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -241,7 +247,7 @@ namespace BonusService.Migrations
                     b.Property<long?>("BonusBase")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("BonusProgramId")
+                    b.Property<int?>("BonusProgramId")
                         .HasColumnType("integer");
 
                     b.Property<long>("BonusSum")
@@ -270,8 +276,8 @@ namespace BonusService.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

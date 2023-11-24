@@ -51,6 +51,30 @@ namespace BonusService.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TransactionHistory",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    PersonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BankId = table.Column<int>(type: "integer", nullable: false),
+                    BonusBase = table.Column<long>(type: "bigint", nullable: true),
+                    BonusSum = table.Column<long>(type: "bigint", nullable: false),
+                    BonusProgramId = table.Column<int>(type: "integer", nullable: true),
+                    UserName = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    EzsId = table.Column<Guid>(type: "uuid", nullable: true),
+                    OwnerId = table.Column<int>(type: "integer", nullable: true),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    TransactionId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionHistory", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Transactions",
                 columns: table => new
                 {
@@ -61,14 +85,13 @@ namespace BonusService.Migrations
                     BankId = table.Column<int>(type: "integer", nullable: false),
                     BonusBase = table.Column<long>(type: "bigint", nullable: true),
                     BonusSum = table.Column<long>(type: "bigint", nullable: false),
-                    BonusProgramId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    BonusProgramId = table.Column<int>(type: "integer", nullable: true),
+                    UserName = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: false),
                     EzsId = table.Column<Guid>(type: "uuid", nullable: true),
                     OwnerId = table.Column<int>(type: "integer", nullable: true),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    TransactionId = table.Column<string>(type: "text", nullable: false),
-                    Discriminator = table.Column<string>(type: "text", nullable: false)
+                    TransactionId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,8 +108,10 @@ namespace BonusService.Migrations
                     ExecTimeStart = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ExecTimeEnd = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     BankId = table.Column<int>(type: "integer", nullable: false),
-                    TotalSum = table.Column<long>(type: "bigint", nullable: false),
-                    ClientCount = table.Column<int>(type: "integer", nullable: false)
+                    TotalBonusSum = table.Column<long>(type: "bigint", nullable: false),
+                    ClientBalancesCount = table.Column<int>(type: "integer", nullable: false),
+                    DurationMilliseconds = table.Column<long>(type: "bigint", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,6 +189,9 @@ namespace BonusService.Migrations
 
             migrationBuilder.DropTable(
                 name: "OwnerMaxBonusPays");
+
+            migrationBuilder.DropTable(
+                name: "TransactionHistory");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

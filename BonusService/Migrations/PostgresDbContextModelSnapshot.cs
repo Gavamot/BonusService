@@ -85,19 +85,22 @@ namespace BonusService.Migrations
                     b.Property<int>("BonusProgramId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("ClientAccountsCount")
+                    b.Property<int>("ClientBalancesCount")
                         .HasColumnType("integer");
 
                     b.Property<long>("DurationMilliseconds")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("EndPeriod")
+                    b.Property<DateTimeOffset>("ExecTimeEnd")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset>("StartPeriod")
+                    b.Property<DateTimeOffset>("ExecTimeStart")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("TotalSum")
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("TotalBonusSum")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");

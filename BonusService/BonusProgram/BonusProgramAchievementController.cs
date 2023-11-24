@@ -7,6 +7,7 @@ using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 #pragma warning disable CS8618
@@ -58,10 +59,23 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         var program = new BonusProgramRep().Get();
         var curMonth = _dateTimeService.GetCurrentMonth();
 
+        string personIdString = request.PersonId.ToString(MongoUser.ClientNodeIdToStringFormat);
+
+        var a= _mongo.Sessions.AsQueryable().Where(x =>
+            x.status == 7
+            && x.user != null
+            && x.user.clientNodeId == personIdString
+            && x.user.chargingClientType == 0
+            && x.tariff != null
+            && x.tariff.BankId == program.BankId
+            && x.operation != null
+            && x.operation.calculatedPayment > 0
+            && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime).ToString();
+
         var payment = await _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == 7
                 && x.user != null
-                && x.user.clientNodeId == request.PersonId
+                && x.user.clientNodeId == personIdString
                 && x.user.chargingClientType == 0
                 && x.tariff != null
                 && x.tariff.BankId == program.BankId
@@ -93,7 +107,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
                 NextLevelAwardSum = nextLevel?.AwardSum
             }
         });
-    }
+     }
 }
 
 [Authorize]

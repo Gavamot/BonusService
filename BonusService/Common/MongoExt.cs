@@ -1,7 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
+using MongoDB.Driver.Core.WireProtocol.Messages;
 namespace BonusService.Common;
 
 public class MongoConfig
@@ -38,8 +42,24 @@ public class MongoDbContext //: DbContext
     public const string SessionCollection = "cp_sessions";
     public MongoDbContext(string connectionString, string databaseName)
     {
+        /*var b = new MongoUrlBuilder(connectionString);
+        var client = new MongoClient(new MongoClientSettings()
+        {
+            Server = b.Server,
+            ClusterConfigurator = cb =>
+            {
+                cb.Subscribe<CommandSucceededEvent>(e =>
+                {
+                    var a = e;
+                });
+                cb.Subscribe<CommandMessage>(e =>
+                {
+                });
+            }
+        });*/
         var client = new MongoClient(connectionString);
         Database = client.GetDatabase(databaseName);
+
     }
 
     public IMongoCollection<MongoSession> Sessions => Database.GetCollection<MongoSession>(SessionCollection);
@@ -58,6 +78,7 @@ public class MongoDbContext //: DbContext
     }*/
 }
 
+[BsonIgnoreExtraElements]
 public class MongoSession
 {
     public ObjectId _id { get; set; }
@@ -71,20 +92,25 @@ public class MongoSession
     public MongoTariff? tariff { get; set; }
 }
 
+[BsonIgnoreExtraElements]
 public class MongoUser
 {
-    public Guid? clientNodeId { get; set; }
+    public string? clientNodeId { get; set; }
 
     public string? clientLogin { get; set; }
 
     public int? chargingClientType { get; set; }
+
+    public const string ClientNodeIdToStringFormat = "D";
 }
 
+[BsonIgnoreExtraElements]
 public class MongoOperation
 {
     public long? calculatedPayment { get; set; }
 }
 
+[BsonIgnoreExtraElements]
 public class MongoTariff
 {
     public int? BankId { get; set; }
