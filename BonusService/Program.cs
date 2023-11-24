@@ -10,7 +10,6 @@ using Hangfire;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
-using Microsoft.OpenApi.Models;
 using NLog.Web;
 
 
@@ -64,16 +63,21 @@ services.AddHealthChecks();
 services.TryAddSingleton<IDateTimeService, DateTimeService>();
 services.AddPostgres(configuration);
 services.AddMongoService(configuration);
+
 services.AddHangfireService(configuration);
 
 services.AddFluentValidationAutoValidation();
 services.AddFluentValidationClientsideAdapters();
 services.AddValidatorsFromAssemblyContaining<Program>();
 
-services.AddControllers().AddJsonOptions(opt=>
-    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 
+services.AddBonusServices(configuration);
 services.AddJwtAuthorization(configuration);
 
 services.AddSwagger();
@@ -89,7 +93,6 @@ app.UseCors("AllowAllHeaders");
 
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
-
 
 app.UseSwagger();
 // временный костыль до тех пор пока не сделаем apiGateaway
@@ -125,12 +128,40 @@ app.UseJwtAuthorization();
 app.MapControllers();
 app.ApplyPostgresMigrations();
 
-app.UseHangfireDashboard();
+if (Program.IsNotAppTest())
+{
+    using var scope = app.Services.CreateScope();
+    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().Init();
+}
 
+AddPostgresSeed(app.Services);
+
+var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+GlobalConfiguration.Configuration.UseActivator(new HangfireServicesExt.HangfireActivator(scopeFactory));
+
+app.UseHangfireDashboard();
+app.UseHangfireServer();
 app.Run();
 
 public partial class Program
 {
+
+    public static void AddPostgresSeed(IServiceProvider serviceProvider)
+    {
+        // Времянка пока юонусные программы захардкоженны
+        using var scope1 = serviceProvider.CreateScope();
+        {
+            var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
+            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == new BonusProgramRep().Get().Id);
+            if (bp == null)
+            {
+                bp = new BonusProgramRep().Get();
+                bp.Id = default;
+                postgres.BonusPrograms.Add(bp);
+                postgres.SaveChanges();
+            }
+        }
+    }
     public const string AppTest = nameof(AppTest);
 
     public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();

@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using BonusService.Postgres;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
@@ -35,15 +37,21 @@ public abstract class AbstractBonusProgramJob
             {
                 BonusProgramId = bonusProgram.Id,
                 BankId = bonusProgram.BankId,
-                ClientAccountsCount = bonusProgramJobResult.clientBalanceCount,
-                TotalSum = bonusProgramJobResult.totalSum,
-                StartPeriod = interval.from,
-                EndPeriod = interval.to,
+                ExecTimeStart = interval.from,
+                ExecTimeEnd = interval.to,
                 DurationMilliseconds = stopwatch.ElapsedMilliseconds,
+
+                ClientCount = bonusProgramJobResult.clientBalanceCount,
+                TotalSum = bonusProgramJobResult.totalSum,
             };
+
             await _postgres.BonusProgramHistory.AddAsync(history);
             await _postgres.SaveChangesAsync();
-            _logger.LogInformation("Job {bonusProgramMark} status => {History}", bonusProgramMark, JsonSerializer.Serialize(history));
+            var json = JsonSerializer.Serialize(history,new JsonSerializerOptions()
+            {
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            });
+            _logger.LogInformation("Job {bonusProgramMark} status => {History}", bonusProgramMark, json);
         }
         catch (Exception e)
         {

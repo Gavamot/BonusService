@@ -10,6 +10,7 @@ public class BonusProgramRep : IBonusProgramRep
 {
     public BonusProgram Get()
     {
+        var lastUpdated = new DateTimeOffset(2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         return new BonusProgram()
         {
             Id = 1,
@@ -21,7 +22,7 @@ public class BonusProgramRep : IBonusProgramRep
             DateStop = null,
             IsDeleted = false,
             ExecutionCron = "0 9 1 * *",
-            LastUpdated = new DateTime(2023, 11, 1),
+            LastUpdated = lastUpdated,
             FrequencyType = FrequencyTypes.Month,
             FrequencyValue = 1,
             BonusProgramHistory = new List<BonusProgramHistory>(),
@@ -30,7 +31,7 @@ public class BonusProgramRep : IBonusProgramRep
                 new ()
                 {
                     Id = 1,
-                    LastUpdated = new DateTime(2023, 11, 1),
+                    LastUpdated = lastUpdated,
                     Name = "Нет кэшбэка",
                     AwardSum = 0,
                     Condition = 0,
@@ -40,7 +41,7 @@ public class BonusProgramRep : IBonusProgramRep
                 new ()
                 {
                     Id = 2,
-                    LastUpdated = new DateTime(2023, 11, 1),
+                    LastUpdated = lastUpdated,
                     Name = "Кэшбэк 1 уровня",
                     AwardSum = 1,
                     Condition = 1_000_00,
@@ -50,7 +51,7 @@ public class BonusProgramRep : IBonusProgramRep
                 new ()
                 {
                     Id = 3,
-                    LastUpdated = new DateTime(2023, 11, 1),
+                    LastUpdated = lastUpdated,
                     Name = "Кэшбэк 2 уровня",
                     AwardSum = 5,
                     Condition = 3_000_00,
@@ -60,7 +61,7 @@ public class BonusProgramRep : IBonusProgramRep
                 new ()
                 {
                     Id = 4,
-                    LastUpdated = new DateTime(2023, 11, 1),
+                    LastUpdated = lastUpdated,
                     Name = "Кэшбэк 3 уровня",
                     AwardSum = 10,
                     Condition =5_000_00,

@@ -22,7 +22,7 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
             .AddInMemoryCollection(new KeyValuePair<string, string?> []
             {
                 new("ConnectionStrings:Hangfire", $"Host=localhost;Port=9999;Database=hangfire_{DbName};Username=postgres;Application Name=bonus-service"),
-                new("ConnectionStrings:_postgres", $"Host=localhost;Port=9999;Database={DbName};Username=postgres;Application Name=bonus-service"),
+                new("ConnectionStrings:Postgres", $"Host=localhost;Port=9999;Database={DbName};Username=postgres;Application Name=bonus-service"),
                 new("MongoConfig:ConnectionString", $"mongodb://localhost:9998?serverSelectionTimeoutMS=60000&connectTimeoutMS=7000&socketTimeoutMS=7000"),
                 new("MongoConfig:QueriesFolder", "/PssPlatform/Queries"),
                 new("MongoConfig:Database", $"{DbName}"),

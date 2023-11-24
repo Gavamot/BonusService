@@ -22,8 +22,12 @@ public static class HangfireServicesExt
             config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
-                .UseSerializerSettings(new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore })
-                .UseActivator(new HangfireActivator(provider.GetRequiredService<IServiceScopeFactory>()))
+                .UseSerializerSettings(new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Include,
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                    MaxDepth = 10
+                })
                 .UseFilter(new AutomaticRetryAttribute { Attempts = delays.Length, DelaysInSeconds = delays })
                 .UsePostgreSqlStorage((opt) =>
                 {
@@ -49,10 +53,10 @@ public static class HangfireServicesExt
         }
     }
 
+    // This class injects the default DI container into hangfire jobs
     public class HangfireActivator : JobActivator
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
         public HangfireActivator(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
@@ -60,29 +64,26 @@ public static class HangfireServicesExt
 
         public override JobActivatorScope BeginScope(JobActivatorContext context)
         {
-            return new AspNetCoreJobActivatorScope(_serviceScopeFactory.CreateScope(), context.BackgroundJob.Id);
+            return new AspNetCoreJobActivatorScope(_serviceScopeFactory.CreateScope());
         }
     }
 
-    public class AspNetCoreJobActivatorScope : JobActivatorScope
+    class AspNetCoreJobActivatorScope : JobActivatorScope
     {
-        private readonly string _jobId;
-        private readonly IServiceScope _serviceScope;
-        public AspNetCoreJobActivatorScope (IServiceScope serviceScope, string jobId)
+        private readonly IServiceScope _scope;
+        public AspNetCoreJobActivatorScope(IServiceScope scope)
         {
-            this._jobId = jobId;
-            _serviceScope = serviceScope ?? throw new ArgumentNullException(nameof(serviceScope));
+            _scope = scope;
         }
 
         public override object Resolve(Type type)
         {
-            var res = ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, type);
-            return res;
+            return _scope.ServiceProvider.GetRequiredService(type);
         }
 
         public override void DisposeScope()
         {
-            _serviceScope.Dispose();
+            _scope.Dispose();
         }
     }
 }

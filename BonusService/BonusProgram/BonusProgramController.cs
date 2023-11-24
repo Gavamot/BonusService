@@ -1,6 +1,5 @@
 using BonusService.Auth.Policy;
 using BonusService.Bonuses;
-using BonusService.Pay;
 using BonusService.Postgres;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

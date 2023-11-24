@@ -4,7 +4,7 @@ public static class BonusExt
 {
     public static IServiceCollection AddBonusServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHostedService<RunBonusProgramsBackgroundService>();
+        services.AddScoped<IBonusProgramsRunner, BonusProgramsRunner>();
         services.AddScoped<MonthlySumBonusJob>();
         services.AddScoped<IBonusProgramRep, BonusProgramRep>();
         return services;

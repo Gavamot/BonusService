@@ -1,8 +1,10 @@
 using System.Net.Http.Headers;
 using BonusApi;
+using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
 using FakeItEasy;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 namespace BonusService.Test.Common;
@@ -83,6 +85,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
     protected readonly MongoDbContext mongo;
+    protected readonly IRecurringJobManagerV2 jobManager;
 
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
@@ -90,13 +93,19 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         InitDatabases(server).GetAwaiter().GetResult();
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
         A.CallTo(() => this.server.DateTimeService.GetCurrentMonth()).ReturnsNextFromSequence(Q.IntervalMoth1);
+
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();
         postgres.Database.Migrate();
+        Program.AddPostgresSeed(server.Services);
+
         //InfraHelper.CreateMongoDatabase(this.server.DbName).GetAwaiter().GetResult();
         mongo = scope.GetRequiredService<MongoDbContext>();
+
         mongo.Database.DropCollection(MongoDbContext.SessionCollection);
+
+        jobManager = scope.GetRequiredService<IRecurringJobManagerV2>();
     }
 
 
@@ -110,14 +119,15 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
     public async ValueTask DisposeAsync()
     {
-        var postgresDelete = postgres.Database.EnsureDeletedAsync();
+        /*var postgresDelete = postgres.Database.EnsureDeletedAsync();
 
         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireServicesExt.HangfireDbContext>();
         var hangfireDelete = hangfire.Database.EnsureDeletedAsync();
 
+      //mongo.Database.DropCollection(MongoDbContext.SessionCollection);
         var mongoDelete = InfraHelper.DropMongoDatabase(server.DbName);
         var tasks = new [] { postgresDelete, hangfireDelete, mongoDelete };
         await Task.WhenAll(tasks);
-        scope.Dispose();
+        scope.Dispose();*/
     }
 }

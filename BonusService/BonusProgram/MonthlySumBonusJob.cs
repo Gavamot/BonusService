@@ -44,6 +44,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         int bankId = bonusProgram.BankId;
 
         var curMonth = _dateTimeService.GetCurrentMonth();
+
         var data = _mongo.Sessions.AsQueryable().Where(x => x.status == 7
                 && x.user != null
                 && x.user.clientNodeId != null
@@ -53,7 +54,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 && x.tariff.BankId == bankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime >= curMonth.from && x.chargeEndTime < curMonth.to)
+                && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
 
         var capacity = 4096;
@@ -64,7 +65,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
 
         foreach (var group in data)
         {
-            var login = group.First().user.clientLogin ?? "null";
+            var login = group.FirstOrDefault()?.user?.clientLogin ?? "null";
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay);
             if (bonus.sum <= 0) { continue; }
@@ -108,6 +109,6 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
         }
-        return new BonusProgramJobResult(clientBalanceCount, bonusProgramId);
+        return new BonusProgramJobResult(clientBalanceCount, totalBonusSum);
     }
 }
