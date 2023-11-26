@@ -12,6 +12,8 @@
         <PackageReference Include="FluentValidation" Version="11.8.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
+        <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="7.0.1" />
+        <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
         <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.11" />
         <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.11">
           <PrivateAssets>all</PrivateAssets>

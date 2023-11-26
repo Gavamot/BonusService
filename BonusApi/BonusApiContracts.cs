@@ -1002,8 +1002,10 @@ namespace BonusApi
         private System.DateTimeOffset? _execTimeStart = default!;
         private System.DateTimeOffset? _execTimeEnd = default!;
         private int? _bankId = default!;
-        private long? _totalSum = default!;
-        private int? _clientCount = default!;
+        private long? _totalBonusSum = default!;
+        private int? _clientBalancesCount = default!;
+        private long? _durationMilliseconds = default!;
+        private System.DateTimeOffset? _lastUpdated = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
@@ -1107,35 +1109,69 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("totalSum")]
+        [System.Text.Json.Serialization.JsonPropertyName("totalBonusSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? TotalSum
+        public long? TotalBonusSum
         {
-            get { return _totalSum; }
+            get { return _totalBonusSum; }
 
             set
             {
-                if (_totalSum != value)
+                if (_totalBonusSum != value)
                 {
-                    _totalSum = value;
+                    _totalBonusSum = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("clientCount")]
+        [System.Text.Json.Serialization.JsonPropertyName("clientBalancesCount")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? ClientCount
+        public int? ClientBalancesCount
         {
-            get { return _clientCount; }
+            get { return _clientBalancesCount; }
 
             set
             {
-                if (_clientCount != value)
+                if (_clientBalancesCount != value)
                 {
-                    _clientCount = value;
+                    _clientBalancesCount = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("durationMilliseconds")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public long? DurationMilliseconds
+        {
+            get { return _durationMilliseconds; }
+
+            set
+            {
+                if (_durationMilliseconds != value)
+                {
+                    _durationMilliseconds = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? LastUpdated
+        {
+            get { return _lastUpdated; }
+
+            set
+            {
+                if (_lastUpdated != value)
+                {
+                    _lastUpdated = value;
                     RaisePropertyChanged();
                 }
             }

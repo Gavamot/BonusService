@@ -7,11 +7,10 @@ using BonusService.Postgres;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using NLog.Web;
 
 
@@ -80,6 +79,7 @@ services.AddControllers().AddJsonOptions(opt =>
 
 
 services.AddBonusServices(configuration);
+
 services.AddJwtAuthorization(configuration);
 
 services.AddSwagger();
@@ -103,12 +103,12 @@ app.UseSwaggerUI(c=>
     c.EnableTryItOutByDefault();
 });
 
-app.UseHangfireDashboard();
-app.UseHangfireServer();
-
 app.UseHttpLogging();
 app.UseHttpsRedirection();
+
 app.UseJwtAuthorization();
+
+app.UseHangfire();
 
 app.MapControllers();
 app.ApplyPostgresMigrations();
@@ -128,9 +128,9 @@ using var scope1 = app.Services.CreateScope();
 var mongo = scope1.ServiceProvider.GetRequiredService<MongoDbContext>();
 app.Run();
 
+
 public partial class Program
 {
-
     public static void AddPostgresSeed(IServiceProvider serviceProvider)
     {
         // Времянка пока юонусные программы захардкоженны

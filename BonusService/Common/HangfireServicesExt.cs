@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Dashboard.BasicAuthorization;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -86,5 +87,32 @@ public static class HangfireServicesExt
         {
             _scope.Dispose();
         }
+    }
+
+    public static void UseHangfire(this WebApplication app)
+    {
+        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+        {
+            Authorization = new[]
+            {
+                new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
+                {
+                    SslRedirect = false,
+                    RequireSsl = false,
+                    LoginCaseSensitive = true,
+                    Users = new []
+                    {
+                        new BasicAuthAuthorizationUser
+                        {
+                            Login = "adminka",
+                            PasswordClear = "d6c61b11b2188340f59c9c1b4ada9345684434ef660c013f0432423423553454e9fb600aa1e09fc3453453469ea2376e747c0c5def0242a56c120002b29eef9bad59434dbc52b8f9f767c341"
+                        }
+                    }
+                })
+            }
+        });
+
+        var options = new BackgroundJobServerOptions { WorkerCount = 2 };
+        app.UseHangfireServer(options);
     }
 }
