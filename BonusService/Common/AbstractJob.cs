@@ -6,7 +6,7 @@ using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
-public record BonusProgramJobResult(int clientBalanceCount, long totalBonusSum);
+public record BonusProgramJobResult(DateTimeInterval interval, int clientBalanceCount, long totalBonusSum);
 public abstract class AbstractBonusProgramJob
 {
     protected readonly ILogger _logger;
@@ -31,13 +31,12 @@ public abstract class AbstractBonusProgramJob
             var bonusProgramJobResult = await ExecuteJobAsync(bonusProgram);
             _logger.LogInformation("Job {bonusProgramMark} end", bonusProgramMark);
             stopwatch.Stop();
-            var interval = bonusProgram.CreateDateTimeInterval(_dateTimeService);
             var history = new BonusProgramHistory()
             {
                 BonusProgramId = bonusProgram.Id,
                 BankId = bonusProgram.BankId,
-                ExecTimeStart = interval.from,
-                ExecTimeEnd = interval.to,
+                ExecTimeStart = bonusProgramJobResult.interval.from,
+                ExecTimeEnd = bonusProgramJobResult.interval.to,
                 DurationMilliseconds = stopwatch.ElapsedMilliseconds,
                 ClientBalancesCount = bonusProgramJobResult.clientBalanceCount,
                 TotalBonusSum = bonusProgramJobResult.totalBonusSum,

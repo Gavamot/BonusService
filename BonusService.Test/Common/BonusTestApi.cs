@@ -7,6 +7,7 @@ using FakeItEasy;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
@@ -23,7 +24,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             BonusSum = sum,
         };
 
-        public readonly static DateTimeInterval IntervalMoth1 = new DateTimeInterval(new DateTimeOffset(2000, 1, 1, 1, 1, 1, new TimeSpan(0)), new DateTimeOffset(2000, 2, 1, 1, 1, 1, new TimeSpan(0)));
+        public readonly static DateTimeInterval IntervalMoth1 = new (new DateTimeOffset(2000, 1, 1, 1, 1, 1, new TimeSpan(0)), new DateTimeOffset(2000, 2, 1, 1, 1, 1, new TimeSpan(0)));
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
 
@@ -56,6 +57,28 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             new (2003, 1, 2, 21, 4, 5, timezone),
             new (2004, 1, 2, 3, 4, 6, timezone),
         };
+
+        public const string ClientLogin = "8909113342";
+        public static MongoSession CreateSession(DateTime date) => new MongoSession()
+        {
+            _id = ObjectId.GenerateNewId(),
+            operation = new MongoOperation()
+            {
+                calculatedPayment = Q.Sum1000
+            },
+            chargeEndTime = date,
+            status = MongoSessionStatus.Paid,
+            tariff = new MongoTariff()
+            {
+                BankId = Q.BankIdRub
+            },
+            user = new MongoUser()
+            {
+                clientLogin = ClientLogin,
+                chargingClientType = MongoChargingClientType.IndividualEntity,
+                clientNodeId = Q.PersonId1String
+            }
+        };
     }
 
     protected async Task InitTransactionTran1Person1BankRub(long bonusBalance)
@@ -87,7 +110,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
     protected readonly MongoDbContext mongo;
-    protected readonly IRecurringJobManagerV2 jobManager;
+    protected readonly IBackgroundJobClientV2 jobClient;
 
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
@@ -104,10 +127,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         //InfraHelper.CreateMongoDatabase(this.server.DbName).GetAwaiter().GetResult();
         mongo = scope.GetRequiredService<MongoDbContext>();
-
         mongo.Database.DropCollection(MongoDbContext.SessionCollection);
-
-        jobManager = scope.GetRequiredService<IRecurringJobManagerV2>();
+        jobClient = scope.GetRequiredService<IBackgroundJobClientV2>();
     }
 
 

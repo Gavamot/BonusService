@@ -1,9 +1,26 @@
+using System.Collections.Immutable;
 using Hangfire;
 using Hangfire.Dashboard.BasicAuthorization;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 namespace BonusService.Common;
+
+public static class HangfireHistoryStatus
+{
+    public const string Deleted = nameof(Deleted);
+    public const string Enqueued = nameof(Enqueued);
+    public const string Awaiting = nameof(Awaiting);
+    public const string Processing = nameof(Processing);
+    public const string Scheduled = nameof(Scheduled);
+    public const string Succeeded = nameof(Succeeded);
+    public const string Failed = nameof(Failed);
+
+    public static readonly ImmutableHashSet<string> EndJobStatuses = ImmutableHashSet.Create(new [] { Deleted, Succeeded, Failed });
+    public static bool IsJobEnded(this IBackgroundJobClientV2 client, string jobId) => client.Storage.GetMonitoringApi().JobDetails(jobId).History.Any(x=> EndJobStatuses.Contains(x.StateName));
+    public static bool IsJobNotEnded(this IBackgroundJobClientV2 client, string jobId) => client.IsJobEnded(jobId) == false;
+
+}
 
 public static class HangfireServicesExt
 {

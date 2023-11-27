@@ -8,6 +8,18 @@ using MongoDB.Driver.Core.Events;
 using MongoDB.Driver.Core.WireProtocol.Messages;
 namespace BonusService.Common;
 
+public static class MongoChargingClientType
+{
+    public const int IndividualEntity = 0;
+    public const int CompanyEntity = 3;
+}
+
+public static class MongoSessionStatus
+{
+    public const int Payment = 5;
+    public const int Paid = 7;
+}
+
 public class MongoConfig
 {
     [Required]

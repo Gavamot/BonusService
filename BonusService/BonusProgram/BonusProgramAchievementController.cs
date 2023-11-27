@@ -60,23 +60,11 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         var curMonth = _dateTimeService.GetCurrentMonth();
 
         string personIdString = request.PersonId.ToString(MongoUser.ClientNodeIdToStringFormat);
-
-        var a= _mongo.Sessions.AsQueryable().Where(x =>
-            x.status == 7
-            && x.user != null
-            && x.user.clientNodeId == personIdString
-            && x.user.chargingClientType == 0
-            && x.tariff != null
-            && x.tariff.BankId == program.BankId
-            && x.operation != null
-            && x.operation.calculatedPayment > 0
-            && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime).ToString();
-
         var payment = await _mongo.Sessions.AsQueryable().Where(x =>
-                x.status == 7
+                x.status == MongoSessionStatus.Paid
                 && x.user != null
                 && x.user.clientNodeId == personIdString
-                && x.user.chargingClientType == 0
+                && x.user.chargingClientType == MongoChargingClientType.IndividualEntity
                 && x.tariff != null
                 && x.tariff.BankId == program.BankId
                 && x.operation != null

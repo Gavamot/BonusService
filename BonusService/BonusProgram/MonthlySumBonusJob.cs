@@ -1,6 +1,5 @@
 using BonusService.Common;
 using BonusService.Postgres;
-using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 
 namespace BonusService.Bonuses;
@@ -46,10 +45,11 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
 
         var curMonth = _dateTimeService.GetCurrentMonth();
         //curMonth = new DateTimeInterval(curMonth.from.AddMonths(-1), curMonth.to.AddMonths(-1));
-        var data = _mongo.Sessions.AsQueryable().Where(x => x.status == 7
+        var data = _mongo.Sessions.AsQueryable().Where(x =>
+                x.status == MongoSessionStatus.Paid
                 && x.user != null
                 && x.user.clientNodeId != null
-                && x.user.chargingClientType == 0
+                && x.user.chargingClientType == MongoChargingClientType.IndividualEntity
                 && x.tariff != null
                 && x.tariff.BankId != null
                 && x.tariff.BankId == bankId
@@ -57,7 +57,6 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 && x.operation.calculatedPayment > 0
                 && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
-
 
         var capacity = 4096;
         List<Transaction> transactions = new(4096);
@@ -117,6 +116,6 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
         }
-        return new BonusProgramJobResult(clientBalanceCount, totalBonusSum);
+        return new BonusProgramJobResult(curMonth, clientBalanceCount, totalBonusSum);
     }
 }
