@@ -9,7 +9,7 @@ public static class Extensions
 {
     public static string GetUserName(this HttpContext httpContext)
     {
-        return httpContext.User.Claims.First(x => x.Type == "name").Value;
+        return httpContext.User.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
     }
     public static IServiceCollection AddSwagger(this IServiceCollection services)
     {

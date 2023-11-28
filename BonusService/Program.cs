@@ -121,11 +121,8 @@ if (Program.IsNotAppTest())
 
 AddPostgresSeed(app.Services);
 
-var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-GlobalConfiguration.Configuration.UseActivator(new HangfireServicesExt.HangfireActivator(scopeFactory));
 
-using var scope1 = app.Services.CreateScope();
-var mongo = scope1.ServiceProvider.GetRequiredService<MongoDbContext>();
+
 app.Run();
 
 

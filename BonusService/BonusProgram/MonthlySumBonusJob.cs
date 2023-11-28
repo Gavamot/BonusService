@@ -77,6 +77,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 continue;
             }
 
+            var userName = group.FirstOrDefault()?.user?.clientLogin ?? null;
             var transaction = new Transaction()
             {
                 PersonId = clientNodeId,
@@ -88,8 +89,8 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 Type = TransactionType.Auto,
                 LastUpdated = curMonth.from,
                 Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                UserName = userName,
                 OwnerId = null,
-                UserName = null,
                 EzsId = null,
             };
             transactions.Add(transaction);

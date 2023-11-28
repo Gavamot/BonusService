@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using BonusApi;
-using BonusService.Bonuses;
 using BonusService.Common;
 using BonusService.Postgres;
 using FakeItEasy;
@@ -31,9 +30,11 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static int OwnerId1 = 1;
         public readonly static int OwnerId2 = 2;
 
-        public const long Sum2000 = 2000;
-        public const long Sum1000 = 1000;
-        public const long Sum500 = 500;
+        public const long SumLevel1 = 1_000_00;
+        public const long SumLevel2 = 3_000_00;
+        public const long Sum2000 = 20_00;
+        public const long Sum1000 = 10_00;
+        public const long Sum500 = 5_00;
         public const string Description1 = "Описанье 1";
         public const string Description2 = "Описанье 2";
         public readonly static string UserName = "Admin";
@@ -48,7 +49,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public const int BankIdRub = 1;
         public const  int BankIdKaz = 7;
         public static readonly TimeSpan timezone = new(0, 0, 0);
-        public static DateTimeOffset [] DateTimeSequence =
+
+        public static readonly DateTimeOffset [] DateTimeSequence =
         {
             new (2001, 1, 2, 3, 4, 5, timezone),
             new (2001, 1, 3, 4, 5, 6, timezone),
@@ -59,12 +61,13 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         };
 
         public const string ClientLogin = "8909113342";
+        public const string ClientLogin2 = "8909163142";
         public static MongoSession CreateSession(DateTime date) => new MongoSession()
         {
             _id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
             {
-                calculatedPayment = Q.Sum1000
+                calculatedPayment = Q.SumLevel2
             },
             chargeEndTime = date,
             status = MongoSessionStatus.Paid,
@@ -110,14 +113,17 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
     protected readonly MongoDbContext mongo;
-    protected readonly IBackgroundJobClientV2 jobClient;
+    protected IBackgroundJobClientV2 jobClient;
+    protected readonly HangfireDbContext hangfireDb;
 
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
         this.server = server;
-        InitDatabases(server).GetAwaiter().GetResult();
-        A.CallTo(() => this.server.DateTimeService.GetNowUtc()).ReturnsNextFromSequence(Q.DateTimeSequence);
-        A.CallTo(() => this.server.DateTimeService.GetCurrentMonth()).ReturnsNextFromSequence(Q.IntervalMoth1);
+        //InitDatabases(server).GetAwaiter().GetResult();
+        A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
+            ReturnsNextFromSequence(Q.DateTimeSequence);
+        A.CallTo(() => this.server.DateTimeService.GetCurrentMonth())
+            .ReturnsNextFromSequence(Q.IntervalMoth1);
 
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();

@@ -22,6 +22,16 @@ public static class HangfireHistoryStatus
 
 }
 
+public class HangfireDbContext : DbContext
+{
+    public HangfireDbContext(){ }
+
+    public HangfireDbContext(DbContextOptions<HangfireDbContext> options): base(options)
+    {
+
+    }
+}
+
 public static class HangfireServicesExt
 {
     private static string GetHangfireConnectionString(this IConfiguration configuration) => configuration.GetConnectionString("Hangfire") ?? throw new ArgumentException("ConnectionStrings.Hangfire not exist in configuration");
@@ -57,20 +67,19 @@ public static class HangfireServicesExt
                 });
         });
 
-        services.AddHangfireServer();
+        services.AddHangfireServer(opt =>
+        {
+            //opt.CancellationCheckInterval = TimeSpan.FromSeconds(1);
+            //opt.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+            opt.WorkerCount = 2;
+            //opt.StopTimeout = TimeSpan.FromSeconds(30);
+            //opt.ShutdownTimeout = TimeSpan.FromSeconds(30.0);
+            //opt.ServerTimeout = TimeSpan.FromMinutes(10);
+        });
 
         return services;
     }
 
-    public class HangfireDbContext : DbContext
-    {
-        public HangfireDbContext(){ }
-
-        public HangfireDbContext(DbContextOptions<HangfireDbContext> options): base(options)
-        {
-
-        }
-    }
 
     // This class injects the default DI container into hangfire jobs
     public class HangfireActivator : JobActivator
@@ -108,6 +117,8 @@ public static class HangfireServicesExt
 
     public static void UseHangfire(this WebApplication app)
     {
+        var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+        GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(scopeFactory));
         app.UseHangfireDashboard("/hangfire", new DashboardOptions
         {
             Authorization = new[]
@@ -128,8 +139,5 @@ public static class HangfireServicesExt
                 })
             }
         });
-
-        var options = new BackgroundJobServerOptions { WorkerCount = 2 };
-        app.UseHangfireServer(options);
     }
 }

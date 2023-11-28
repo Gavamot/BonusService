@@ -11,7 +11,7 @@ namespace BonusService.Test.Common;
 
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
-    public readonly string DbName = $"bonus_{Guid.NewGuid():N}";
+    public readonly string DbName = $"bonus_{Guid.NewGuid():N}_{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
 
     public readonly IDateTimeService DateTimeService = A.Fake<IDateTimeService>();
 
@@ -35,8 +35,8 @@ public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> 
             .UseConfiguration(config)
             .ConfigureServices(services =>
             {
-                RemoveService<IBackgroundJobClient>(services);
-                services.AddSingleton<IBackgroundJobClient, FakeBackgroundJobClient>();
+                //RemoveService<IBackgroundJobClientV2>(services);
+                //services.AddSingleton<IBackgroundJobClient, FakeBackgroundJobClient>();
                 RemoveService<IDateTimeService>(services);
                 services.AddSingleton<IDateTimeService>(x=> DateTimeService);
             });

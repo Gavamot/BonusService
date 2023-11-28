@@ -5,7 +5,6 @@ using BonusService.Test.Common;
 using FluentAssertions;
 namespace BonusService.Test;
 
-
 public class BonusProgramAchievementTest : BonusTestApi
 {
     public BonusProgramAchievementTest(FakeApplicationFactory<Program> server) : base(server)

@@ -2,6 +2,7 @@ using BonusApi;
 using BonusService.Postgres;
 using BonusService.Test.Common;
 using FluentAssertions;
+
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Test;
 

@@ -1,11 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
+using BonusService.Common;
 using BonusService.Postgres;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.Pay;
 
@@ -29,7 +31,7 @@ public sealed partial class PayDtoMapper
     public partial Transaction FromDto(PayRequestDto requestDto);
 }
 
-public sealed record PayRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long Payment, [Required]string Description, [Required]string TransactionId, [Required]Guid EzsId, [Required]int OwnerId) : ICommand<long>;
+public sealed record PayRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long Payment, [Required]string Description, [Required]string TransactionId, [Required]Guid EzsId, [Required]int OwnerId, [property: JsonIgnore]string UserName = "") : ICommand<long>;
 
 public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 {
@@ -70,6 +72,7 @@ public sealed class PayController : ControllerBase
     [Authorize(Policy = PolicyNames.PayExecute)]
     public async Task<long> Pay([FromServices]IMediator mediator, [FromBody][Required]PayRequestDto request, CancellationToken ct)
     {
+        request = request with { UserName = HttpContext.GetUserName() };
         long res = await mediator.Send(request, ct);
         return res;
     }
