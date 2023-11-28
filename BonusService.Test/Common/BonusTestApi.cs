@@ -6,7 +6,6 @@ using FakeItEasy;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson;
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
@@ -46,8 +45,11 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static string PersonId1String = "5fa85f64-5717-4562-b3fc-2c963f66afa6";
         public readonly static Guid PersonId2 = Guid.Parse("6fa85f64-5717-4562-b3fc-2c963f66afa7");
         public readonly static string PersonId2String = "6fa85f64-5717-4562-b3fc-2c963f66afa7";
+
+
         public const int BankIdRub = 1;
         public const  int BankIdKaz = 7;
+        public static readonly int [] AllBanks = new [] { BankIdRub, BankIdKaz };
         public static readonly TimeSpan timezone = new(0, 0, 0);
 
         public static readonly DateTimeOffset [] DateTimeSequence =
@@ -64,7 +66,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public const string ClientLogin2 = "8909163142";
         public static MongoSession CreateSession(DateTime date) => new MongoSession()
         {
-            _id = ObjectId.GenerateNewId(),
+            //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
             {
                 calculatedPayment = Q.SumLevel2
@@ -138,14 +140,12 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         jobClient = scope.GetRequiredService<IBackgroundJobClientV2>();
     }
 
-
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)
     {
         var postgres = InfraHelper.RunPostgresContainer();
         var mongo = InfraHelper.RunMongo(this.server.DbName);
         await Task.WhenAll(postgres, mongo);
     }
-
 
     public async ValueTask DisposeAsync()
     {

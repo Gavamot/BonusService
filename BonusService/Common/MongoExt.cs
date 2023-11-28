@@ -10,12 +10,14 @@ namespace BonusService.Common;
 
 public static class MongoChargingClientType
 {
+    public static int [] GetAll() => new [] { IndividualEntity, CompanyEntity };
     public const int IndividualEntity = 0;
     public const int CompanyEntity = 3;
 }
 
 public static class MongoSessionStatus
 {
+    public static int[] GetAll() => new [] { Payment, Paid };
     public const int Payment = 5;
     public const int Paid = 7;
 }
@@ -93,7 +95,7 @@ public class MongoDbContext //: DbContext
 [BsonIgnoreExtraElements]
 public class MongoSession
 {
-    public ObjectId _id { get; set; }
+    //public ObjectId _id { get; set; }
     public int? status { get; set; }
     public DateTime chargeEndTime { get; set; }
 
