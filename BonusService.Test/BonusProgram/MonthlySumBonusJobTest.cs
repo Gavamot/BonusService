@@ -49,6 +49,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
     private void AddUnmatchedSessions()
     {
+
         var session = Q.CreateSession(new DateTime(1990, 1, 1));
         session.status = 44;
 
@@ -77,21 +78,21 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public void EmptySessions_EmptyResultHistoryAdded()
+    public async Task EmptySessions_EmptyResultHistoryAdded()
     {
-        var jobId = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
+        var job = GetService<MonthlySumBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
     }
 
     [Fact]
-    public void EmptyCalculationForPeriod_EmptyResultHistoryAdded()
+    public async Task EmptyCalculationForPeriod_EmptyResultHistoryAdded()
     {
         AddUnmatchedSessions();
-        var jobId = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
+        var job = GetService<MonthlySumBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
         postgres.Transactions.Any().Should().BeFalse();
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
@@ -100,7 +101,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public void EmptyCalculationForPeriodTwiceExecution_EmptyResult2HistoryAdded()
+    public async Task EmptyCalculationForPeriodTwiceExecution_EmptyResult2HistoryAdded()
     {
         A.CallTo(()=> this.server.DateTimeService.GetCurrentMonth()).ReturnsNextFromSequence(new []
         {
@@ -108,10 +109,11 @@ public class MonthlySumBonusJobTest : BonusTestApi
             Q.IntervalMoth1,
         });
         AddUnmatchedSessions();
-        var jobId = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        var jobId2 = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
-        jobClient.WaitForEndOfJob(jobId2);
+        var job = GetService<MonthlySumBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
+
+        var job2 = GetService<MonthlySumBonusJob>();
+        await job2.ExecuteAsync(bonusProgram);
 
         postgres.Transactions.Any().Should().BeFalse();
 
@@ -121,7 +123,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public void OnePerson2PayInDifferentTimeByDifferentSum_CalculatedCorrectly()
+    public async Task OnePerson2PayInDifferentTimeByDifferentSum_CalculatedCorrectly()
     {
         AddUnmatchedSessions();
 
@@ -134,8 +136,8 @@ public class MonthlySumBonusJobTest : BonusTestApi
             user1RusAccountSession2
         });
 
-        var jobId = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
+        var job = GetService<MonthlySumBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
 
         // 2 PaymentCalc
         postgres.Transactions.Count().Should().Be(1);
@@ -151,7 +153,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         tranUser1Rus.OwnerId.Should().BeNull();
         tranUser1Rus.EzsId.Should().BeNull();
         tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().Be(Q.IntervalMoth1.from);
+        tranUser1Rus.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
@@ -162,13 +164,11 @@ public class MonthlySumBonusJobTest : BonusTestApi
         bonusProgramHistory.BonusProgramId.Should().Be(1);
         bonusProgramHistory.ClientBalancesCount.Should().Be(1);
         bonusProgramHistory.TotalBonusSum.Should().Be(bonusSumByLevel2);
-
-
     }
 
 
     [Fact]
-    public void SessionFromDifferentBunk_OnlyBonusProgramBankCalculated()
+    public async Task SessionFromDifferentBunk_OnlyBonusProgramBankCalculated()
     {
         AddUnmatchedSessions();
 
@@ -181,8 +181,8 @@ public class MonthlySumBonusJobTest : BonusTestApi
             user1RusAccountSession2
         });
 
-        var jobId = jobClient.Enqueue<MonthlySumBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
+        var job = GetService<MonthlySumBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
 
         postgres.Transactions.Count().Should().Be(1);
 
@@ -196,7 +196,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         tranUser1Rus.OwnerId.Should().BeNull();
         tranUser1Rus.EzsId.Should().BeNull();
         tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().Be(Q.IntervalMoth1.from);
+        tranUser1Rus.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
@@ -211,7 +211,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public void TwoPersonsPayed_CalculatedCorrectly()
+    public void RealTest_TwoPersonsPayed_CalculatedCorrectly()
     {
         AddUnmatchedSessions();
 
@@ -241,7 +241,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         tranUser1Rus.OwnerId.Should().BeNull();
         tranUser1Rus.EzsId.Should().BeNull();
         tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().Be(Q.IntervalMoth1.from);
+        tranUser1Rus.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
         var tranUser2Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId2 && x.BankId == Q.BankIdRub);
         tranUser2Rus.Type.Should().Be(TransactionType.Auto);
@@ -253,7 +253,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         tranUser2Rus.OwnerId.Should().BeNull();
         tranUser2Rus.EzsId.Should().BeNull();
         tranUser2Rus.TransactionId.Should().NotBeEmpty();
-        tranUser2Rus.LastUpdated.Should().Be(Q.IntervalMoth1.from);
+        tranUser2Rus.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);

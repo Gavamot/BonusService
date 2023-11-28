@@ -44,6 +44,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         int bankId = bonusProgram.BankId;
 
         var curMonth = _dateTimeService.GetCurrentMonth();
+        var now = _dateTimeService.GetNowUtc();
         //curMonth = new DateTimeInterval(curMonth.from.AddMonths(-1), curMonth.to.AddMonths(-1));
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
@@ -87,7 +88,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
-                LastUpdated = curMonth.from,
+                LastUpdated = now,
                 Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 UserName = userName,
                 OwnerId = null,

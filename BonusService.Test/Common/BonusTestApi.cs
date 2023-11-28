@@ -110,6 +110,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     protected readonly FakeApplicationFactory<Program> server;
     protected readonly IServiceScope scope;
+    protected T GetService<T>() => scope.GetRequiredService<T>();
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
     protected readonly MongoDbContext mongo;
