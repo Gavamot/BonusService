@@ -1,9 +1,10 @@
 using BonusApi;
-using BonusService.Postgres;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
 
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 namespace BonusService.Test;
 
 public class ManualAccrualTest : BonusTestApi

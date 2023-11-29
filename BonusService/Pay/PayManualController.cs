@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using BonusService.Auth.Policy;
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;

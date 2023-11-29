@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-namespace BonusService.Pay;
+namespace BonusService.Common;
 
 public interface ICrudController<T>
 {

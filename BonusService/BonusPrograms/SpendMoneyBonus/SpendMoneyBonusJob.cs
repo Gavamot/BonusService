@@ -1,37 +1,33 @@
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using MongoDB.Driver;
-
-namespace BonusService.Bonuses;
+namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
 
 /// <summary>
 /// Начисление бонувов каждый календарный месяц(с 1 по последние число) по уровням от общей суммы затрат персоны
 /// https://rnd.sitronics.com/jira/browse/EZSPLAT-244
 /// </summary>
-public class MonthlySumBonusJob : AbstractBonusProgramJob
+public class SpendMoneyBonusJob : AbstractBonusProgramJob
 {
-    private readonly IBonusProgramRep _rep;
     private readonly MongoDbContext _mongo;
-
-    public MonthlySumBonusJob(
-        IBonusProgramRep rep,
+    protected override BonusProgramType BonusProgramType => BonusProgramType.SpendMoney;
+    public SpendMoneyBonusJob(
         MongoDbContext mongo,
         PostgresDbContext postgres,
         IDateTimeService dateTimeService,
-        ILogger<MonthlySumBonusJob> logger) : base(logger, postgres, dateTimeService)
+        ILogger<SpendMoneyBonusJob> logger) : base(logger, postgres, dateTimeService)
     {
-        _rep = rep;
         _mongo = mongo;
     }
 
     private string GenerateTransactionId(int bonusProgram,  Guid PersonId,int bankId, DateTimeInterval period)
         => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
 
-    private (int percentages, long sum) CalculateBonusSum(long totalPay)
+    private (int percentages, long sum) CalculateBonusSum(long totalPay, BonusProgram bonusProgram)
     {
-        var data =_rep.Get();
-        var level = data.ProgramLevels.OrderByDescending(x => x.Level)
+        var level = bonusProgram.ProgramLevels.OrderByDescending(x => x.Level)
             .FirstOrDefault(x=> x.Condition <= totalPay);
         if (level == null) return (0, 0);
         long bonus = totalPay * level.AwardSum / 100L;
@@ -42,10 +38,8 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
-
-        var curMonth = _dateTimeService.GetCurrentMonth();
+        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
         var now = _dateTimeService.GetNowUtc();
-        //curMonth = new DateTimeInterval(curMonth.from.AddMonths(-1), curMonth.to.AddMonths(-1));
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
@@ -56,7 +50,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 && x.tariff.BankId == bankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime >= curMonth.from.UtcDateTime && x.chargeEndTime < curMonth.to.UtcDateTime)
+                && x.chargeEndTime >= interval.from.UtcDateTime && x.chargeEndTime < interval.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
 
         var capacity = 4096;
@@ -69,7 +63,7 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
         {
             var login = group.FirstOrDefault()?.user?.clientLogin ?? "null";
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
-            var bonus = CalculateBonusSum(totalPay);
+            var bonus = CalculateBonusSum(totalPay, bonusProgram);
             if (bonus.sum <= 0) { continue; }
 
             if (!Guid.TryParse(group.Key, out Guid clientNodeId))
@@ -83,13 +77,13 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
             {
                 PersonId = clientNodeId,
                 BankId = bankId,
-                TransactionId = GenerateTransactionId(bonusProgramId, clientNodeId, bankId, curMonth),
+                TransactionId = GenerateTransactionId(bonusProgramId, clientNodeId, bankId, interval),
                 BonusProgramId = bonusProgramId,
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = now,
-                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {curMonth.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {interval.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 UserName = userName,
                 OwnerId = null,
                 EzsId = null,
@@ -118,6 +112,6 @@ public class MonthlySumBonusJob : AbstractBonusProgramJob
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
         }
-        return new BonusProgramJobResult(curMonth, clientBalanceCount, totalBonusSum);
+        return new BonusProgramJobResult(interval, clientBalanceCount, totalBonusSum);
     }
 }

@@ -1,6 +1,7 @@
-using BonusService.Postgres;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace BonusService.Test;
 
 public class GetBalanceAllTest : BonusTestApi

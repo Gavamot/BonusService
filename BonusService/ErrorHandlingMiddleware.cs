@@ -1,5 +1,7 @@
 using System.Net;
 
+namespace BonusService;
+
 public class ErrorHandlingMiddleware : Exception
 {
     private readonly ILogger<ErrorHandlingMiddleware> _logger;

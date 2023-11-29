@@ -1,11 +1,15 @@
 using System.Net.Http.Headers;
 using BonusApi;
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using FakeItEasy;
+using FluentAssertions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using FrequencyTypes = BonusApi.FrequencyTypes;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
@@ -22,7 +26,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             BonusSum = sum,
         };
 
-        public readonly static DateTimeInterval IntervalMoth1 = new (new DateTimeOffset(2000, 1, 1, 1, 1, 1, new TimeSpan(0)), new DateTimeOffset(2000, 2, 1, 1, 1, 1, new TimeSpan(0)));
+        public static readonly DateTimeOffset IntervalMoth1Start = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
+        public static readonly DateTimeOffset IntervalMoth1End = IntervalMoth1Start.AddMonths(1);
+        public readonly static DateTimeInterval IntervalMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
+
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
 
@@ -54,12 +61,11 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public static readonly DateTimeOffset [] DateTimeSequence =
         {
-            new (2001, 1, 2, 3, 4, 5, timezone),
-            new (2001, 1, 3, 4, 5, 6, timezone),
-            new (2001, 2, 3, 5, 3, 1, timezone),
-            new (2002, 1, 2, 3, 4, 5, timezone),
-            new (2003, 1, 2, 21, 4, 5, timezone),
-            new (2004, 1, 2, 3, 4, 6, timezone),
+            IntervalMoth1Start.AddHours(1),
+            IntervalMoth1Start.AddDays(5),
+            IntervalMoth1Start.AddDays(5).AddHours(4),
+            IntervalMoth1Start.AddMonths(1).AddDays(2).AddHours(4),
+            IntervalMoth1Start.AddYears(1).AddDays(2).AddHours(4),
         };
 
         public const string ClientLogin = "8909113342";
@@ -112,7 +118,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     protected readonly FakeApplicationFactory<Program> server;
     protected readonly IServiceScope scope;
-    protected T GetService<T>() => scope.GetRequiredService<T>();
+    protected T GetService<T>() where T : notnull => scope.GetRequiredService<T>();
     protected IServiceScope CreateScope() => server.Services.CreateScope();
     protected readonly PostgresDbContext postgres;
     protected readonly MongoDbContext mongo;
@@ -128,6 +134,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         A.CallTo(() => this.server.DateTimeService.GetCurrentMonth())
             .ReturnsNextFromSequence(Q.IntervalMoth1);
 
+        A.CallTo(() => this.server.DateTimeService.GetDateTimeInterval(A<BonusService.Common.Postgres.Entity.FrequencyTypes>.Ignored, A<int>.Ignored, A<DateTimeOffset>.Ignored))
+            .WithAnyArguments()
+            .ReturnsLazily((BonusService.Common.Postgres.Entity.FrequencyTypes a, int b , DateTimeOffset c) => new DateTimeService().GetDateTimeInterval(a, b, c));
+
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();
@@ -138,6 +148,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         mongo = scope.GetRequiredService<MongoDbContext>();
         mongo.Database.DropCollection(MongoDbContext.SessionCollection);
         jobClient = scope.GetRequiredService<IBackgroundJobClientV2>();
+
+        hangfireDb = scope.GetRequiredService<HangfireDbContext>();
     }
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)

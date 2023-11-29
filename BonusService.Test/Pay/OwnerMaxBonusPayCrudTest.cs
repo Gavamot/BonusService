@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;

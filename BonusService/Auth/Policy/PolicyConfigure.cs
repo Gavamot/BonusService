@@ -1,7 +1,7 @@
+using BonusService.Auth.Claims;
+using BonusService.Auth.Rights;
+using BonusService.Auth.Roles;
 using Microsoft.AspNetCore.Authorization;
-using PlatformWebApi.Identity.Claims;
-using PlatformWebApi.Identity.Rights;
-using PlatformWebApi.Identity.Roles;
 
 namespace BonusService.Auth.Policy;
 

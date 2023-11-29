@@ -1,5 +1,6 @@
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

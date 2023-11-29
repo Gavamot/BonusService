@@ -1,10 +1,13 @@
+using System.Diagnostics.CodeAnalysis;
 using BonusApi;
-using BonusService.Postgres;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 
 namespace BonusService.Test;
 
+[SuppressMessage("Usage", "xUnit1031:Do not use blocking task operations in test method")]
 public class PayTest : BonusTestApi
 {
     public PayTest(FakeApplicationFactory<Program> server) : base(server)
@@ -254,7 +257,7 @@ public class PayTest : BonusTestApi
     }
 
      [Fact]
-    public async Task WrongParameters_TrowsException()
+    public void WrongParameters_TrowsException()
      {
          void PayTrows(PayRequestDto request)
          {

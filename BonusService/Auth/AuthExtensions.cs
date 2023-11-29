@@ -1,14 +1,14 @@
 using System.Configuration;
 using System.Text;
 using BonusService.Auth.DbContext;
+using BonusService.Auth.Entity;
 using BonusService.Auth.Policy;
+using BonusService.Auth.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using PlatformWebApi.Identity.Settings;
-using PlatformWebApi.Models.Models.Identity.Entity;
 
 namespace BonusService.Auth;
 

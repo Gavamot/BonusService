@@ -1,4 +1,4 @@
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres.Entity;
 
 #pragma warning disable CS8618
 public class BonusProgramHistory : IHaveId<int>, IHaveDateOfChange

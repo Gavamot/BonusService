@@ -1,7 +1,7 @@
 
 
+using BonusService.Auth.Entity;
 using Microsoft.EntityFrameworkCore;
-using PlatformWebApi.Models.Models.Identity.Entity;
 
 namespace BonusService.Auth.DbContext;
 

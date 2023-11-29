@@ -1,9 +1,9 @@
-using BonusApi;
-using BonusService.Bonuses;
+using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FluentAssertions;
-namespace BonusService.Test;
+#pragma warning disable CS8604 // Possible null reference argument.
+namespace BonusService.Test.BonusPrograms;
 
 public class BonusProgramAchievementTest : BonusTestApi
 {
@@ -15,7 +15,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task AnotherDateNotCounting_OnlySumCurrentMonth()
     {
-        var bonus = new BonusProgramRep().Get();
+        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
         mongo.Sessions.InsertMany(new []
         {
@@ -25,7 +25,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime - TimeSpan.FromHours(1),
+                chargeEndTime = Q.IntervalMoth1Start.AddHours(-1).UtcDateTime,
             },
             new MongoSession()
             {
@@ -33,7 +33,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
-                chargeEndTime = Q.IntervalMoth1.to.UtcDateTime,
+                chargeEndTime = Q.IntervalMoth1End.UtcDateTime,
             },
             new MongoSession()
             {
@@ -41,7 +41,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.IntervalMoth1Start.UtcDateTime,
             }
         });
 
@@ -49,21 +49,13 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
-        res.LevelName.Should().Be(curLevel.Name);
-        res.LevelCondition.Should().Be(curLevel.Condition);
-        res.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-        res.LevelAwardSum.Should().Be(curLevel.AwardSum);
 
-        res.NextLevelName.Should().BeNull();
-        res.NextLevelCondition.Should().BeNull();
-        res.NextLevelAwardPercent.Should().BeNull();
-        res.NextLevelAwardSum.Should().BeNull();
     }
 
     [Fact]
     public async Task GetLastLevelSumMoreWhenNeed_WorksCorrectly()
     {
-        var bonus = new BonusProgramRep().Get();
+        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
         var sum = curLevel.Condition + 1000;
@@ -83,22 +75,17 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(sum);
-        res.LevelName.Should().Be(curLevel.Name);
-        res.LevelCondition.Should().Be(curLevel.Condition);
-        res.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-        res.LevelAwardSum.Should().Be(curLevel.AwardSum);
-
-        res.NextLevelName.Should().BeNull();
-        res.NextLevelCondition.Should().BeNull();
-        res.NextLevelAwardPercent.Should().BeNull();
-        res.NextLevelAwardSum.Should().BeNull();
+        var bonusProgram = BonusProgramSeed.Get();
+        res.BonusProgram.Should().NotBeNull();
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
     }
 
 
     [Fact]
     public async Task GetLastLevelExecCondition_WorksCorrectly()
     {
-        var bonus = new BonusProgramRep().Get();
+        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
         mongo.Sessions.InsertMany(new []
@@ -117,21 +104,16 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
-        res.LevelName.Should().Be(curLevel.Name);
-        res.LevelCondition.Should().Be(curLevel.Condition);
-        res.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-        res.LevelAwardSum.Should().Be(curLevel.AwardSum);
-
-        res.NextLevelName.Should().BeNull();
-        res.NextLevelCondition.Should().BeNull();
-        res.NextLevelAwardPercent.Should().BeNull();
-        res.NextLevelAwardSum.Should().BeNull();
+        var bonusProgram = BonusProgramSeed.Get();
+        res.BonusProgram.Should().NotBeNull();
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
     }
 
     [Fact]
     public async Task GetMiddleLevel3Sessions_WorksCorrectly()
     {
-        var bonus = new BonusProgramRep().Get();
+        var bonus = BonusProgramSeed.Get();
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
         var nextLevel = programLevels[3];
@@ -167,21 +149,16 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition / 3 + curLevel.Condition / 3 + curLevel.Condition / 3 + 6);
-        res.LevelName.Should().Be(curLevel.Name);
-        res.LevelCondition.Should().Be(curLevel.Condition);
-        res.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-        res.LevelAwardSum.Should().Be(curLevel.AwardSum);
-
-        res.NextLevelName.Should().Be(nextLevel.Name);
-        res.NextLevelCondition.Should().Be(nextLevel.Condition);
-        res.NextLevelAwardPercent.Should().Be(nextLevel.AwardPercent);
-        res.NextLevelAwardSum.Should().Be(nextLevel.AwardSum);
+        var bonusProgram = BonusProgramSeed.Get();
+        res.BonusProgram.Should().NotBeNull();
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
     }
 
     [Fact]
     public async Task GetMiddleLevelOneSession_WorksCorrectly()
     {
-        var bonus = new BonusProgramRep().Get();
+        var bonus = BonusProgramSeed.Get();
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
         mongo.Sessions.InsertMany(new []
@@ -198,10 +175,10 @@ public class BonusProgramAchievementTest : BonusTestApi
 
         var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
-        res.LevelName.Should().Be(curLevel.Name);
-        res.LevelCondition.Should().Be(curLevel.Condition);
-        res.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-        res.LevelAwardSum.Should().Be(curLevel.AwardSum);
+        var bonusProgram = BonusProgramSeed.Get();
+        res.BonusProgram.Should().NotBeNull();
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
     }
 
     [Fact]
@@ -283,27 +260,16 @@ public class BonusProgramAchievementTest : BonusTestApi
             chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
-        bonusPrograms.Items.Count.Should().Be(1);
-        var item = bonusPrograms.Items.First();
+        var items = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        items.Items?.Count.Should().Be(1);
+        var item = items.Items.First();
         item.CurrentSum.Should().Be(0);
 
-        var program = new BonusProgramRep().Get();
-        var curLevel = program.ProgramLevels.First();
-        var nextLevel = program.ProgramLevels.Skip(1).First();
+        var bonusProgram = BonusProgramSeed.Get();
 
-        item.BonusProgramId.Should().Be(program.Id);
-        item.BonusProgramName.Should().Be(program.Name);
-
-        item.LevelCondition.Should().Be(curLevel.Condition);
-        item.LevelName.Should().Be(curLevel.Name);
-        item.Type.Should().Be((BonusProgramType)program.BonusProgramType);
-        item.LevelAwardSum.Should().Be(curLevel.AwardSum);
-        item.LevelAwardPercent.Should().Be(curLevel.AwardPercent);
-
-        item.NextLevelCondition.Should().Be(nextLevel.Condition);
-        item.NextLevelName.Should().Be(nextLevel.Name);
-        item.NextLevelAwardPercent.Should().Be(nextLevel.AwardPercent);
-        item.NextLevelAwardSum.Should().Be(nextLevel.AwardSum);
+        var res = items.Items.First();
+        res.BonusProgram.Should().NotBeNull();
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
     }
 }

@@ -1,7 +1,7 @@
 using System.Text.Json;
+using BonusService.Balance;
 using BonusService.Common;
-using BonusService.Controllers;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Pay;

@@ -1,10 +1,10 @@
 using System.Data;
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
-
-namespace BonusService.Bonuses;
+namespace BonusService.BonusPrograms;
 
 [Mapper]
 public sealed partial class TransactionHistoryMapper

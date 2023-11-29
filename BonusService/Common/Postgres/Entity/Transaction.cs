@@ -1,8 +1,7 @@
 #nullable enable
 
-using Mediator;
 #pragma warning disable CS8618
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres.Entity;
 
 public enum TransactionType
 {

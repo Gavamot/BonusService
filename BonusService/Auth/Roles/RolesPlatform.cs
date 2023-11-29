@@ -1,4 +1,4 @@
-namespace PlatformWebApi.Identity.Roles;
+namespace BonusService.Auth.Roles;
 
 public static class RolesPlatform
 {

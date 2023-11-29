@@ -1,4 +1,5 @@
-namespace BonusService.Bonuses;
+using BonusService.BonusPrograms;
+namespace BonusService;
 
 public static class AppEvents
 {

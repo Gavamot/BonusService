@@ -1,5 +1,5 @@
 using System.Security.Claims;
-namespace PlatformWebApi.Identity.Claims;
+namespace BonusService.Auth.Claims;
 
 public static class ClaimTypesPlatform
 {

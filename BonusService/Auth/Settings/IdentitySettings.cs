@@ -1,5 +1,5 @@
 #pragma warning disable CS8618
-namespace PlatformWebApi.Identity.Settings;
+namespace BonusService.Auth.Settings;
 
 public class IdentitySettings
 {

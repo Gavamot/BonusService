@@ -1,10 +1,11 @@
+using System.Diagnostics.CodeAnalysis;
 using AutoBogus;
-using BonusApi;
-using BonusService.Bonuses;
+using BonusService.BonusPrograms;
+using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FluentAssertions;
-using BonusProgram = BonusService.Postgres.BonusProgram;
+using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 namespace BonusService.Test;
 
 public sealed class MongoSessionFaker : AutoFaker<MongoSession>
@@ -30,8 +31,7 @@ public sealed class MongoSessionFaker : AutoFaker<MongoSession>
     }
 }
 
-
-
+[SuppressMessage("Usage", "xUnit1031:Do not use blocking task operations in test method")]
 public class LoadTest : BonusTestApi
 {
     public LoadTest(FakeApplicationFactory<Program> server) : base(server)
@@ -39,9 +39,9 @@ public class LoadTest : BonusTestApi
 
     }
 
-    private BonusProgram bonusProgram = new BonusProgramRep().Get();
+    private BonusProgram bonusProgram = BonusProgramSeed.Get();
 
-    [Fact]
+    [Fact(Skip = "Long execution")]
     public void AddManySessions()
     {
         var faker = new MongoSessionFaker();
@@ -51,7 +51,7 @@ public class LoadTest : BonusTestApi
             mongo.Sessions.InsertMany(chunk);
         }
 
-        var job = GetService<MonthlySumBonusJob>();
+        var job = GetService<SpendMoneyBonusJob>();
         job.ExecuteAsync(bonusProgram).GetAwaiter().GetResult();
 
         var res = postgres.Transactions.Count();

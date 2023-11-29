@@ -1,4 +1,4 @@
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres;
 
 #pragma warning disable CS8618
 

@@ -1,8 +1,7 @@
 #nullable enable
 
-using BonusService.Common;
 #pragma warning disable CS8618
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres.Entity;
 
 public enum FrequencyTypes
 {
@@ -58,24 +57,4 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public List<BonusProgramLevel> ProgramLevels { get; set; }
     public List<BonusProgramHistory> BonusProgramHistory { get; set; }
     public string CreateMark() => $"{Id}_{Name}";
-    public DateTimeInterval CreateDateTimeInterval(IDateTimeService dateTimeService)
-    {
-        if (FrequencyValue == 1)
-        {
-            var now = dateTimeService.GetNowUtc();
-            switch (FrequencyType)
-            {
-                case FrequencyTypes.Day : return new DateTimeInterval(
-                    new DateTimeOffset(now.Year, now.Month, now.Day, 0, 0, 0, now.Offset),
-                    new DateTimeOffset(now.Year, now.Month, now.Day, 0, 0, 0, now.Offset) + TimeSpan.FromDays(1));
-                case FrequencyTypes.Week : throw new NotImplementedException("Необходжимо найти либу или написать свой алгоритм для недельнольного предстваления из даты");
-                case FrequencyTypes.Month : return dateTimeService.GetCurrentMonth();
-                default: throw new NotImplementedException();
-            }
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

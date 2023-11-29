@@ -1,4 +1,4 @@
-using BonusService.Postgres;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
 namespace BonusService.Test;

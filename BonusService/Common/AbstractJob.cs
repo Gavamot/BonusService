@@ -1,7 +1,8 @@
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
@@ -19,8 +20,31 @@ public abstract class AbstractBonusProgramJob
         _dateTimeService = dateTimeService;
     }
 
+    protected abstract BonusProgramType BonusProgramType { get; }
+    protected void Validate(BonusProgram bonusProgram)
+    {
+        try
+        {
+            if (bonusProgram.BonusProgramType != BonusProgramType.SpendMoney)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Неверный тип бонусной программы начисляющей джобы. Должен быть {BonusProgramType.SpendMoney} а задан {bonusProgram.BonusProgramType}");
+            if (bonusProgram.IsDeleted)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
+            var now = _dateTimeService.GetNowUtc();
+            if (bonusProgram.DateStart > now)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу раньше срока бонусной программы");
+            if ((bonusProgram.DateStop ?? DateTimeOffset.MaxValue) < now)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу на завершенную бонусную программу");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            throw;
+        }
+    }
+
     public async Task ExecuteAsync(BonusProgram bonusProgram)
     {
+        Validate(bonusProgram);
         Stopwatch stopwatch = Stopwatch.StartNew();
         var bonusProgramMark = bonusProgram.CreateMark();
         using var activity = new Activity(bonusProgramMark);

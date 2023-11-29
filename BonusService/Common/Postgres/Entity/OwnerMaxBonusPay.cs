@@ -1,4 +1,4 @@
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres.Entity;
 
 public class OwnerMaxBonusPay : IForeignCatalogEntity
 {

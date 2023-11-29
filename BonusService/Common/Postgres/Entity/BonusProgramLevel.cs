@@ -1,6 +1,6 @@
 #pragma warning disable CS8618
 #nullable enable
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres.Entity;
 
 public class BonusProgramLevel : ICatalogEntity
 {

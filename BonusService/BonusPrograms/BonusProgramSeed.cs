@@ -1,14 +1,9 @@
-using BonusService.Postgres;
-namespace BonusService.Bonuses;
+using BonusService.Common.Postgres.Entity;
+namespace BonusService.BonusPrograms;
 
-public interface IBonusProgramRep
+public static class BonusProgramSeed
 {
-    BonusProgram Get();
-}
-
-public class BonusProgramRep : IBonusProgramRep
-{
-    public BonusProgram Get()
+    public static  BonusProgram Get()
     {
         var lastUpdated = new DateTimeOffset(2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         return new BonusProgram()

@@ -748,134 +748,21 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgramAchievementResponseItem : System.ComponentModel.INotifyPropertyChanged
     {
-        private int? _bonusProgramId = default!;
-        private string? _bonusProgramName = default!;
-        private BonusProgramType? _type = default!;
-        private string? _levelName = default!;
-        private long? _levelCondition = default!;
-        private int? _levelAwardPercent = default!;
-        private int? _levelAwardSum = default!;
+        private BonusProgram? _bonusProgram = default!;
         private long? _currentSum = default!;
-        private string? _nextLevelName = default!;
-        private long? _nextLevelCondition = default!;
-        private int? _nextLevelAwardPercent = default!;
-        private int? _nextLevelAwardSum = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? BonusProgramId
+        public BonusProgram? BonusProgram
         {
-            get { return _bonusProgramId; }
+            get { return _bonusProgram; }
 
             set
             {
-                if (_bonusProgramId != value)
+                if (_bonusProgram != value)
                 {
-                    _bonusProgramId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramName")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? BonusProgramName
-        {
-            get { return _bonusProgramName; }
-
-            set
-            {
-                if (_bonusProgramName != value)
-                {
-                    _bonusProgramName = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("type")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
-        public BonusProgramType? Type
-        {
-            get { return _type; }
-
-            set
-            {
-                if (_type != value)
-                {
-                    _type = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("levelName")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? LevelName
-        {
-            get { return _levelName; }
-
-            set
-            {
-                if (_levelName != value)
-                {
-                    _levelName = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("levelCondition")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? LevelCondition
-        {
-            get { return _levelCondition; }
-
-            set
-            {
-                if (_levelCondition != value)
-                {
-                    _levelCondition = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("levelAwardPercent")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? LevelAwardPercent
-        {
-            get { return _levelAwardPercent; }
-
-            set
-            {
-                if (_levelAwardPercent != value)
-                {
-                    _levelAwardPercent = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("levelAwardSum")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? LevelAwardSum
-        {
-            get { return _levelAwardSum; }
-
-            set
-            {
-                if (_levelAwardSum != value)
-                {
-                    _levelAwardSum = value;
+                    _bonusProgram = value;
                     RaisePropertyChanged();
                 }
             }
@@ -893,74 +780,6 @@ namespace BonusApi
                 if (_currentSum != value)
                 {
                     _currentSum = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("nextLevelName")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? NextLevelName
-        {
-            get { return _nextLevelName; }
-
-            set
-            {
-                if (_nextLevelName != value)
-                {
-                    _nextLevelName = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("nextLevelCondition")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? NextLevelCondition
-        {
-            get { return _nextLevelCondition; }
-
-            set
-            {
-                if (_nextLevelCondition != value)
-                {
-                    _nextLevelCondition = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("nextLevelAwardPercent")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? NextLevelAwardPercent
-        {
-            get { return _nextLevelAwardPercent; }
-
-            set
-            {
-                if (_nextLevelAwardPercent != value)
-                {
-                    _nextLevelAwardPercent = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("nextLevelAwardSum")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? NextLevelAwardSum
-        {
-            get { return _nextLevelAwardSum; }
-
-            set
-            {
-                if (_nextLevelAwardSum != value)
-                {
-                    _nextLevelAwardSum = value;
                     RaisePropertyChanged();
                 }
             }
@@ -1854,6 +1673,7 @@ namespace BonusApi
         private string _transactionId = default!;
         private System.Guid _ezsId = default!;
         private int _ownerId = default!;
+        private string? _userName = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
@@ -1975,6 +1795,23 @@ namespace BonusApi
                 if (_ownerId != value)
                 {
                     _ownerId = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("userName")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? UserName
+        {
+            get { return _userName; }
+
+            set
+            {
+                if (_userName != value)
+                {
+                    _userName = value;
                     RaisePropertyChanged();
                 }
             }

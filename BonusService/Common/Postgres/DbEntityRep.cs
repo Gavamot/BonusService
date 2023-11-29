@@ -1,6 +1,5 @@
-using BonusService.Common;
 using Microsoft.EntityFrameworkCore;
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres;
 
 public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
 {

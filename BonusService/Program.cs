@@ -1,13 +1,12 @@
 using System.Text.Json.Serialization;
+using BonusService;
 using BonusService.Auth;
-using BonusService.Bonuses;
+using BonusService.BonusPrograms;
 using BonusService.Common;
+using BonusService.Common.Postgres;
 using BonusService.Pay;
-using BonusService.Postgres;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Hangfire;
-using Hangfire.Dashboard.BasicAuthorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
@@ -26,8 +25,6 @@ Console.WriteLine($"Running address is urls={urls}");
 
 var services = builder.Services;
 
-
-services.AddScoped<IBonusProgramRep, BonusProgramRep>();
 services.AddScoped<OwnerByPayRep>();
 
 services.AddCors(options =>
@@ -69,7 +66,7 @@ services.AddHangfireService(configuration);
 
 services.AddFluentValidationAutoValidation();
 services.AddFluentValidationClientsideAdapters();
-services.AddValidatorsFromAssemblyContaining<Program>();
+services.AddValidatorsFromAssemblyContaining<BonusService.Program>();
 
 services.AddControllers().AddJsonOptions(opt =>
 {
@@ -113,44 +110,43 @@ app.UseHangfire();
 app.MapControllers();
 app.ApplyPostgresMigrations();
 
-if (Program.IsNotAppTest())
+if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
     scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().Init();
 }
 
-AddPostgresSeed(app.Services);
-
-
+BonusService.Program.AddPostgresSeed(app.Services);
 
 app.Run();
 
 
-public partial class Program
+namespace BonusService
 {
-    public static void AddPostgresSeed(IServiceProvider serviceProvider)
+    public partial class Program
     {
-        // Времянка пока юонусные программы захардкоженны
-        using var scope1 = serviceProvider.CreateScope();
+        public static void AddPostgresSeed(IServiceProvider serviceProvider)
         {
+            // Времянка пока юонусные программы захардкоженны
+            using var scope1 = serviceProvider.CreateScope();
             var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == new BonusProgramRep().Get().Id);
+            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
             if (bp == null)
             {
-                bp = new BonusProgramRep().Get();
-                bp.Id = default;
+                bp = BonusProgramSeed.Get();
+                //bp.Id = 1;
                 postgres.BonusPrograms.Add(bp);
                 postgres.SaveChanges();
             }
         }
-    }
-    public const string AppTest = nameof(AppTest);
+        public const string AppTest = nameof(AppTest);
 
-    public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();
-    public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
-    public static bool IsNotAppTest() => !IsAppTest();
-    public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
-    public static bool IsNotLocal() => !IsLocal();
-    public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
-    public static bool IsNotNswagBuild() => !IsNswagBuild();
+        public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();
+        public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
+        public static bool IsNotAppTest() => !IsAppTest();
+        public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
+        public static bool IsNotLocal() => !IsLocal();
+        public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
+        public static bool IsNotNswagBuild() => !IsNswagBuild();
+    }
 }

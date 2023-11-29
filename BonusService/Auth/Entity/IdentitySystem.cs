@@ -1,4 +1,4 @@
-namespace PlatformWebApi.Models.Models.Identity.Entity;
+namespace BonusService.Auth.Entity;
 
 public class IdentitySystem
 {

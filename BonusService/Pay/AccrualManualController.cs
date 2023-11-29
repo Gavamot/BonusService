@@ -2,14 +2,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using BonusService.Auth.Policy;
 using BonusService.Common;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
-namespace BonusService.Controllers;
+namespace BonusService.Pay;
 
 public sealed class AccrualManualDtoValidator : AbstractValidator<AccrualManualRequestDto>
 {

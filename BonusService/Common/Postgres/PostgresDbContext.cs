@@ -1,6 +1,7 @@
 #pragma warning disable CS8618
+using BonusService.Common.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
-namespace BonusService.Postgres;
+namespace BonusService.Common.Postgres;
 
 // dotnet ef migrations add InitialCreate --context PostgresDbContext
 public static class PostgresExt
@@ -34,6 +35,13 @@ public class PostgresDbContext : DbContext
     public DbSet<BonusProgram> BonusPrograms { get; set; }
     public DbSet<BonusProgramLevel> BonusProgramsLevels { get; set; }
     public DbSet<BonusProgramHistory> BonusProgramHistory { get; set; }
+
+    public IQueryable<BonusProgram> GetActiveBonusPrograms(DateTimeOffset now)
+    {
+        return BonusPrograms.Where(x => x.IsDeleted == false && x.DateStart <= now && ((x.DateStop == null) || x.DateStop > now))
+            .Include(x=> x.ProgramLevels)
+            .AsNoTracking();
+    }
 
     public PostgresDbContext(){ }
 

@@ -1,12 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
-using BonusService.Postgres;
+using BonusService.Common.Postgres;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-namespace BonusService.Controllers;
+namespace BonusService.Balance;
 
 public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetPersonBalanceRequestDto>
 {

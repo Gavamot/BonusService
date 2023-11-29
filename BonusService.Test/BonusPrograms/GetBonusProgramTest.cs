@@ -1,6 +1,6 @@
 using BonusService.Test.Common;
 using FluentAssertions;
-namespace BonusService.Test;
+namespace BonusService.Test.BonusPrograms;
 
 public class BonusProgramTest : BonusTestApi
 {

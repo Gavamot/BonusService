@@ -1,4 +1,4 @@
-namespace PlatformWebApi.Identity.Rights;
+namespace BonusService.Auth.Rights;
 
 public static class ControllerNames
 {
