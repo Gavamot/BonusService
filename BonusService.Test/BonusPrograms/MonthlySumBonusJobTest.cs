@@ -28,7 +28,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
 {
     private BonusProgram bonusProgram = BonusProgramSeed.Get();
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
-    public MonthlySumBonusJobTest(FakeApplicationFactory<Program> server) : base(new FakeApplicationFactory<Program>())
+    public MonthlySumBonusJobTest(FakeApplicationFactory<Program> server) : base(server)
     {
 
     }
@@ -213,7 +213,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public void RealTest_TwoPersonsPayed_CalculatedCorrectly()
+    public async Task RealTest_TwoPersonsPayed_CalculatedCorrectly()
     {
         AddUnmatchedSessions();
 
@@ -228,8 +228,8 @@ public class MonthlySumBonusJobTest : BonusTestApi
             user2RusAccountSession1
         });
 
-        var jobId = jobClient.Enqueue<SpendMoneyBonusJob>(x=> x.ExecuteAsync(bonusProgram));
-        jobClient.WaitForEndOfJob(jobId);
+        var job = GetService<SpendMoneyBonusJob>();
+        await job.ExecuteAsync(bonusProgram);
 
         postgres.Transactions.Count().Should().Be(2);
 

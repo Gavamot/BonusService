@@ -12,7 +12,7 @@ using FrequencyTypes = BonusApi.FrequencyTypes;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace BonusService.Test.Common;
 
-public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncDisposable
+public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncLifetime
 {
     public static class Q
     {
@@ -150,6 +150,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         jobClient = scope.GetRequiredService<IBackgroundJobClientV2>();
 
         hangfireDb = scope.GetRequiredService<HangfireDbContext>();
+        hangfireDb.Database.Migrate();
     }
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)
@@ -159,6 +160,23 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         await Task.WhenAll(postgres, mongo);
     }
 
+    public async Task InitializeAsync()
+    {
+
+    }
+    async Task IAsyncLifetime.DisposeAsync()
+    {
+        var postgresDelete = postgres.Database.EnsureDeletedAsync();
+
+         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
+         var hangfireDelete = hangfire.Database.EnsureDeletedAsync();
+
+          await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);
+          var mongoDelete =  InfraHelper.DropMongoDatabase(server.DbName);
+          var tasks = new [] { postgresDelete, mongoDelete, hangfireDelete };
+          await Task.WhenAll(tasks);
+          scope.Dispose();
+    }
     public async ValueTask DisposeAsync()
     {
         /*var postgresDelete = postgres.Database.EnsureDeletedAsync();
