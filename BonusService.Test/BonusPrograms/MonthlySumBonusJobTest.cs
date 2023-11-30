@@ -35,20 +35,11 @@ public class MonthlySumBonusJobTest : BonusTestApi
 
     private void CheckEmptyHistory(BonusProgramHistory bonusProgramHistory)
     {
-        bonusProgramHistory.BonusProgramId.Should().Be(bonusProgram.Id);
-        bonusProgramHistory.BankId.Should().Be(bonusProgram.BankId);
         bonusProgramHistory.ClientBalancesCount.Should().Be(0);
         bonusProgramHistory.TotalBonusSum.Should().Be(0);
-        bonusProgramHistory.ExecTimeStart.Should().Be(Q.IntervalMoth1.from);
-        bonusProgramHistory.ExecTimeEnd.Should().Be(Q.IntervalMoth1.to);
+        ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
     }
-    private void CheckEmptyHistory(IEnumerable<BonusProgramHistory> bonusProgramHistories)
-    {
-        foreach (var bonusProgramHistory in bonusProgramHistories)
-        {
-            CheckEmptyHistory(bonusProgramHistory);
-        }
-    }
+
     private void AddUnmatchedSessions()
     {
 
@@ -77,6 +68,35 @@ public class MonthlySumBonusJobTest : BonusTestApi
             session4,
             session5
         });
+    }
+
+    private void ValidateTransactionCommonFields(Transaction transaction, string clientLogin = Q.ClientLogin)
+    {
+        transaction.Type.Should().Be(TransactionType.Auto);
+        transaction.Description.Should().NotBeEmpty();
+        transaction.BonusProgramId.Should().Be(1);
+        transaction.OwnerId.Should().BeNull();
+        transaction.EzsId.Should().BeNull();
+        transaction.TransactionId.Should().NotBeEmpty();
+        transaction.UserName.Should().Be(clientLogin);
+        transaction.LastUpdated.Should().NotBe(default);
+    }
+
+    private void ValidateBonusProgramHistoryCommonFields(BonusProgramHistory history)
+    {
+        history.ExecTimeStart.Should().Be(Q.IntervalMoth1.from.UtcDateTime);
+        history.ExecTimeEnd.Should().Be(Q.IntervalMoth1.to.UtcDateTime);
+        history.BankId.Should().Be(1);
+        history.BonusProgramId.Should().Be(1);
+        history.LastUpdated.Should().NotBe(default);
+    }
+
+    private void CheckEmptyHistory(IEnumerable<BonusProgramHistory> bonusProgramHistories)
+    {
+        foreach (var bonusProgramHistory in bonusProgramHistories)
+        {
+            CheckEmptyHistory(bonusProgramHistory);
+        }
     }
 
     [Fact]
@@ -144,29 +164,19 @@ public class MonthlySumBonusJobTest : BonusTestApi
         // 2 PaymentCalc
         postgres.Transactions.Count().Should().Be(1);
         var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
-        tranUser1Rus.Type.Should().Be(TransactionType.Auto);
-        tranUser1Rus.Description.Should().NotBeEmpty();
-        tranUser1Rus.BonusProgramId.Should().Be(1);
         long bonusBaseSum = user1RusAccountSession1.operation.calculatedPayment!.Value + user1RusAccountSession2.operation.calculatedPayment.Value;
         tranUser1Rus.BonusBase.Should().Be(bonusBaseSum);
         long bonusSumByLevel2 = bonusBaseSum * 5 / 100;
         tranUser1Rus.BonusSum.Should().Be(bonusSumByLevel2);
         tranUser1Rus.UserName.Should().Be(user1RusAccountSession1.user.clientLogin);
-        tranUser1Rus.OwnerId.Should().BeNull();
-        tranUser1Rus.EzsId.Should().BeNull();
-        tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().NotBe(default);
+        ValidateTransactionCommonFields(tranUser1Rus);
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
-        bonusProgramHistories.Length.Should().Be(1);
-        var bonusProgramHistory = bonusProgramHistories.First();
-        bonusProgramHistory.ExecTimeStart.Should().Be(Q.IntervalMoth1.from);
-        bonusProgramHistory.ExecTimeEnd.Should().Be(Q.IntervalMoth1.to);
-        bonusProgramHistory.BankId.Should().Be(1);
-        bonusProgramHistory.BonusProgramId.Should().Be(1);
-        bonusProgramHistory.ClientBalancesCount.Should().Be(1);
-        bonusProgramHistory.TotalBonusSum.Should().Be(bonusSumByLevel2);
-        bonusProgramHistory.LastUpdated.Should().NotBe(default);
+        var histories = postgres.BonusProgramHistory.ToArray();
+        histories.Length.Should().Be(1);
+        var history = histories.First();
+        history.ClientBalancesCount.Should().Be(1);
+        history.TotalBonusSum.Should().Be(bonusSumByLevel2);
+        ValidateBonusProgramHistoryCommonFields(history);
     }
     [Fact]
     public async Task SessionFromDifferentBunk_OnlyBonusProgramBankCalculated()
@@ -188,28 +198,17 @@ public class MonthlySumBonusJobTest : BonusTestApi
         postgres.Transactions.Count().Should().Be(1);
 
         var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
-        tranUser1Rus.Type.Should().Be(TransactionType.Auto);
-        tranUser1Rus.Description.Should().NotBeEmpty();
-        tranUser1Rus.BonusProgramId.Should().Be(1);
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 5 / 100);
-        tranUser1Rus.UserName.Should().Be(user1RusAccountSession1.user.clientLogin);
-        tranUser1Rus.OwnerId.Should().BeNull();
-        tranUser1Rus.EzsId.Should().BeNull();
-        tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().NotBe(default);
+        ValidateTransactionCommonFields(tranUser1Rus);
 
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
-        bonusProgramHistory.ExecTimeStart.Should().Be(Q.IntervalMoth1.from);
-        bonusProgramHistory.ExecTimeEnd.Should().Be(Q.IntervalMoth1.to);
-        bonusProgramHistory.BankId.Should().Be(1);
-        bonusProgramHistory.BonusProgramId.Should().Be(1);
+        ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
         bonusProgramHistory.ClientBalancesCount.Should().Be(1);
         bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100);
-        bonusProgramHistory.LastUpdated.Should().NotBe(default);
     }
 
     [Fact]
@@ -234,41 +233,25 @@ public class MonthlySumBonusJobTest : BonusTestApi
         postgres.Transactions.Count().Should().Be(2);
 
         var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
-        tranUser1Rus.Type.Should().Be(TransactionType.Auto);
-        tranUser1Rus.Description.Should().NotBeEmpty();
-        tranUser1Rus.BonusProgramId.Should().Be(1);
+
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 5 / 100);
-        tranUser1Rus.UserName.Should().Be(user1RusAccountSession1.user.clientLogin);
-        tranUser1Rus.OwnerId.Should().BeNull();
-        tranUser1Rus.EzsId.Should().BeNull();
-        tranUser1Rus.TransactionId.Should().NotBeEmpty();
-        tranUser1Rus.LastUpdated.Should().NotBe(default);
+        ValidateTransactionCommonFields(tranUser1Rus);
 
         var tranUser2Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId2 && x.BankId == Q.BankIdRub);
-        tranUser2Rus.Type.Should().Be(TransactionType.Auto);
-        tranUser2Rus.Description.Should().NotBeEmpty();
-        tranUser2Rus.BonusProgramId.Should().Be(1);
+
         tranUser2Rus.BonusBase.Should().Be(user2RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser2Rus.BonusSum.Should().Be(user2RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
-        tranUser2Rus.UserName.Should().Be(user2RusAccountSession1.user.clientLogin);
-        tranUser2Rus.OwnerId.Should().BeNull();
-        tranUser2Rus.EzsId.Should().BeNull();
-        tranUser2Rus.TransactionId.Should().NotBeEmpty();
-        tranUser2Rus.LastUpdated.Should().NotBe(default);
+        ValidateTransactionCommonFields(tranUser2Rus, user2RusAccountSession1.user.clientLogin);
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
-        bonusProgramHistory.ExecTimeStart.Should().Be(Q.IntervalMoth1.from);
-        bonusProgramHistory.ExecTimeEnd.Should().Be(Q.IntervalMoth1.to);
-        bonusProgramHistory.BankId.Should().Be(Q.BankIdRub);
+        ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
         bonusProgramHistory.BonusProgramId.Should().Be(1);
         bonusProgramHistory.ClientBalancesCount.Should().Be(2);
         bonusProgramHistory.TotalBonusSum.Should().Be(
             (user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100) +
             (user2RusAccountSession1.operation.calculatedPayment!.Value * 1 / 100));
-        bonusProgramHistory.LastUpdated.Should().NotBe(default);
-
     }
 }
