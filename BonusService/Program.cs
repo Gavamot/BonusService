@@ -96,6 +96,7 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseSwagger();
 app.UseSwaggerUI(c=>
 {
+    c.DisplayRequestDuration();
     c.SwaggerEndpoint("v1/swagger.json", "My API V1");
     c.EnableTryItOutByDefault();
 });

@@ -51,8 +51,6 @@ public class BonusProgramLevelDto
     public int AwardSum { get; set; }
 }
 
-
-
 public sealed class BonusProgramAchievementRequestValidator : AbstractValidator<BonusProgramAchievementRequest>
 {
     public BonusProgramAchievementRequestValidator()
