@@ -212,7 +212,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
-    public async Task RealTest_TwoPersonsPayed_CalculatedCorrectly()
+    public async Task TwoPersonsPayed_CalculatedCorrectly()
     {
         AddUnmatchedSessions();
 

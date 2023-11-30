@@ -15,9 +15,10 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4592b91a_002D85a1_002D4765_002D80e0_002D4e564948b4a2/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AddManySessions #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4850352b_002Dbed8_002D41db_002D9cf3_002D52288904b2ff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AddManySessions #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4850352b_002Dbed8_002D41db_002D9cf3_002D52288904b2ff/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AddManySessions #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.LoadTest.AddManySessions&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.BonusPrograms.BonusProgramAchievementTest.AnotherDateNotCounting_OnlySumCurrentMonth&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1bd9102_002D13e2_002D4ee6_002Db4a0_002D924f9d033beb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AddManySessions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
