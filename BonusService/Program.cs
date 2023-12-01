@@ -93,13 +93,31 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.UseSwagger();
-app.UseSwaggerUI(c=>
+if (app.Environment.IsDevelopment())
 {
-    c.DisplayRequestDuration();
-    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
-    c.EnableTryItOutByDefault();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c=>
+    {
+        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+        c.EnableTryItOutByDefault();
+        c.DisplayRequestDuration();
+    });
+}
+else
+{
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "/bonus/swagger/{documentName}/swagger.json";
+    });
+    app.UseSwaggerUI(c=>
+    {
+        c.RoutePrefix = "bonus/swagger";
+        c.SwaggerEndpoint("/bonus/swagger/v1/swagger.json", "Bonus API V1");
+        c.EnableTryItOutByDefault();
+        c.DisplayRequestDuration();
+    });
+}
+
 
 app.UseHttpLogging();
 app.UseHttpsRedirection();
