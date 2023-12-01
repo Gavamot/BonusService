@@ -51,7 +51,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
 
         var session3 = Q.CreateSession(new DateTime(1990, 1, 1));
         session3.tariff.BankId = Q.BankIdKaz;
-        session3.user.clientNodeId = Q.PersonId2String;
+        session3.user.clientNodeId = Q.PersonId2;
 
         var session4 = Q.CreateSession(new DateTime(1990, 1, 1));
         session3.user.chargingClientType = MongoChargingClientType.CompanyEntity;
@@ -219,7 +219,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         MongoSession user1RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
         MongoSession user2RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
         user2RusAccountSession1.user.clientLogin = Q.ClientLogin2;
-        user2RusAccountSession1.user.clientNodeId = Q.PersonId2String;
+        user2RusAccountSession1.user.clientNodeId = Q.PersonId2;
         user2RusAccountSession1.operation.calculatedPayment = Q.SumLevel1;
         mongo.Sessions.InsertMany(new []
         {

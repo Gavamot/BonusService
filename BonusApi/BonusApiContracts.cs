@@ -25,19 +25,38 @@ namespace BonusApi
     public partial interface IBonusClient
     {
         /// <summary>
-        /// Начисление бонусных баллов оператором
+        /// Списание бонусных баллов оператором
+        /// <br/>Возращает число списанных оператором бонусов.
+        /// <br/>Оператор не может списывать бонусы в минус
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AccrualManualAsync(AccrualManualRequestDto body);
+        System.Threading.Tasks.Task<long> BalancePayManualAsync(PayManualRequestDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Начисление бонусных баллов оператором
+        /// Списание бонусных баллов оператором
+        /// <br/>Возращает число списанных оператором бонусов.
+        /// <br/>Оператор не может списывать бонусы в минус
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task AccrualManualAsync(AccrualManualRequestDto body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<long> BalancePayManualAsync(PayManualRequestDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Списание бонусных баллов сервисом оплаты
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> BalancePayAsync(PayRequestDto body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Списание бонусных баллов сервисом оплаты
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<long> BalancePayAsync(PayRequestDto body, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Получить баланс пользователя по всем валютам
@@ -69,104 +88,119 @@ namespace BonusApi
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<long> BalanceGetAsync(string personId, int bankId, System.Threading.CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Начисление бонусных баллов оператором
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(string personId);
+        System.Threading.Tasks.Task BalanceAccrualManualAsync(AccrualManualRequestDto body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Начисление бонусных баллов оператором
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task BalanceAccrualManualAsync(AccrualManualRequestDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsGetByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(string personId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsGetByIdAsync(int id);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> CrudBonusLevelsGetAllAsync();
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> CrudBonusLevelsGetAllAsync(System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsAddAsync(BonusProgramLevel body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsAddAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsUpdateAsync(BonusProgramLevel body);
+        System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsAddAsync(BonusProgramLevel body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsUpdateAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsAddAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CrudBonusLevelsDeleteByIdAsync(int id);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CrudBonusLevelsDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramGetByIdAsync(int id);
+        System.Threading.Tasks.Task BonusLevelsDeleteByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task BonusLevelsDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> CrudBonusProgramGetAllAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> CrudBonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramAddAsync(BonusProgram body);
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramGetPersonAchievementAsync(string personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramAddAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramGetPersonAchievementAsync(string personId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramUpdateAsync(BonusProgram body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramUpdateAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CrudBonusProgramDeleteByIdAsync(int id);
+        System.Threading.Tasks.Task BonusProgramUpdateAsync(BonusProgramDto body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task CrudBonusProgramDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task BonusProgramUpdateAsync(BonusProgramDto body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> BonusProgramGetByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> BonusProgramGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task BonusProgramDeleteByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task BonusProgramDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramRestartJobsAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramRestartJobsAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -197,55 +231,12 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayUpdateAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Списание бонусных баллов сервисом оплаты
-        /// </summary>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> PayAsync(PayRequestDto body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Списание бонусных баллов сервисом оплаты
-        /// </summary>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> PayAsync(PayRequestDto body, System.Threading.CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Списание бонусных баллов оператором
-        /// <br/>Возращает число списанных оператором бонусов.
-        /// <br/>Оператор не может списывать бонусы в минус
-        /// </summary>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> PayManualAsync(PayManualRequestDto body);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <summary>
-        /// Списание бонусных баллов оператором
-        /// <br/>Возращает число списанных оператором бонусов.
-        /// <br/>Оператор не может списывать бонусы в минус
-        /// </summary>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> PayManualAsync(PayManualRequestDto body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -455,10 +446,7 @@ namespace BonusApi
         private string? _executionCron = default!;
         private FrequencyTypes? _frequencyType = default!;
         private int? _frequencyValue = default!;
-        private bool? _isDeleted = default!;
         private System.DateTimeOffset? _lastUpdated = default!;
-        private System.Collections.Generic.ICollection<BonusProgramLevel>? _programLevels = default!;
-        private System.Collections.Generic.ICollection<BonusProgramHistory>? _bonusProgramHistory = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
 
@@ -632,23 +620,6 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("isDeleted")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public bool? IsDeleted
-        {
-            get { return _isDeleted; }
-
-            set
-            {
-                if (_isDeleted != value)
-                {
-                    _isDeleted = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
         [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
@@ -661,40 +632,6 @@ namespace BonusApi
                 if (_lastUpdated != value)
                 {
                     _lastUpdated = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("programLevels")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<BonusProgramLevel>? ProgramLevels
-        {
-            get { return _programLevels; }
-
-            set
-            {
-                if (_programLevels != value)
-                {
-                    _programLevels = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramHistory")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<BonusProgramHistory>? BonusProgramHistory
-        {
-            get { return _bonusProgramHistory; }
-
-            set
-            {
-                if (_bonusProgramHistory != value)
-                {
-                    _bonusProgramHistory = value;
                     RaisePropertyChanged();
                 }
             }
@@ -728,173 +665,7 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramAchievementRequest : System.ComponentModel.INotifyPropertyChanged
-    {
-        private string _personId = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("personId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
-        [System.ComponentModel.DataAnnotations.Required]
-        public string PersonId
-        {
-            get { return _personId; }
-
-            set
-            {
-                if (_personId != value)
-                {
-                    _personId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public string ToJson()
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Serialize(this, options);
-
-        }
-        public static BonusProgramAchievementRequest FromJson(string data)
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementRequest>(data, options);
-
-        }
-
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramAchievementResponse : System.ComponentModel.INotifyPropertyChanged
-    {
-        private System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? _items = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("items")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? Items
-        {
-            get { return _items; }
-
-            set
-            {
-                if (_items != value)
-                {
-                    _items = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public string ToJson()
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Serialize(this, options);
-
-        }
-        public static BonusProgramAchievementResponse FromJson(string data)
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponse>(data, options);
-
-        }
-
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramAchievementResponseItem : System.ComponentModel.INotifyPropertyChanged
-    {
-        private BonusProgramDto? _bonusProgram = default!;
-        private long? _currentSum = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public BonusProgramDto? BonusProgram
-        {
-            get { return _bonusProgram; }
-
-            set
-            {
-                if (_bonusProgram != value)
-                {
-                    _bonusProgram = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("currentSum")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? CurrentSum
-        {
-            get { return _currentSum; }
-
-            set
-            {
-                if (_currentSum != value)
-                {
-                    _currentSum = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        public string ToJson()
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Serialize(this, options);
-
-        }
-        public static BonusProgramAchievementResponseItem FromJson(string data)
-        {
-
-            var options = new System.Text.Json.JsonSerializerOptions();
-
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponseItem>(data, options);
-
-        }
-
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-        }
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramDto : System.ComponentModel.INotifyPropertyChanged
+    public partial class BonusProgramAchievementDto : System.ComponentModel.INotifyPropertyChanged
     {
         private int? _id = default!;
         private string? _name = default!;
@@ -1105,12 +876,12 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static BonusProgramDto FromJson(string data)
+        public static BonusProgramAchievementDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramDto>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementDto>(data, options);
 
         }
 
@@ -1125,40 +896,114 @@ namespace BonusApi
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BonusProgramHistory : System.ComponentModel.INotifyPropertyChanged
+    public partial class BonusProgramAchievementRequest : System.ComponentModel.INotifyPropertyChanged
     {
-        private int? _id = default!;
-        private BonusProgram? _bonusProgram = default!;
-        private int? _bonusProgramId = default!;
-        private System.DateTimeOffset? _execTimeStart = default!;
-        private System.DateTimeOffset? _execTimeEnd = default!;
-        private int? _bankId = default!;
-        private long? _totalBonusSum = default!;
-        private int? _clientBalancesCount = default!;
-        private long? _durationMilliseconds = default!;
-        private System.DateTimeOffset? _lastUpdated = default!;
+        private string _personId = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Id
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public string PersonId
         {
-            get { return _id; }
+            get { return _personId; }
 
             set
             {
-                if (_id != value)
+                if (_personId != value)
                 {
-                    _id = value;
+                    _personId = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementRequest FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementRequest>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramAchievementResponse : System.ComponentModel.INotifyPropertyChanged
+    {
+        private System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? _items = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("items")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.Collections.Generic.ICollection<BonusProgramAchievementResponseItem>? Items
+        {
+            get { return _items; }
+
+            set
+            {
+                if (_items != value)
+                {
+                    _items = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public string ToJson()
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementResponse FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponse>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramAchievementResponseItem : System.ComponentModel.INotifyPropertyChanged
+    {
+        private BonusProgramAchievementDto? _bonusProgram = default!;
+        private long? _currentSum = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public BonusProgram? BonusProgram
+        public BonusProgramAchievementDto? BonusProgram
         {
             get { return _bonusProgram; }
 
@@ -1172,52 +1017,162 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
+        [System.Text.Json.Serialization.JsonPropertyName("currentSum")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? BonusProgramId
+        public long? CurrentSum
         {
-            get { return _bonusProgramId; }
+            get { return _currentSum; }
 
             set
             {
-                if (_bonusProgramId != value)
+                if (_currentSum != value)
                 {
-                    _bonusProgramId = value;
+                    _currentSum = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("execTimeStart")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset? ExecTimeStart
+        public string ToJson()
         {
-            get { return _execTimeStart; }
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Serialize(this, options);
+
+        }
+        public static BonusProgramAchievementResponseItem FromJson(string data)
+        {
+
+            var options = new System.Text.Json.JsonSerializerOptions();
+
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramAchievementResponseItem>(data, options);
+
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void RaisePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+        {
+            var handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BonusProgramDto : System.ComponentModel.INotifyPropertyChanged
+    {
+        private int _id = default!;
+        private string? _name = default!;
+        private BonusProgramType? _bonusProgramType = default!;
+        private string? _description = default!;
+        private System.DateTimeOffset? _dateStart = default!;
+        private System.DateTimeOffset? _dateStop = default!;
+        private int? _bankId = default!;
+        private string? _executionCron = default!;
+        private FrequencyTypes? _frequencyType = default!;
+        private int? _frequencyValue = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public int Id
+        {
+            get { return _id; }
 
             set
             {
-                if (_execTimeStart != value)
+                if (_id != value)
                 {
-                    _execTimeStart = value;
+                    _id = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("execTimeEnd")]
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset? ExecTimeEnd
+        public string? Name
         {
-            get { return _execTimeEnd; }
+            get { return _name; }
 
             set
             {
-                if (_execTimeEnd != value)
+                if (_name != value)
                 {
-                    _execTimeEnd = value;
+                    _name = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramType")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public BonusProgramType? BonusProgramType
+        {
+            get { return _bonusProgramType; }
+
+            set
+            {
+                if (_bonusProgramType != value)
+                {
+                    _bonusProgramType = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("description")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public string? Description
+        {
+            get { return _description; }
+
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateStart")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? DateStart
+        {
+            get { return _dateStart; }
+
+            set
+            {
+                if (_dateStart != value)
+                {
+                    _dateStart = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("dateStop")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public System.DateTimeOffset? DateStop
+        {
+            get { return _dateStop; }
+
+            set
+            {
+                if (_dateStop != value)
+                {
+                    _dateStop = value;
                     RaisePropertyChanged();
                 }
             }
@@ -1240,69 +1195,53 @@ namespace BonusApi
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("totalBonusSum")]
+        [System.Text.Json.Serialization.JsonPropertyName("executionCron")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? TotalBonusSum
+        public string? ExecutionCron
         {
-            get { return _totalBonusSum; }
+            get { return _executionCron; }
 
             set
             {
-                if (_totalBonusSum != value)
+                if (_executionCron != value)
                 {
-                    _totalBonusSum = value;
+                    _executionCron = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("clientBalancesCount")]
+        [System.Text.Json.Serialization.JsonPropertyName("frequencyType")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? ClientBalancesCount
+        [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+        public FrequencyTypes? FrequencyType
         {
-            get { return _clientBalancesCount; }
+            get { return _frequencyType; }
 
             set
             {
-                if (_clientBalancesCount != value)
+                if (_frequencyType != value)
                 {
-                    _clientBalancesCount = value;
+                    _frequencyType = value;
                     RaisePropertyChanged();
                 }
             }
         }
 
-        [System.Text.Json.Serialization.JsonPropertyName("durationMilliseconds")]
+        [System.Text.Json.Serialization.JsonPropertyName("frequencyValue")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? DurationMilliseconds
+        public int? FrequencyValue
         {
-            get { return _durationMilliseconds; }
+            get { return _frequencyValue; }
 
             set
             {
-                if (_durationMilliseconds != value)
+                if (_frequencyValue != value)
                 {
-                    _durationMilliseconds = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public System.DateTimeOffset? LastUpdated
-        {
-            get { return _lastUpdated; }
-
-            set
-            {
-                if (_lastUpdated != value)
-                {
-                    _lastUpdated = value;
+                    _frequencyValue = value;
                     RaisePropertyChanged();
                 }
             }
@@ -1316,12 +1255,12 @@ namespace BonusApi
             return System.Text.Json.JsonSerializer.Serialize(this, options);
 
         }
-        public static BonusProgramHistory FromJson(string data)
+        public static BonusProgramDto FromJson(string data)
         {
 
             var options = new System.Text.Json.JsonSerializerOptions();
 
-            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramHistory>(data, options);
+            return System.Text.Json.JsonSerializer.Deserialize<BonusProgramDto>(data, options);
 
         }
 
@@ -1657,6 +1596,9 @@ namespace BonusApi
         }
     }
 
+    /// <summary>
+    /// &lt;p&gt;Содержит значения:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;i&gt;0&lt;/i&gt; - заряжено Х кВт&lt;/li&gt;&lt;li&gt;&lt;i&gt;1&lt;/i&gt; - потрачено Х денег&lt;/li&gt;&lt;li&gt;&lt;i&gt;2&lt;/i&gt; - зарядка на Х разных станциях&lt;/li&gt;&lt;li&gt;&lt;i&gt;3&lt;/i&gt; - день рождения&lt;/li&gt;&lt;/ul&gt;
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum BonusProgramType
     {
@@ -1675,6 +1617,9 @@ namespace BonusApi
 
     }
 
+    /// <summary>
+    /// &lt;p&gt;Содержит значения:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;i&gt;0&lt;/i&gt; - С 1 числа месяца - поледниего числа месяца (включительно)&lt;/li&gt;&lt;li&gt;&lt;i&gt;1&lt;/i&gt; - С Понедельника по Воскресенье (включительно)&lt;/li&gt;&lt;li&gt;&lt;i&gt;2&lt;/i&gt; - Каждый календарный день&lt;/li&gt;&lt;/ul&gt;
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum FrequencyTypes
     {

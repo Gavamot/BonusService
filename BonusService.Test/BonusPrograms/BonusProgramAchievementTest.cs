@@ -1,6 +1,7 @@
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Test.Common;
+using FakeItEasy;
 using FluentAssertions;
 #pragma warning disable CS8604 // Possible null reference argument.
 namespace BonusService.Test.BonusPrograms;
@@ -24,7 +25,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1Start.AddHours(-1).UtcDateTime,
             },
             new MongoSession()
@@ -32,7 +33,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1End.UtcDateTime,
             },
             new MongoSession()
@@ -40,12 +41,12 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1Start.UtcDateTime,
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
@@ -66,12 +67,12 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = sum},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(sum);
@@ -95,12 +96,16 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        /*Fake.ClearRecordedCalls(this.server.DateTimeService);
+        A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
+            Returns(Q.IntervalMoth1Start);*/
+
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
@@ -116,7 +121,6 @@ public class BonusProgramAchievementTest : BonusTestApi
         var bonus = BonusProgramSeed.Get();
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
-        var nextLevel = programLevels[3];
 
         mongo.Sessions.InsertMany(new []
         {
@@ -125,7 +129,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition/3 + 1},
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             },
             new MongoSession()
@@ -133,19 +137,19 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment =curLevel.Condition/3 +2 },
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             }, new MongoSession()
             {
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition/3 + 3 },
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition / 3 + curLevel.Condition / 3 + curLevel.Condition / 3 + 6);
@@ -168,12 +172,12 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition },
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
                 chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
         var bonusProgram = BonusProgramSeed.Get();
         res.BonusProgram.Should().NotBeNull();
@@ -191,7 +195,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = null },
                 status = 6,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
                 chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
             },
             new MongoSession()
@@ -199,7 +203,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = null,
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
                 chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
             },
             new MongoSession()
@@ -207,7 +211,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = 100 },
                 status = 6,
                 tariff = new MongoTariff() { BankId = null },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
                 chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
             },
             new MongoSession()
@@ -215,7 +219,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = 100 },
                 status = 6,
                 tariff = null,
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
                 chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
             },
             new MongoSession()
@@ -223,7 +227,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 operation = new MongoOperation() { calculatedPayment = 100 },
                 status = null,
                 tariff = new MongoTariff() { BankId = 1 },
-                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
                 chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
             },
             new MongoSession()
@@ -244,7 +248,7 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        var bonusPrograms = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         bonusPrograms.Should().NotBeNull();
     }
 
@@ -256,11 +260,11 @@ public class BonusProgramAchievementTest : BonusTestApi
             operation = new MongoOperation() { calculatedPayment = 100 },
             status = 6,
             tariff = new MongoTariff() { BankId = 1 },
-            user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1String },
+            user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 1, clientNodeId = Q.PersonId1 },
             chargeEndTime = new DateTime(2000, 1, 1, 1, 1, 1),
         });
 
-        var items = await api.BonusProgramAchievementGetPersonAchievementAsync(Q.PersonId1);
+        var items = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         items.Items?.Count.Should().Be(1);
         var item = items.Items.First();
         item.CurrentSum.Should().Be(0);

@@ -18,7 +18,7 @@ public class PayTest : BonusTestApi
     [Fact]
     public async Task ZeroBalance_ZeroBonusPay()
     {
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.GetRandomTransactionId(),
@@ -42,7 +42,7 @@ public class PayTest : BonusTestApi
 
         });
         await postgres.SaveChangesAsync();
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.GetRandomTransactionId(),
@@ -65,7 +65,7 @@ public class PayTest : BonusTestApi
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
         await postgres.SaveChangesAsync();
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -102,7 +102,7 @@ public class PayTest : BonusTestApi
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
         await postgres.SaveChangesAsync();
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -143,7 +143,7 @@ public class PayTest : BonusTestApi
             });
 
         await postgres.SaveChangesAsync();
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -188,7 +188,7 @@ public class PayTest : BonusTestApi
             });
 
         await postgres.SaveChangesAsync();
-        var payed = await api.PayAsync(new PayRequestDto()
+        var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -235,7 +235,7 @@ public class PayTest : BonusTestApi
 
         await postgres.SaveChangesAsync();
 
-        var payed = await  api.PayAsync(new PayRequestDto()
+        var payed = await  api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
             TransactionId = Q.TransactionId1,
@@ -263,7 +263,7 @@ public class PayTest : BonusTestApi
          {
              Assert.ThrowsAsync<ApiException>(async () =>
             {
-                 await api.PayAsync(request);
+                 await api.BalancePayAsync(request);
             }).GetAwaiter().GetResult();
         }
 

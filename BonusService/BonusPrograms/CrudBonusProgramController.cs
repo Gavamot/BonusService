@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
-namespace BonusService.BonusPrograms;
 
+// ReSharper disable once CheckNamespace
+namespace BonusService.BonusPrograms.BonusProgramCrud;
 public class BonusProgramDto : CrudCatalogDto
 {
     public string? Name { get; set; }
@@ -26,7 +27,6 @@ public partial class BonusProgramMapper
 {
     public partial void Map(BonusProgramDto dto, BonusProgram entity);
 }
-
 
 [ApiController]
 [Authorize]
@@ -51,35 +51,4 @@ public sealed partial class BonusProgramController : CrudController<BonusProgram
         return Ok();
     }
 
-    /*[HttpGet("{id:int}")]
-    public async Task<BonusProgram?> GetById([FromRoute][Required]int id, CancellationToken ct)
-    {
-        return await _db.BonusPrograms.FirstOrDefaultAsync(x=> x.Id == id && x.IsDeleted == false, ct);
-    }
-
-    [HttpGet]
-    public async Task<BonusProgram[]> GetAll(CancellationToken ct)
-    {
-        return await _db.BonusPrograms.Where(x=> x.IsDeleted == false).ToArrayAsync(ct);
-    }
-
-    [HttpPost]
-    public async Task<BonusProgram> Add([Required]BonusProgram entity, CancellationToken ct)
-    {
-        var res = await _db.BonusPrograms.AddAsync(entity, ct);
-        await _db.SaveChangesAsync(ct);
-        return res.Entity;
-    }
-
-    [HttpPut]
-    public async Task<BonusProgram> Update([Required]BonusProgram entity, CancellationToken ct)
-    {
-        return await _db.BonusPrograms.Update(entity);
-    }
-
-    [HttpDelete("{id:int}")]
-    public async Task DeleteById([FromRoute] [Required]int id, CancellationToken ct)
-    {
-        await _rep.DeleteAsync(id, ct);
-    }*/
 }

@@ -27,7 +27,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId1,
         };
 
-        var res = await api.PayManualAsync(request);
+        var res = await api.BalancePayManualAsync(request);
         res.Should().Be(0L);
 
         var isTransactionExist = await postgres.Transactions.AnyAsync();
@@ -47,7 +47,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId2,
         };
 
-        return await api.PayManualAsync(request);
+        return await api.BalancePayManualAsync(request);
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId3,
         };
 
-        var res =  await api.PayManualAsync(request);
+        var res =  await api.BalancePayManualAsync(request);
         res.Should().Be(0);
         var balance = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         balance.Should().BeNull();
@@ -134,7 +134,7 @@ public class ManualPayTest : BonusTestApi
             TransactionId = Q.TransactionId3,
         };
 
-        var res =  await api.PayManualAsync(request);
+        var res =  await api.BalancePayManualAsync(request);
         res.Should().Be(Q.Sum1000);
         var transaction = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         transaction.Should().NotBeNull();
@@ -146,9 +146,9 @@ public class ManualPayTest : BonusTestApi
     [Fact]
     public async Task WrongParameters_TrowsException()
     {
-        async Task PayManualAsyncTrows(PayManualRequestDto request)
+        async Task BalancePayManualAsyncTrows(PayManualRequestDto request)
         {
-            Func<Task> t = async () => await api.PayManualAsync(request);
+            Func<Task> t = async () => await api.BalancePayManualAsync(request);
             await t.Should().ThrowAsync<Exception>();
         }
 
@@ -162,46 +162,46 @@ public class ManualPayTest : BonusTestApi
         };
         var request = requestOriginal.ToJsonClone();
         request.Description = "";
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.Description = null;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.Description = " "; // Tab
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.Description = "  "; // Spaces
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.BonusSum = 0;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.BonusSum = -1;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.BankId = 0;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.BankId = -1;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.PersonId = default;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.TransactionId = "";
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
 
         request = requestOriginal.ToJsonClone();
         request.TransactionId = null;
-        await PayManualAsyncTrows(request);
+        await BalancePayManualAsyncTrows(request);
     }
 }

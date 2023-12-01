@@ -1,3 +1,4 @@
+using BonusApi;
 using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
@@ -25,7 +26,7 @@ public class ManualAccrualTest : BonusTestApi
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
         };
-        await api.AccrualManualAsync(request);
+        await api.BalanceAccrualManualAsync(request);
         var transaction = await postgres.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
@@ -51,7 +52,7 @@ public class ManualAccrualTest : BonusTestApi
             PersonId = Q.PersonId1,
             TransactionId = Q.TransactionId1,
         };
-        await api.AccrualManualAsync(request);
+        await api.BalanceAccrualManualAsync(request);
 
         request = new AccrualManualRequestDto()
         {
@@ -62,7 +63,7 @@ public class ManualAccrualTest : BonusTestApi
             TransactionId = Q.TransactionId1,
         };
 
-        await api.AccrualManualAsync(request);
+        await api.BalanceAccrualManualAsync(request);
 
         var transaction = await postgres.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
@@ -90,7 +91,7 @@ public class ManualAccrualTest : BonusTestApi
             TransactionId = Q.TransactionId1,
         };
 
-        await api.AccrualManualAsync(request);
+        await api.BalanceAccrualManualAsync(request);
 
         long sum2 = 1111L;
         var request2 = new AccrualManualRequestDto()
@@ -102,7 +103,7 @@ public class ManualAccrualTest : BonusTestApi
             TransactionId = Q.TransactionId2,
         };
 
-        await api.AccrualManualAsync(request2);
+        await api.BalanceAccrualManualAsync(request2);
 
         var transactions = await postgres.Transactions.ToArrayAsync();
         transactions.Should().HaveCount(2);
@@ -138,7 +139,7 @@ public class ManualAccrualTest : BonusTestApi
     {
         async Task AccrualManualAsyncTrows(AccrualManualRequestDto request)
         {
-            Func<Task> t = async () => await api.AccrualManualAsync(request);
+            Func<Task> t = async () => await api.BalanceAccrualManualAsync(request);
             await t.Should().ThrowAsync<Exception>();
         }
 

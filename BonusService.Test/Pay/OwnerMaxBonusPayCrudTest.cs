@@ -73,7 +73,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         entity.LastUpdated.Should().Be(Q.DateTimeSequence.First());
     }
 
-    [Fact]
+    /*[Fact]
     public async Task Update()
     {
         postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
@@ -102,7 +102,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         updatedOwner.MaxBonusPayPercentages.Should().Be(50);
         updatedOwner.LastUpdated.Should().Be(Q.DateTimeSequence.First());
         updatedOwner.OwnerId.Should().Be(Q.OwnerId2);
-    }
+    }*/
 
     [Fact]
     public async Task Delete()

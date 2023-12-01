@@ -6,6 +6,7 @@ using BonusService.Common;
 using BonusService.Common.Postgres;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
+
 namespace BonusService.Balance;
 
 public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, long>
@@ -26,7 +27,8 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
         var transaction = command.transaction;
         var oldTransaction = await _postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == transaction.TransactionId, cancellationToken: ct);
         if (oldTransaction != null) return oldTransaction.BonusSum;
-        var bonusBalance = await _mediator.Send(new GetBalanceByBankIdDto(transaction.PersonId, transaction.BankId), ct);
+        var request = new GetBalanceByBankIdRequest(transaction.PersonId, transaction.BankId);
+        var bonusBalance = await _mediator.Send(request, ct);
         var bonusSum = Math.Min(bonusBalance, transaction.BonusSum);
         _logger.LogInformation("Запрос на списание {BonusSum}, пользователь имеет {BonusBalance} бонусов",transaction.BonusSum, bonusBalance);
         if (bonusSum <= 0)

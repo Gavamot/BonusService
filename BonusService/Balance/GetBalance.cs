@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Balance.GetBalance;
 
-public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetPersonBalanceRequestDto>
+public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetPersonBalanceRequest>
 {
     public GetPersonBalanceRequestDtoValidator()
     {
@@ -16,7 +16,7 @@ public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetP
     }
 }
 
-public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanceByBankIdDto>
+public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanceByBankIdRequest>
 {
     public GetBalanceByBankIdDtoValidator()
     {
@@ -36,7 +36,7 @@ public sealed partial class BalanceController : ControllerBase
     /// </summary>
     [HttpGet]
     [Authorize(Policy = PolicyNames.BalanceRead)]
-    public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery][Required]GetPersonBalanceRequestDto request)
+    public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery][Required]GetPersonBalanceRequest request)
     {
         var res = await mediator.Send(request);
         return res;
@@ -47,7 +47,7 @@ public sealed partial class BalanceController : ControllerBase
     /// </summary>
     [HttpGet]
     [Authorize(Policy = PolicyNames.BalanceRead)]
-    public async Task<long> Get([FromServices]IMediator mediator, [FromQuery][Required]GetBalanceByBankIdDto data)
+    public async Task<long> Get([FromServices]IMediator mediator, [FromQuery][Required]GetBalanceByBankIdRequest data)
     {
         var res = await mediator.Send(data);
         return res;

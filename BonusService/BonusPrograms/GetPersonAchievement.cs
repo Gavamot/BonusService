@@ -18,7 +18,7 @@ namespace BonusService.BonusPrograms.BonusProgramAchievement;
 [Mapper]
 public partial class BonusProgramDtoMapper
 {
-    public partial BonusProgramDto ToDto(BonusProgram requestDto);
+    public partial BonusProgramAchievementDto ToDto(BonusProgram requestDto);
 }
 
 [Mapper]
@@ -27,7 +27,7 @@ public partial class BonusProgramLevelDtoMapper
     public partial BonusProgramLevelDto ToDto(BonusProgramLevel requestDto);
 }
 
-public sealed class BonusProgramDto
+public sealed class BonusProgramAchievementDto
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -62,7 +62,7 @@ public sealed class BonusProgramAchievementRequestValidator : AbstractValidator<
 
 public sealed record BonusProgramAchievementResponseItem
 {
-    public BonusProgramDto BonusProgram { get; set; }
+    public BonusProgramAchievementDto BonusProgram { get; set; }
     public long CurrentSum { get; set; }
 }
 
@@ -87,9 +87,9 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     }
 
 
-    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram)
+    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
+        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         switch (bonusProgram.BonusProgramType)
         {
             case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));
@@ -106,7 +106,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
         foreach (var bonusProgram in bonusPrograms)
         {
-            var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram);
+            var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, now);
             items.Add(new()
             {
                 BonusProgram  = mapper.ToDto(bonusProgram),
