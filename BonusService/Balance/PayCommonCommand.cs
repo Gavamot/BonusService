@@ -1,10 +1,12 @@
 using System.Text.Json;
-using BonusService.Balance;
+using BonusService.Balance.GetBalance;
+using BonusService.Balance.Pay;
+using BonusService.Balance.PayManual;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
-namespace BonusService.Pay;
+namespace BonusService.Balance;
 
 public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, long>
 {

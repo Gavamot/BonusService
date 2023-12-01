@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 namespace BonusService.Common.Postgres;
 
 #pragma warning disable CS8618
@@ -18,7 +19,14 @@ public interface IForeignCatalogEntity : IDbEntity<int>
 /// </summary>
 public interface ICatalogEntity : IDbEntity<int>
 {
+    [Required]
     string Name { get; set; }
+}
+
+public abstract class CrudCatalogDto : IHaveId<int>
+{
+    [Required]
+    public int Id { get; set; }
 }
 
 /// <summary>
@@ -43,8 +51,8 @@ public interface IHaveDateOfChange
 
 public interface IBalanceKey
 {
-    public Guid PersonId { get; }
+    public string PersonId { get; }
     public int BankId { get; }
 }
 
-record BalanceKey(Guid PersonId, int BankId) : IBalanceKey;
+record BalanceKey(string PersonId, int BankId) : IBalanceKey;

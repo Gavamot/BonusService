@@ -4,7 +4,7 @@ using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-namespace BonusService.Pay;
+namespace BonusService.Balance;
 
 public sealed class OwnerByPayValidator : AbstractValidator<OwnerMaxBonusPay>
 {

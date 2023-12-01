@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common.Postgres;
 
-public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
+public interface IDbEntityRep<T>
+    where T : class, IHaveId<int>, IHaveDateOfChange
 {
     Task<T> AddAsync(T entity, CancellationToken cs);
     Task<T> UpdateAsync(T entity, CancellationToken ct);
@@ -10,12 +11,24 @@ public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChang
     IQueryable<T> GetAll();
 }
 
-public abstract class DbEntityRep<T> : IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
+public class CrudException : Exception
+{
+
+}
+
+public class CrudNotFountException : CrudException
+{
+
+}
+
+public abstract class DbEntityRep<T> : IDbEntityRep<T>
+    where T : class, IHaveId<int>, IHaveDateOfChange
 {
     protected readonly PostgresDbContext _postgres;
     protected  readonly IDateTimeService _dateTimeService;
 
-    protected DbEntityRep(PostgresDbContext postgres, IDateTimeService dateTimeService)
+    protected DbEntityRep(PostgresDbContext postgres,
+        IDateTimeService dateTimeService)
     {
         _postgres = postgres;
         _dateTimeService = dateTimeService;
@@ -27,13 +40,20 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T> where T : class, IHaveId<
         await _postgres.SaveChangesAsync(cs);
         return entity;
     }
+
     public virtual async Task<T> UpdateAsync(T entity, CancellationToken ct)
     {
+        if(entity.Id == 0
+            || (entity as IDeletable)?.IsDeleted == true)
+        {
+            throw new CrudNotFountException();
+        }
         entity.LastUpdated = _dateTimeService.GetNowUtc();
-        var res =_postgres.Update(entity);
+        var res = _postgres.Update(entity);
         await _postgres.SaveChangesAsync(ct);
         return res.Entity;
     }
+
     public virtual async Task DeleteAsync(int id, CancellationToken cs)
     {
         var entity = await GetAsync(id, cs);

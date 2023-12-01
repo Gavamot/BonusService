@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
+using BonusService.Balance.PayManual;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
@@ -10,7 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Riok.Mapperly.Abstractions;
-namespace BonusService.Pay;
+
+// ReSharper disable once CheckNamespace
+namespace BonusService.Balance.Pay;
 
 public sealed class PayDtoValidator : AbstractValidator<PayRequestDto>
 {
@@ -32,7 +35,7 @@ public sealed partial class PayDtoMapper
     public partial Transaction FromDto(PayRequestDto requestDto);
 }
 
-public sealed record PayRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long Payment, [Required]string Description, [Required]string TransactionId, [Required]Guid EzsId, [Required]int OwnerId, [property: JsonIgnore]string UserName = "") : ICommand<long>;
+public sealed record PayRequestDto([Required]string PersonId, [Required]int BankId, [Required]long Payment, [Required]string Description, [Required]string TransactionId, [Required]Guid EzsId, [Required]int OwnerId, [property: JsonIgnore]string UserName = "") : ICommand<long>;
 
 public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 {
@@ -63,8 +66,8 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 
 [ApiController]
 [Authorize]
-[Route("/[controller]")]
-public sealed class PayController : ControllerBase
+[Route("/[controller]/[action]")]
+public sealed partial class BalanceController : ControllerBase
 {
     /// <summary>
     /// Списание бонусных баллов сервисом оплаты

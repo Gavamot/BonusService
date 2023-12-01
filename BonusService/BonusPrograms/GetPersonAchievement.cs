@@ -12,7 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 #pragma warning disable CS8618
 
-namespace BonusService.BonusPrograms;
+// ReSharper disable once CheckNamespace
+namespace BonusService.BonusPrograms.BonusProgramAchievement;
 
 [Mapper]
 public partial class BonusProgramDtoMapper
@@ -67,7 +68,7 @@ public sealed record BonusProgramAchievementResponseItem
 
 
 public sealed record BonusProgramAchievementResponse([Required]BonusProgramAchievementResponseItem [] Items);
-public sealed record BonusProgramAchievementRequest([Required]Guid PersonId) : IRequest<BonusProgramAchievementResponse>;
+public sealed record BonusProgramAchievementRequest([Required]string PersonId) : IRequest<BonusProgramAchievementResponse>;
 
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
 {
@@ -86,7 +87,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     }
 
 
-    private ValueTask<long> CalculateAchievementSumAsync(Guid personId, BonusProgram bonusProgram)
+    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram)
     {
         var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
         switch (bonusProgram.BonusProgramType)
@@ -119,7 +120,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 [Authorize]
 [ApiController]
 [Route("/[controller]/[action]")]
-public sealed class BonusProgramAchievementController : ControllerBase
+public sealed partial class BonusProgramController : ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]

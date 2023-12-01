@@ -8,7 +8,7 @@ public class TransactionHistory
     /// <summary>
     /// Тип валюты
     /// </summary>
-    public Guid PersonId { get; set; }
+    public string PersonId { get; set; }
     public int BankId { get; set; }
 
     /// <summary>

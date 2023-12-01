@@ -1,4 +1,3 @@
-using BonusApi;
 using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;

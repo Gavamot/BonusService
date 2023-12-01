@@ -10,15 +10,15 @@ namespace BonusService.BonusPrograms;
 [ApiController]
 [Authorize]
 [Route("/[controller]/[action]")]
-public sealed class CrudBonusLevelsController : ICrudController<BonusProgramLevel>
+public sealed class BonusLevelsController : CrudController<BonusProgramLevel>
 {
     private readonly IDbEntityRep<BonusProgramLevel> _rep;
-    public CrudBonusLevelsController(IDbEntityRep<BonusProgramLevel> rep)
+    public BonusLevelsController(IDbEntityRep<BonusProgramLevel> rep) : base(rep)
     {
         _rep = rep;
     }
 
-    [HttpGet("{id:int}")]
+    /*[HttpGet("{id:int}")]
     public async Task<BonusProgramLevel?> GetById([FromRoute][Required]int id, CancellationToken ct)
     {
         return await _rep.GetAsync(id, ct);
@@ -29,13 +29,13 @@ public sealed class CrudBonusLevelsController : ICrudController<BonusProgramLeve
     {
         return await _rep.GetAll().ToArrayAsync(ct);
     }
-    [HttpPut]
+    [HttpPost]
     public async Task<BonusProgramLevel> Add([Required]BonusProgramLevel entity, CancellationToken ct)
     {
         return await _rep.AddAsync(entity, ct);
     }
 
-    [HttpPost]
+    [HttpPut]
     public async Task<BonusProgramLevel> Update([Required]BonusProgramLevel entity, CancellationToken ct)
     {
         return await _rep.UpdateAsync(entity, ct);
@@ -45,5 +45,5 @@ public sealed class CrudBonusLevelsController : ICrudController<BonusProgramLeve
     public async Task DeleteById([FromRoute] [Required]int id, CancellationToken ct)
     {
         await _rep.DeleteAsync(id, ct);
-    }
+    }*/
 }

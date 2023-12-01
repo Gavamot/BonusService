@@ -44,7 +44,7 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(System.Guid personId);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(string personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -52,14 +52,14 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetPersonBalanceResponseDto> BalanceGetAllAsync(string personId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// Получить баланс пользователя по конкретной валюте
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> BalanceGetAsync(System.Guid personId, int bankId);
+        System.Threading.Tasks.Task<long> BalanceGetAsync(string personId, int bankId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
@@ -67,25 +67,106 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<long> BalanceGetAsync(System.Guid personId, int bankId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<long> BalanceGetAsync(string personId, int bankId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(System.Guid personId);
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(string personId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(System.Guid personId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramAchievementGetPersonAchievementAsync(string personId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsGetByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> CrudBonusLevelsGetAllAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> CrudBonusLevelsGetAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsAddAsync(BonusProgramLevel body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsAddAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsUpdateAsync(BonusProgramLevel body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgramLevel> CrudBonusLevelsUpdateAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CrudBonusLevelsDeleteByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CrudBonusLevelsDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramGetByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> CrudBonusProgramGetAllAsync();
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> CrudBonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramAddAsync(BonusProgram body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramAddAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramUpdateAsync(BonusProgram body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BonusProgram> CrudBonusProgramUpdateAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CrudBonusProgramDeleteByIdAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task CrudBonusProgramDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -171,7 +252,7 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class AccrualManualRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
         private int _bankId = default!;
         private long _bonusSum = default!;
         private string _description = default!;
@@ -181,7 +262,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 
@@ -649,13 +730,13 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BonusProgramAchievementRequest : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 
@@ -1262,7 +1343,6 @@ namespace BonusApi
         private System.DateTimeOffset? _lastUpdated = default!;
         private int? _level = default!;
         private int? _bonusProgramId = default!;
-        private BonusProgram? _bonusProgram = default!;
         private long? _condition = default!;
         private int? _awardPercent = default!;
         private int? _awardSum = default!;
@@ -1347,23 +1427,6 @@ namespace BonusApi
                 if (_bonusProgramId != value)
                 {
                     _bonusProgramId = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgram")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public BonusProgram? BonusProgram
-        {
-            get { return _bonusProgram; }
-
-            set
-            {
-                if (_bonusProgram != value)
-                {
-                    _bonusProgram = value;
                     RaisePropertyChanged();
                 }
             }
@@ -1630,14 +1693,14 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GetBalanceByBankIdDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
         private int _bankId = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 
@@ -1699,13 +1762,13 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class GetPersonBalanceRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("personId")]
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 
@@ -1910,7 +1973,7 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PayManualRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
         private int _bankId = default!;
         private long _bonusSum = default!;
         private string _description = default!;
@@ -1920,7 +1983,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 
@@ -2036,7 +2099,7 @@ namespace BonusApi
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.0.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PayRequestDto : System.ComponentModel.INotifyPropertyChanged
     {
-        private System.Guid _personId = default!;
+        private string _personId = default!;
         private int _bankId = default!;
         private long _payment = default!;
         private string _description = default!;
@@ -2049,7 +2112,7 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Guid PersonId
+        public string PersonId
         {
             get { return _personId; }
 

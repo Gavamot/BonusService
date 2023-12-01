@@ -16,7 +16,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 {
     public static class Q
     {
-        public static Transaction CreateTransaction(Guid personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()
+        public static Transaction CreateTransaction(string personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()
         {
             Description = Q.Description1,
             Type = TransactionType.Auto,
@@ -48,10 +48,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public const string TransactionId2 = "3fa85f64-5717-4562-b3fc-2c963fa6af12";
         public const string TransactionId3 = "33385f64-5717-4562-b3fc-2c963f66af12";
         public static string GetRandomTransactionId() => Guid.NewGuid().ToString("N");
-        public readonly static Guid PersonId1 = Guid.Parse("5fa85f64-5717-4562-b3fc-2c963f66afa6");
-        public readonly static string PersonId1String = "5fa85f64-5717-4562-b3fc-2c963f66afa6";
-        public readonly static Guid PersonId2 = Guid.Parse("6fa85f64-5717-4562-b3fc-2c963f66afa7");
-        public readonly static string PersonId2String = "6fa85f64-5717-4562-b3fc-2c963f66afa7";
+        public readonly static string PersonId1 = "5fa85f64-5717-4562-b3fc-2c963f66afa6";
+        public readonly static string PersonId2 = "6fa85f64-5717-4562-b3fc-2c963f66afa7";
 
 
         public const int BankIdRub = 1;
@@ -87,7 +85,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             {
                 clientLogin = ClientLogin,
                 chargingClientType = MongoChargingClientType.IndividualEntity,
-                clientNodeId = Q.PersonId1String
+                clientNodeId = Q.PersonId1
             }
         };
     }

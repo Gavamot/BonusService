@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Text.Json.Serialization;
 #pragma warning disable CS8618
 namespace BonusService.Common.Postgres.Entity;
 
@@ -48,13 +49,15 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public DateTimeOffset DateStart { get; set; }
     public DateTimeOffset? DateStop { get; set; }
     public int BankId { get; set; }
-
     public string ExecutionCron { get; set; }
     public FrequencyTypes FrequencyType { get; set; }
-    public int  FrequencyValue { get; set; }
+    public int FrequencyValue { get; set; }
+    [JsonIgnore]
     public bool IsDeleted { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
+    [JsonIgnore]
     public List<BonusProgramLevel> ProgramLevels { get; set; }
+    [JsonIgnore]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; }
     public string CreateMark() => $"{Id}_{Name}";
 }
