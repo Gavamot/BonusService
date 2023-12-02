@@ -37,7 +37,7 @@ public class BonusProgramsRunner : IBonusProgramsRunner
         string bonusProgramId = GenerateJobId(bonusProgram.Id, bonusProgram.Name);
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(bonusProgramId, x => x.ExecuteAsync(bonusProgram), bonusProgram.ExecutionCron);
+            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(bonusProgramId, x => x.ExecuteAsync(bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
         }
         else
         {

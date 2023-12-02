@@ -34,12 +34,11 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         return new (level.AwardSum, bonus);
     }
 
-    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram)
+    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
-        var now = _dateTimeService.GetNowUtc();
+        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null

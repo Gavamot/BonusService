@@ -21,7 +21,7 @@ public abstract class AbstractBonusProgramJob
     }
 
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram bonusProgram)
+    protected void Validate(BonusProgram bonusProgram, DateTimeOffset now)
     {
         try
         {
@@ -29,7 +29,6 @@ public abstract class AbstractBonusProgramJob
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Неверный тип бонусной программы начисляющей джобы. Должен быть {BonusProgramType.SpendMoney} а задан {bonusProgram.BonusProgramType}");
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
-            var now = _dateTimeService.GetNowUtc();
             if (bonusProgram.DateStart > now)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу раньше срока бонусной программы");
             if ((bonusProgram.DateStop ?? DateTimeOffset.MaxValue) < now)
@@ -42,9 +41,9 @@ public abstract class AbstractBonusProgramJob
         }
     }
 
-    public async Task ExecuteAsync(BonusProgram bonusProgram)
+    public async Task ExecuteAsync(BonusProgram bonusProgram, DateTimeOffset now)
     {
-        Validate(bonusProgram);
+        Validate(bonusProgram, now);
         Stopwatch stopwatch = Stopwatch.StartNew();
         var bonusProgramMark = bonusProgram.CreateMark();
         using var activity = new Activity(bonusProgramMark);
@@ -52,7 +51,7 @@ public abstract class AbstractBonusProgramJob
         _logger.LogInformation("Job {bonusProgramMark} start", bonusProgramMark);
         try
         {
-            var bonusProgramJobResult = await ExecuteJobAsync(bonusProgram);
+            var bonusProgramJobResult = await ExecuteJobAsync(bonusProgram, now);
             _logger.LogInformation("Job {bonusProgramMark} end", bonusProgramMark);
             stopwatch.Stop();
             var history = new BonusProgramHistory()
@@ -81,7 +80,7 @@ public abstract class AbstractBonusProgramJob
         }
         activity.Stop();
     }
-    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram);
+    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now);
 }
 
 public abstract class AbstractJob : IJob
