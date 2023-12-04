@@ -43,7 +43,6 @@ public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudContr
     [HttpPost]
     public async Task<TEntity> Add([Required]TEntity entity, CancellationToken ct)
     {
-        Response.StatusCode = StatusCodes.Status200OK;
         return await _rep.AddAsync(entity, ct);
     }
 

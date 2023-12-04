@@ -69,7 +69,7 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
 
     public virtual async Task DeleteAsync(int id, CancellationToken cs)
     {
-        var entity = await GetAsync(id, cs);
+        var entity = await _postgres.Set<T>().FirstOrDefaultAsync(e => e.Id == id, cs);
         if(entity == null) return;
         if (entity is IDeletable dbEntity)
         {

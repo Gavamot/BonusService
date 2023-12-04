@@ -160,7 +160,7 @@ namespace BonusService
             if (bp == null)
             {
                 bp = BonusProgramSeed.Get();
-                //bp.Id = 1;
+                bp.Id = 0;
                 postgres.BonusPrograms.Add(bp);
                 postgres.SaveChanges();
             }

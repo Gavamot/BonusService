@@ -1,6 +1,7 @@
 #nullable enable
 
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 #pragma warning disable CS8618
 namespace BonusService.Common.Postgres.Entity;
 
@@ -43,21 +44,27 @@ public enum BonusProgramType
 public class BonusProgram : ICatalogEntity, IDeletable
 {
     public int Id { get; set; }
-    public string Name { get; set; } = "";
+    public string Name { get; set; }
     public BonusProgramType BonusProgramType { get; set; }
-    public string Description { get; set; } = "";
+    public string Description { get; set; }
     public DateTimeOffset DateStart { get; set; }
     public DateTimeOffset? DateStop { get; set; }
     public int BankId { get; set; }
     public string ExecutionCron { get; set; }
     public FrequencyTypes FrequencyType { get; set; }
     public int FrequencyValue { get; set; }
-    [JsonIgnore]
-    public bool IsDeleted { get; set; }
     public DateTimeOffset LastUpdated { get; set; }
+
     [JsonIgnore]
-    public List<BonusProgramLevel> ProgramLevels { get; set; }
+    [SwaggerSchema(ReadOnly = true)]
+    public bool IsDeleted { get; set; }
+
     [JsonIgnore]
-    public List<BonusProgramHistory> BonusProgramHistory { get; set; }
+    [SwaggerSchema(ReadOnly = true, Nullable = true)]
+    public List<BonusProgramLevel> ProgramLevels { get; set; } = new List<BonusProgramLevel>();
+    [JsonIgnore]
+    [SwaggerSchema(ReadOnly = true, Nullable = true)]
+    public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
+
     public string CreateMark() => $"{Id}_{Name}";
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 #pragma warning disable CS8618
 #nullable enable
 namespace BonusService.Common.Postgres.Entity;
@@ -15,6 +16,7 @@ public class BonusProgramLevel : ICatalogEntity
 
     public int BonusProgramId { get; set; }
     [JsonIgnore]
+    [SwaggerSchema(ReadOnly = true)]
     public BonusProgram BonusProgram { get; set; }
     /// <summary>
     /// Условие срабатывания программы например общая сумма в рублях

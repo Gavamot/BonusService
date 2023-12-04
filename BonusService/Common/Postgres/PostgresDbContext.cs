@@ -32,7 +32,7 @@ public class PostgresDbContext : DbContext
     public DbSet<TransactionHistory> TransactionHistory  { get; set; }
     public DbSet<OwnerMaxBonusPay> OwnerMaxBonusPays { get; set; }
 
-    public DbSet<BonusProgram> BonusPrograms { get; set; }
+    public DbSet<BonusProgram?> BonusPrograms { get; set; }
     public DbSet<BonusProgramLevel> BonusProgramsLevels { get; set; }
     public DbSet<BonusProgramHistory> BonusProgramHistory { get; set; }
 
