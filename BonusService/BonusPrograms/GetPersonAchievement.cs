@@ -24,7 +24,7 @@ public partial class BonusProgramDtoMapper
 [Mapper]
 public partial class BonusProgramLevelDtoMapper
 {
-    public partial BonusProgramLevelDto ToDto(BonusProgramLevel requestDto);
+    public partial BonusProgramAchievementLevelDto ToDto(BonusProgramLevel requestDto);
 }
 
 public sealed class BonusProgramAchievementDto
@@ -39,10 +39,10 @@ public sealed class BonusProgramAchievementDto
     public string ExecutionCron { get; set; }
     public FrequencyTypes FrequencyType { get; set; }
     public int  FrequencyValue { get; set; }
-    public List<BonusProgramLevelDto> ProgramLevels { get; set; }
+    public List<BonusProgramAchievementLevelDto> ProgramLevels { get; set; }
 }
 
-public class BonusProgramLevelDto
+public class BonusProgramAchievementLevelDto
 {
     public int Id { get; set; }
     public string Name { get; set; }

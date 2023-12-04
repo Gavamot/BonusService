@@ -25,7 +25,6 @@ Console.WriteLine($"Running address is urls={urls}/bonus/swagger");
 
 var services = builder.Services;
 
-services.AddScoped<OwnerByPayRep>();
 
 services.AddCors(options =>
 {

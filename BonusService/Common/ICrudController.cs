@@ -4,24 +4,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common;
 
-public interface ICrudController<TEntity>
+public interface ICrudController<TEntity, TDto>
     where TEntity : class, IHaveId<int>, IHaveDateOfChange
+    where TDto : CrudDto<TEntity>
 {
     Task<TEntity?> GetById(int id, CancellationToken ct);
-    Task GetAll(CancellationToken ct);
+    Task<TEntity[]> GetAll(CancellationToken ct);
     Task<TEntity> Add(TEntity entity, CancellationToken ct);
-    //Task<TEntity> Update(TDto entity, CancellationToken ct);
+    //Task Update([Required]TDto dto, CancellationToken ct);
     Task DeleteById(int id, CancellationToken ct);
 }
 
 
-public abstract class CrudController<TEntity> : ControllerBase, ICrudController<TEntity>
+public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudController<TEntity, TDto>
     where TEntity : class, IHaveId<int>, IHaveDateOfChange
+    where TDto : CrudDto<TEntity>
 {
     protected readonly IDbEntityRep<TEntity> _rep;
-    protected CrudController(IDbEntityRep<TEntity> rep)
+    private readonly IUpdateMapper<TDto, TEntity> _mapper;
+    protected CrudController(IDbEntityRep<TEntity> rep, IUpdateMapper<TDto, TEntity> mapper)
     {
         _rep = rep;
+        _mapper = mapper;
     }
 
     [HttpGet("{id:int}")]
@@ -29,7 +33,6 @@ public abstract class CrudController<TEntity> : ControllerBase, ICrudController<
     {
         return await _rep.GetAsync(id, ct);
     }
-    Task ICrudController<TEntity>.GetAll(CancellationToken ct) => GetAll(ct);
 
     [HttpGet]
     public async Task<TEntity[]> GetAll(CancellationToken ct)
@@ -44,18 +47,14 @@ public abstract class CrudController<TEntity> : ControllerBase, ICrudController<
         return await _rep.AddAsync(entity, ct);
     }
 
-    /*[HttpPatch]
-    public async Task<TEntity> Update([Required]TDto entity, CancellationToken ct)
+    [HttpPatch]
+    public async Task Update([Required]TDto dto, CancellationToken ct)
     {
-
-    }*/
-
-    /*[HttpPut]
-    public async Task<T> Update([Required]T entity, CancellationToken ct)
-    {
-        return await _rep.UpdateAsync(entity, ct);
-    }*/
-
+        var entity = await _rep.GetAsync(dto.Id, ct);
+        if (entity == null || (entity as IDeletable)?.IsDeleted == true) throw new CrudNotFountException();
+        _mapper.Map(dto, entity);
+        await _rep.UpdateAsync(entity, ct);
+    }
 
     [HttpDelete("{id:int}")]
     public async Task DeleteById([FromRoute][Required]int id, CancellationToken ct)

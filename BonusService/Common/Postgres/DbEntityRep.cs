@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common.Postgres;
 
@@ -19,6 +20,19 @@ public class CrudException : Exception
 public class CrudNotFountException : CrudException
 {
 
+}
+
+public interface IUpdateMapper<in TDto, in TEntity>
+    where TDto : CrudDto<TEntity>
+    where TEntity : IHaveId<int>, IHaveDateOfChange
+{
+    public void Map(TDto dto, TEntity entity);
+}
+
+public abstract class CrudDto <TEntity> : IHaveId<int> where TEntity : IHaveId<int>, IHaveDateOfChange
+{
+    [Required]
+    public int Id { get; set; }
 }
 
 public abstract class DbEntityRep<T> : IDbEntityRep<T>
@@ -43,10 +57,9 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
 
     public virtual async Task<T> UpdateAsync(T entity, CancellationToken ct)
     {
-        if(entity.Id == 0
-            || (entity as IDeletable)?.IsDeleted == true)
+        if(entity.Id == 0 || (entity as IDeletable)?.IsDeleted == true)
         {
-            throw new CrudNotFountException();
+            throw new ArgumentException("Удаление через update не возможно воспользуйтесь операций Delete");
         }
         entity.LastUpdated = _dateTimeService.GetNowUtc();
         var res = _postgres.Update(entity);

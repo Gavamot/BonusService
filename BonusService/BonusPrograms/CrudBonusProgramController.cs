@@ -1,15 +1,13 @@
-using System.ComponentModel.DataAnnotations;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 
 // ReSharper disable once CheckNamespace
 namespace BonusService.BonusPrograms.BonusProgramCrud;
-public class BonusProgramDto : CrudCatalogDto
+public class BonusProgramDto : CrudDto<BonusProgram>
 {
     public string? Name { get; set; }
     public BonusProgramType? BonusProgramType { get; set; }
@@ -23,32 +21,27 @@ public class BonusProgramDto : CrudCatalogDto
 }
 
 [Mapper(AllowNullPropertyAssignment = false)]
-public partial class BonusProgramMapper
+public partial class BonusProgramMapper : IUpdateMapper<BonusProgramDto, BonusProgram>
 {
     public partial void Map(BonusProgramDto dto, BonusProgram entity);
 }
 
+public class BonusProgramRep : DbEntityRep<BonusProgram>
+{
+    public BonusProgramRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
+    {
+    }
+}
+
+
+
 [ApiController]
 [Authorize]
 [Route("/[controller]/[action]")]
-public sealed partial class BonusProgramController : CrudController<BonusProgram>
+public sealed partial class BonusProgramController : CrudController<BonusProgram, BonusProgramDto>
 {
-    private readonly PostgresDbContext _db;
-    private readonly IDbEntityRep<BonusProgram> _rep;
-    public BonusProgramController(PostgresDbContext db, IDbEntityRep<BonusProgram> rep) : base(rep)
+    public BonusProgramController(PostgresDbContext db, BonusProgramRep rep) : base(rep, new BonusProgramMapper())
     {
-        _db = db;
-        _rep = rep;
-    }
 
-    [HttpPatch]
-    public async Task<IActionResult> Update([Required]BonusProgramDto dto, CancellationToken ct)
-    {
-        var entity = await _db.BonusPrograms.FirstOrDefaultAsync(x=> x.Id == dto.Id && x.IsDeleted == false, ct);
-        if (entity == null) return NotFound();
-        new BonusProgramMapper().Map(dto, entity);
-        await _rep.UpdateAsync(entity, ct);
-        return Ok();
     }
-
 }

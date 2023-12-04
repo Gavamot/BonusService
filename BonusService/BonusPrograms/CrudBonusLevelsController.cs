@@ -1,48 +1,43 @@
-using System.ComponentModel.DataAnnotations;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 
+// ReSharper disable once CheckNamespace
+namespace BonusService.BonusPrograms.BonusProgramLevelsCrud;
 
-namespace BonusService.BonusPrograms
+public class BonusProgramLevelDto : CrudDto<BonusProgramLevel>
 {
-    [ApiController]
-    [Authorize]
-    [Route("/[controller]/[action]")]
-    public sealed partial class BonusLevelsController
+    public string? Name { get; set; }
+    public int? Level { get; set; }
+    public int? BonusProgramId { get; set; }
+    public long? Condition { get; set; }
+    public int? AwardPercent  { get; set; }
+    public int? AwardSum { get; set; }
+}
+
+[Mapper(AllowNullPropertyAssignment = false)]
+public partial class BonusProgramLevelMapper : IUpdateMapper<BonusProgramLevelDto, BonusProgramLevel>
+{
+    public partial void Map(BonusProgramLevelDto dto, BonusProgramLevel entity);
+}
+
+public class BonusProgramLevelRep : DbEntityRep<BonusProgramLevel>
+{
+    public BonusProgramLevelRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
     {
-        private readonly PostgresDbContext _db;
-        public BonusLevelsController(PostgresDbContext db)
-        {
-            _db = db;
-
-        }
-
-        /*[HttpPatch()]
-        public async Task<> GetById([FromRoute][Required]int id, CancellationToken ct)
-        {
-            return await _rep.GetAsync(id, ct);
-        }*/
-
-
     }
 }
 
-// ReSharper disable once CheckNamespace
-namespace BonusService.BonusPrograms.Crud
+[ApiController]
+[Authorize]
+[Route("/[controller]/[action]")]
+public sealed class BonusLevelsController : CrudController<BonusProgramLevel, BonusProgramLevelDto>
 {
-    [ApiController]
-    [Authorize]
-    [Route("/[controller]/[action]")]
-    public sealed partial class BonusLevelsController : CrudController<BonusProgramLevel>
+    public BonusLevelsController(BonusProgramLevelRep rep) : base(rep, new BonusProgramLevelMapper())
     {
-        public BonusLevelsController(IDbEntityRep<BonusProgramLevel> rep) : base(rep)
-        {
-
-        }
 
     }
 }

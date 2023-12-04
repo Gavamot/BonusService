@@ -23,12 +23,6 @@ public interface ICatalogEntity : IDbEntity<int>
     string Name { get; set; }
 }
 
-public abstract class CrudCatalogDto : IHaveId<int>
-{
-    [Required]
-    public int Id { get; set; }
-}
-
 /// <summary>
 /// Регулярно повторяющиеся документы
 /// </summary>
