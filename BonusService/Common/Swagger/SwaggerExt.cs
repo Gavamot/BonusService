@@ -17,6 +17,8 @@ public static class SwaggerExt
                 c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
+                c.SchemaFilter<SwaggerExcludeFilter>();
+
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlCommentsWithRemarks(xmlPath);

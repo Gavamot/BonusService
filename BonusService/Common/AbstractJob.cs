@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
+using Microsoft.EntityFrameworkCore;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
@@ -21,18 +22,14 @@ public abstract class AbstractBonusProgramJob
     }
 
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram bonusProgram, DateTimeOffset now)
+    protected void Validate(BonusProgram? bonusProgram, DateTimeOffset now)
     {
         try
         {
-            if (bonusProgram.BonusProgramType != BonusProgramType.SpendMoney)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Неверный тип бонусной программы начисляющей джобы. Должен быть {BonusProgramType.SpendMoney} а задан {bonusProgram.BonusProgramType}");
+            if (bonusProgram == null)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} бонусной программы нет в бд");
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
-            if (bonusProgram.DateStart > now)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу раньше срока бонусной программы");
-            if ((bonusProgram.DateStop ?? DateTimeOffset.MaxValue) < now)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу на завершенную бонусную программу");
         }
         catch (Exception e)
         {
@@ -41,11 +38,14 @@ public abstract class AbstractBonusProgramJob
         }
     }
 
-    public async Task ExecuteAsync(BonusProgram bonusProgram, DateTimeOffset now)
+    public async Task ExecuteAsync(int bonusProgramId, DateTimeOffset now)
     {
+        BonusProgram bonusProgram = _postgres.BonusPrograms
+            .Include(x=> x.ProgramLevels)
+            .FirstOrDefault(x => x.Id == bonusProgramId);
         Validate(bonusProgram, now);
         Stopwatch stopwatch = Stopwatch.StartNew();
-        var bonusProgramMark = bonusProgram.CreateMark();
+        var bonusProgramMark = bonusProgram!.CreateMark();
         using var activity = new Activity(bonusProgramMark);
         activity.Start();
         _logger.LogInformation("Job {bonusProgramMark} start", bonusProgramMark);

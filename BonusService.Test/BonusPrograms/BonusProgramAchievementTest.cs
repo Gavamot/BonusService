@@ -1,22 +1,27 @@
+using BonusApi;
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FakeItEasy;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
+using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 #pragma warning disable CS8604 // Possible null reference argument.
 namespace BonusService.Test.BonusPrograms;
 
 public class BonusProgramAchievementTest : BonusTestApi
 {
+    private BonusProgram bonus;
     public BonusProgramAchievementTest(FakeApplicationFactory<Program> server) : base(server)
     {
-
+        bonus = postgres.BonusPrograms.Include(x => x.ProgramLevels)
+            .Include(x=>x.BonusProgramHistory)
+            .First();
     }
 
     [Fact]
     public async Task AnotherDateNotCounting_OnlySumCurrentMonth()
     {
-        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
         mongo.Sessions.InsertMany(new []
         {
@@ -56,7 +61,6 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task GetLastLevelSumMoreWhenNeed_WorksCorrectly()
     {
-        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
         var sum = curLevel.Condition + 1000;
@@ -76,17 +80,15 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(sum);
-        var bonusProgram = BonusProgramSeed.Get();
         res.BonusProgram.Should().NotBeNull();
-        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
-        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonus.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonus.Id);
     }
 
 
     [Fact]
     public async Task GetLastLevelExecCondition_WorksCorrectly()
     {
-        var bonus = BonusProgramSeed.Get();
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
         mongo.Sessions.InsertMany(new []
@@ -109,16 +111,14 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition);
-        var bonusProgram = BonusProgramSeed.Get();
         res.BonusProgram.Should().NotBeNull();
-        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
-        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonus.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonus.Id);
     }
 
     [Fact]
     public async Task GetMiddleLevel3Sessions_WorksCorrectly()
     {
-        var bonus = BonusProgramSeed.Get();
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
 
@@ -153,16 +153,15 @@ public class BonusProgramAchievementTest : BonusTestApi
         var res = bonusPrograms.Items.First();
 
         res.CurrentSum.Should().Be(curLevel.Condition / 3 + curLevel.Condition / 3 + curLevel.Condition / 3 + 6);
-        var bonusProgram = BonusProgramSeed.Get();
+
         res.BonusProgram.Should().NotBeNull();
-        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
-        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonus.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonus.Id);
     }
 
     [Fact]
     public async Task GetMiddleLevelOneSession_WorksCorrectly()
     {
-        var bonus = BonusProgramSeed.Get();
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
         mongo.Sessions.InsertMany(new []
@@ -179,10 +178,9 @@ public class BonusProgramAchievementTest : BonusTestApi
 
         var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();
-        var bonusProgram = BonusProgramSeed.Get();
         res.BonusProgram.Should().NotBeNull();
-        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
-        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonus.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonus.Id);
     }
 
     [Fact]
@@ -269,11 +267,10 @@ public class BonusProgramAchievementTest : BonusTestApi
         var item = items.Items.First();
         item.CurrentSum.Should().Be(0);
 
-        var bonusProgram = BonusProgramSeed.Get();
 
         var res = items.Items.First();
         res.BonusProgram.Should().NotBeNull();
-        res.BonusProgram.ProgramLevels.Count.Should().Be(bonusProgram.ProgramLevels.Count);
-        res.BonusProgram.Id.Should().Be(bonusProgram.Id);
+        res.BonusProgram.ProgramLevels.Count.Should().Be(bonus.ProgramLevels.Count);
+        res.BonusProgram.Id.Should().Be(bonus.Id);
     }
 }

@@ -21,6 +21,12 @@
     &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.BonusPrograms.BonusProgramAchievementTest.AnotherDateNotCounting_OnlySumCurrentMonth&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=64dff863_002Dbc78_002D4cbd_002Da58f_002D36e2a10da72f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetAll" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFolder&gt;96F22065-273D-49AF-8D21-807BA1D20C62/d:BonusPrograms&lt;/ProjectFolder&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=be05c80a_002Dd96f_002D4b3f_002Db585_002Da9cbe748da89/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetById" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFolder&gt;96F22065-273D-49AF-8D21-807BA1D20C62/d:BonusPrograms&lt;/ProjectFolder&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c1bd9102_002D13e2_002D4ee6_002Db4a0_002D924f9d033beb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AddManySessions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.LoadTest.AddManySessions&lt;/TestId&gt;&#xD;
@@ -29,7 +35,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ed45dce7_002D6d3a_002D49e4_002D8128_002D84b778032900/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PositiveCase" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fd6b9ce2_002D2055_002D4409_002D8898_002Dc1ea2625421b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PositiveCase #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=fd6b9ce2_002D2055_002D4409_002D8898_002Dc1ea2625421b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PositiveCase #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	</wpf:ResourceDictionary>

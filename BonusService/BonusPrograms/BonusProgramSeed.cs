@@ -8,7 +8,6 @@ public static class BonusProgramSeed
         var lastUpdated = new DateTimeOffset(2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         return new BonusProgram()
         {
-            Id = 1,
             BankId = 1,
             Name = "Кэшбэк",
             Description = "Начиляется 1 числа каждого месяца изходя из общей суммы затрат за предыдущий месяц",
@@ -25,7 +24,6 @@ public static class BonusProgramSeed
             {
                 new ()
                 {
-                    Id = 1,
                     LastUpdated = lastUpdated,
                     Name = "Нет кэшбэка",
                     AwardSum = 0,
@@ -35,7 +33,6 @@ public static class BonusProgramSeed
                 },
                 new ()
                 {
-                    Id = 2,
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 1 уровня",
                     AwardSum = 1,
@@ -45,7 +42,6 @@ public static class BonusProgramSeed
                 },
                 new ()
                 {
-                    Id = 3,
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 2 уровня",
                     AwardSum = 5,
@@ -55,7 +51,6 @@ public static class BonusProgramSeed
                 },
                 new ()
                 {
-                    Id = 4,
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 3 уровня",
                     AwardSum = 10,

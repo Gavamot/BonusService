@@ -19,7 +19,6 @@ public static class PostgresExt
         if(Program.IsNswagBuild()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        var a=  ctx.Database.GetConnectionString();
         ctx.Database.Migrate();
     }
 }
