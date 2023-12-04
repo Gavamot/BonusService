@@ -22,7 +22,7 @@ namespace BonusService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgram", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgram", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace BonusService.Migrations
                     b.ToTable("BonusPrograms");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgramHistory", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgramHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,7 +110,7 @@ namespace BonusService.Migrations
                     b.ToTable("BonusProgramHistory");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgramLevel", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgramLevel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,7 +147,7 @@ namespace BonusService.Migrations
                     b.ToTable("BonusProgramsLevels");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.OwnerMaxBonusPay", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.OwnerMaxBonusPay", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -172,7 +172,7 @@ namespace BonusService.Migrations
                     b.ToTable("OwnerMaxBonusPays");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.Transaction", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.Transaction", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -205,8 +205,9 @@ namespace BonusService.Migrations
                     b.Property<int?>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("PersonId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("TransactionId")
                         .IsRequired()
@@ -230,7 +231,7 @@ namespace BonusService.Migrations
                     b.ToTable("Transactions");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.TransactionHistory", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.TransactionHistory", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -263,8 +264,9 @@ namespace BonusService.Migrations
                     b.Property<int?>("OwnerId")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("PersonId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("TransactionId")
                         .IsRequired()
@@ -281,9 +283,9 @@ namespace BonusService.Migrations
                     b.ToTable("TransactionHistory");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgramHistory", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgramHistory", b =>
                 {
-                    b.HasOne("BonusService.Postgres.BonusProgram", "BonusProgram")
+                    b.HasOne("BonusService.Common.Postgres.Entity.BonusProgram", "BonusProgram")
                         .WithMany("BonusProgramHistory")
                         .HasForeignKey("BonusProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -292,9 +294,9 @@ namespace BonusService.Migrations
                     b.Navigation("BonusProgram");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgramLevel", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgramLevel", b =>
                 {
-                    b.HasOne("BonusService.Postgres.BonusProgram", "BonusProgram")
+                    b.HasOne("BonusService.Common.Postgres.Entity.BonusProgram", "BonusProgram")
                         .WithMany("ProgramLevels")
                         .HasForeignKey("BonusProgramId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -303,7 +305,7 @@ namespace BonusService.Migrations
                     b.Navigation("BonusProgram");
                 });
 
-            modelBuilder.Entity("BonusService.Postgres.BonusProgram", b =>
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgram", b =>
                 {
                     b.Navigation("BonusProgramHistory");
 

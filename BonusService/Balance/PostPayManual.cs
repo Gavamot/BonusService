@@ -8,7 +8,9 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Riok.Mapperly.Abstractions;
-namespace BonusService.Pay;
+
+// ReSharper disable once CheckNamespace
+namespace BonusService.Balance.PayManual;
 
 public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
 {
@@ -22,7 +24,7 @@ public class PayManualDtoValidator : AbstractValidator<PayManualRequestDto>
     }
 }
 
-public record PayManualRequestDto([Required]Guid PersonId, [Required]int BankId, [Required]long BonusSum, [Required]string Description, [Required]string TransactionId, [property: JsonIgnore]string UserName = "");
+public record PayManualRequestDto([Required]string PersonId, [Required]int BankId, [Required]long BonusSum, [Required]string Description, [Required]string TransactionId, [property: JsonIgnore]string UserName = "");
 
 [Mapper]
 public partial class PayManualDtoMapper
@@ -30,12 +32,10 @@ public partial class PayManualDtoMapper
     public partial Transaction FromDto(PayManualRequestDto requestDto);
 }
 
-public sealed record PayTransactionRequest(Transaction transaction) : ICommand<long>;
-
 [ApiController]
 [Authorize]
-[Route("/[controller]")]
-public sealed class PayManualController : ControllerBase
+[Route("/[controller]/[action]")]
+public sealed partial class BalanceController : ControllerBase
 {
     /// <summary>
     /// Списание бонусных баллов оператором
@@ -44,7 +44,7 @@ public sealed class PayManualController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = PolicyNames.AccrualManualExecute)]
-    public async Task<long> AccrualManual([FromServices]IMediator mediator, [FromBody][Required]PayManualRequestDto request, CancellationToken ct)
+    public async Task<long> PayManual([FromServices]IMediator mediator, [FromBody][Required]PayManualRequestDto request, CancellationToken ct)
     {
         request = request with { UserName = HttpContext.GetUserName() };
         Transaction transaction = new PayManualDtoMapper().FromDto(request);

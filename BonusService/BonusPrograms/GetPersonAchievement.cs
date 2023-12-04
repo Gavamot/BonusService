@@ -9,9 +9,48 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 #pragma warning disable CS8618
 
-namespace BonusService.BonusPrograms;
+// ReSharper disable once CheckNamespace
+namespace BonusService.BonusPrograms.BonusProgramAchievement;
+
+[Mapper]
+public partial class BonusProgramDtoMapper
+{
+    public partial BonusProgramAchievementDto ToDto(BonusProgram requestDto);
+}
+
+[Mapper]
+public partial class BonusProgramLevelDtoMapper
+{
+    public partial BonusProgramAchievementLevelDto ToDto(BonusProgramLevel requestDto);
+}
+
+public sealed class BonusProgramAchievementDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public BonusProgramType BonusProgramType { get; set; }
+    public string Description { get; set; }
+    public DateTimeOffset DateStart { get; set; }
+    public DateTimeOffset? DateStop { get; set; }
+    public int BankId { get; set; }
+    public string ExecutionCron { get; set; }
+    public FrequencyTypes FrequencyType { get; set; }
+    public int  FrequencyValue { get; set; }
+    public List<BonusProgramAchievementLevelDto> ProgramLevels { get; set; }
+}
+
+public class BonusProgramAchievementLevelDto
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public int Level { get; set; }
+    public long Condition { get; set; }
+    public int AwardPercent  { get; set; }
+    public int AwardSum { get; set; }
+}
 
 public sealed class BonusProgramAchievementRequestValidator : AbstractValidator<BonusProgramAchievementRequest>
 {
@@ -23,11 +62,13 @@ public sealed class BonusProgramAchievementRequestValidator : AbstractValidator<
 
 public sealed record BonusProgramAchievementResponseItem
 {
-    public BonusProgram BonusProgram { get; set; }
+    public BonusProgramAchievementDto BonusProgram { get; set; }
     public long CurrentSum { get; set; }
 }
+
+
 public sealed record BonusProgramAchievementResponse([Required]BonusProgramAchievementResponseItem [] Items);
-public sealed record BonusProgramAchievementRequest([Required]Guid PersonId) : IRequest<BonusProgramAchievementResponse>;
+public sealed record BonusProgramAchievementRequest([Required]string PersonId) : IRequest<BonusProgramAchievementResponse>;
 
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
 {
@@ -46,9 +87,9 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     }
 
 
-    private ValueTask<long> CalculateAchievementSumAsync(Guid personId, BonusProgram bonusProgram)
+    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
+        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         switch (bonusProgram.BonusProgramType)
         {
             case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));
@@ -61,12 +102,14 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         var now = _dateTimeService.GetNowUtc();
         var bonusPrograms = await _postgres.GetActiveBonusPrograms(now).ToArrayAsync(ct);
         List<BonusProgramAchievementResponseItem> items = new();
+        var mapper = new BonusProgramDtoMapper();
+
         foreach (var bonusProgram in bonusPrograms)
         {
-            var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram);
+            var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, now);
             items.Add(new()
             {
-                BonusProgram = bonusProgram,
+                BonusProgram  = mapper.ToDto(bonusProgram),
                 CurrentSum = sum,
             });
         }
@@ -77,7 +120,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 [Authorize]
 [ApiController]
 [Route("/[controller]/[action]")]
-public sealed class BonusProgramAchievementController : ControllerBase
+public sealed partial class BonusProgramController : ControllerBase
 {
     [HttpGet]
     [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]

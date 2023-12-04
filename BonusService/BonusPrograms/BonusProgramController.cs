@@ -1,27 +1,22 @@
 using BonusService.Auth.Policy;
-using BonusService.Common;
-using BonusService.Common.Postgres;
-using BonusService.Common.Postgres.Entity;
+using BonusService.BonusPrograms.BonusProgramAchievement;
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-namespace BonusService.BonusPrograms;
+// ReSharper disable once CheckNamespace
+namespace BonusService.BonusPrograms.RestartJobs;
 
-[ApiController]
 [Authorize]
+[ApiController]
 [Route("/[controller]/[action]")]
-public sealed class BonusProgramController : ControllerBase//: CrudController<BonusProgram>
+public sealed partial class BonusProgramController : ControllerBase
 {
-    private readonly PostgresDbContext _postgres;
-    private readonly IDateTimeService _dateTimeService;
-    public BonusProgramController(PostgresDbContext postgres, IDateTimeService dateTimeService)// Change later
+    [HttpPost]
+    [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
+    public async Task<BonusProgramAchievementResponse> RestartJobs([FromServices] IMediator mediator, CancellationToken ct)
     {
-        _postgres = postgres;
-        _dateTimeService = dateTimeService;
+        throw new NotImplementedException();
+        /*var res = await mediator.Send(request, ct);
+        return res;*/
     }
-
-    [HttpGet]
-    [Authorize(Policy = PolicyNames.BonusProgramRead)]
-    public async Task<BonusProgram[]> GetAll(CancellationToken ct) =>
-        await _postgres.GetActiveBonusPrograms(_dateTimeService.GetNowUtc()).ToArrayAsync(ct);
 }

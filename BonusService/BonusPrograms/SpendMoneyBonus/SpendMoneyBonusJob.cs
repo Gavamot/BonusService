@@ -22,7 +22,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         _mongo = mongo;
     }
 
-    private string GenerateTransactionId(int bonusProgram,  Guid PersonId,int bankId, DateTimeInterval period)
+    private string GenerateTransactionId(int bonusProgram,  string PersonId,int bankId, DateTimeInterval period)
         => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay, BonusProgram bonusProgram)
@@ -34,12 +34,11 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         return new (level.AwardSum, bonus);
     }
 
-    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram)
+    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue);
-        var now = _dateTimeService.GetNowUtc();
+        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
@@ -61,18 +60,13 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
 
         foreach (var group in data)
         {
-            var login = group.FirstOrDefault()?.user?.clientLogin ?? "null";
+            var userName = group.FirstOrDefault()?.user?.clientLogin ?? "null";
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay, bonusProgram);
             if (bonus.sum <= 0) { continue; }
 
-            if (!Guid.TryParse(group.Key, out Guid clientNodeId))
-            {
-                _logger.LogWarning("Не могу распарсить user!.clientNodeId из монги в ГУИД ({clientNodeId})", group.Key);
-                continue;
-            }
+            string clientNodeId = group?.Key ?? "null";
 
-            var userName = group.FirstOrDefault()?.user?.clientLogin ?? null;
             var transaction = new Transaction()
             {
                 PersonId = clientNodeId,
@@ -83,14 +77,14 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = now,
-                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={login} за {interval.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={userName} за {interval.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 UserName = userName,
                 OwnerId = null,
                 EzsId = null,
             };
             transactions.Add(transaction);
 
-            _logger.LogInformation($"Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов");
+            _logger.LogInformation("Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов", clientNodeId, transaction.BonusBase, transaction.BonusSum);
             clientBalanceCount++;
             totalBonusSum += transaction.BonusSum;
 

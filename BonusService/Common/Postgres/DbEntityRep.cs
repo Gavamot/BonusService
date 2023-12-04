@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common.Postgres;
 
-public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
+public interface IDbEntityRep<T>
+    where T : class, IHaveId<int>, IHaveDateOfChange
 {
     Task<T> AddAsync(T entity, CancellationToken cs);
     Task<T> UpdateAsync(T entity, CancellationToken ct);
@@ -10,12 +12,37 @@ public interface IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChang
     IQueryable<T> GetAll();
 }
 
-public abstract class DbEntityRep<T> : IDbEntityRep<T> where T : class, IHaveId<int>, IHaveDateOfChange
+public class CrudException : Exception
+{
+
+}
+
+public class CrudNotFountException : CrudException
+{
+
+}
+
+public interface IUpdateMapper<in TDto, in TEntity>
+    where TDto : CrudDto<TEntity>
+    where TEntity : IHaveId<int>, IHaveDateOfChange
+{
+    public void Map(TDto dto, TEntity entity);
+}
+
+public abstract class CrudDto <TEntity> : IHaveId<int> where TEntity : IHaveId<int>, IHaveDateOfChange
+{
+    [Required]
+    public int Id { get; set; }
+}
+
+public abstract class DbEntityRep<T> : IDbEntityRep<T>
+    where T : class, IHaveId<int>, IHaveDateOfChange
 {
     protected readonly PostgresDbContext _postgres;
     protected  readonly IDateTimeService _dateTimeService;
 
-    protected DbEntityRep(PostgresDbContext postgres, IDateTimeService dateTimeService)
+    protected DbEntityRep(PostgresDbContext postgres,
+        IDateTimeService dateTimeService)
     {
         _postgres = postgres;
         _dateTimeService = dateTimeService;
@@ -27,16 +54,22 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T> where T : class, IHaveId<
         await _postgres.SaveChangesAsync(cs);
         return entity;
     }
+
     public virtual async Task<T> UpdateAsync(T entity, CancellationToken ct)
     {
+        if(entity.Id == 0 || (entity as IDeletable)?.IsDeleted == true)
+        {
+            throw new ArgumentException("Удаление через update не возможно воспользуйтесь операций Delete");
+        }
         entity.LastUpdated = _dateTimeService.GetNowUtc();
-        var res =_postgres.Update(entity);
+        var res = _postgres.Update(entity);
         await _postgres.SaveChangesAsync(ct);
         return res.Entity;
     }
+
     public virtual async Task DeleteAsync(int id, CancellationToken cs)
     {
-        var entity = await GetAsync(id, cs);
+        var entity = await _postgres.Set<T>().FirstOrDefaultAsync(e => e.Id == id, cs);
         if(entity == null) return;
         if (entity is IDeletable dbEntity)
         {

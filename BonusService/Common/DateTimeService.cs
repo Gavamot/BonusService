@@ -41,7 +41,7 @@ public class DateTimeService : IDateTimeService
     }
     public DateTimeInterval GetDateTimeInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now = default)
     {
-        if (now == default) now = DateTimeOffset.UtcNow;
+        if (now == default) now = GetNowUtc();
         switch (frequencyType)
         {
             case FrequencyTypes.Day: return new(GetStartOfCurrentDayInner(now), GetStartOfCurrentDayInner(now) + TimeSpan.FromDays(1 * frequencyValue));

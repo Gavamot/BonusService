@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
-public record SpendMoneyBonusAchievementRequest(Guid PersonId, DateTimeInterval Interval, int BankId) : IRequest<long>;
+public record SpendMoneyBonusAchievementRequest(string PersonId, DateTimeInterval Interval, int BankId) : IRequest<long>;
 public sealed class SpendMoneyBonusAchievementCommand : IRequestHandler<SpendMoneyBonusAchievementRequest, long>
 {
     private readonly MongoDbContext _mongo;
@@ -20,12 +20,10 @@ public sealed class SpendMoneyBonusAchievementCommand : IRequestHandler<SpendMon
 
     public ValueTask<long> Handle(SpendMoneyBonusAchievementRequest request, CancellationToken ct)
     {
-        string personIdString = request.PersonId.ToString(MongoUser.ClientNodeIdToStringFormat);
-        var a = _mongo.Sessions.AsQueryable().ToArray();
         var payment = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
-                && x.user.clientNodeId == personIdString
+                && x.user.clientNodeId ==  request.PersonId
                 && x.user.chargingClientType == MongoChargingClientType.IndividualEntity
                 && x.tariff != null
                 && x.tariff.BankId == request.BankId

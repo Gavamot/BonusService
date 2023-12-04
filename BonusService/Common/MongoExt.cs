@@ -114,8 +114,6 @@ public class MongoUser
     public string? clientLogin { get; set; }
 
     public int? chargingClientType { get; set; }
-
-    public const string ClientNodeIdToStringFormat = "D";
 }
 
 [BsonIgnoreExtraElements]

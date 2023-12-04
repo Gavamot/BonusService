@@ -57,7 +57,7 @@ namespace BonusService.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    PersonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PersonId = table.Column<string>(type: "text", nullable: false),
                     BankId = table.Column<int>(type: "integer", nullable: false),
                     BonusBase = table.Column<long>(type: "bigint", nullable: true),
                     BonusSum = table.Column<long>(type: "bigint", nullable: false),
@@ -81,7 +81,7 @@ namespace BonusService.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    PersonId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PersonId = table.Column<string>(type: "text", nullable: false),
                     BankId = table.Column<int>(type: "integer", nullable: false),
                     BonusBase = table.Column<long>(type: "bigint", nullable: true),
                     BonusSum = table.Column<long>(type: "bigint", nullable: false),

@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 using BonusService;
 using BonusService.Auth;
+using BonusService.Balance;
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Common.Postgres;
-using BonusService.Pay;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpLogging;
@@ -21,11 +21,10 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var urls= configuration.GetSection("Urls").Value;
-Console.WriteLine($"Running address is urls={urls}");
+Console.WriteLine($"Running address is urls={urls}/bonus/swagger");
 
 var services = builder.Services;
 
-services.AddScoped<OwnerByPayRep>();
 
 services.AddCors(options =>
 {
@@ -93,12 +92,39 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.UseSwagger();
+app.MapGet("/method1", () =>
+    {
+        return 1;
+    })
+    .WithName("method1")
+    .WithGroupName("Group")
+    .WithSummary("Super method")
+    .WithDescription("Oxerenni method .....fsdf s")
+    .WithOpenApi();
+
+app.MapGet("/method2", () =>
+    {
+        return 1;
+    })
+    .WithName("method2")
+    .WithGroupName("Group")
+    .WithOpenApi();
+
+
+
+app.UseSwagger(c =>
+{
+    c.RouteTemplate = "/bonus/swagger/{documentName}/swagger.json";
+});
 app.UseSwaggerUI(c=>
 {
-    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    c.RoutePrefix = "bonus/swagger";
+    c.SwaggerEndpoint("/bonus/swagger/v1/swagger.json", "Bonus API V1");
     c.EnableTryItOutByDefault();
+    c.DisplayRequestDuration();
 });
+
+
 
 app.UseHttpLogging();
 app.UseHttpsRedirection();
@@ -134,7 +160,7 @@ namespace BonusService
             if (bp == null)
             {
                 bp = BonusProgramSeed.Get();
-                //bp.Id = 1;
+                bp.Id = 0;
                 postgres.BonusPrograms.Add(bp);
                 postgres.SaveChanges();
             }

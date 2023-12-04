@@ -1,10 +1,11 @@
 using System.Security.Cryptography;
+using BonusApi;
 using BonusService.Common.Postgres;
-using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OwnerMaxBonusPay = BonusService.Common.Postgres.Entity.OwnerMaxBonusPay;
 namespace BonusService.Test;
 
 public class OwnerMaxBonusPayCrudTest : BonusTestApi
@@ -85,14 +86,11 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
 
         var id = postgres.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
 
-        var owner = await api.OwnerMaxBonusPayUpdateAsync(new BonusApi.OwnerMaxBonusPay()
+        await api.OwnerMaxBonusPayUpdateAsync(new OwnerByPayDto()
         {
-            OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 50,Id = id
+            Id = id,
+            MaxBonusPayPercentages = 50
         });
-        owner.OwnerId.Should().Be(id);
-        owner.OwnerId.Should().Be(Q.OwnerId2);
-        owner.MaxBonusPayPercentages.Should().Be(50);
-        owner.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
         using var scope = CreateScope();
         var newPostgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
