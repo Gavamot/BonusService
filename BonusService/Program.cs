@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var urls= configuration.GetSection("Urls").Value;
-Console.WriteLine($"Running address is urls={urls}/bonus/swagger");
+Console.WriteLine($"Running address is urls={urls}/api/bonus/swagger");
 
 var services = builder.Services;
 
@@ -92,34 +92,14 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.MapGet("/method1", () =>
-    {
-        return 1;
-    })
-    .WithName("method1")
-    .WithGroupName("Group")
-    .WithSummary("Super method")
-    .WithDescription("Oxerenni method .....fsdf s")
-    .WithOpenApi();
-
-app.MapGet("/method2", () =>
-    {
-        return 1;
-    })
-    .WithName("method2")
-    .WithGroupName("Group")
-    .WithOpenApi();
-
-
-
 app.UseSwagger(c =>
 {
-    c.RouteTemplate = "/bonus/swagger/{documentName}/swagger.json";
+    c.RouteTemplate = "/api/bonus/swagger/{documentName}/swagger.json";
 });
 app.UseSwaggerUI(c=>
 {
-    c.RoutePrefix = "bonus/swagger";
-    c.SwaggerEndpoint("/bonus/swagger/v1/swagger.json", "Bonus API V1");
+    c.RoutePrefix = "api/bonus/swagger";
+    c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
     c.EnableTryItOutByDefault();
     c.DisplayRequestDuration();
 });
