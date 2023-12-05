@@ -98,7 +98,7 @@ app.UseSwagger(c =>
 });
 app.UseSwaggerUI(c=>
 {
-    c.RoutePrefix = "api/bonus/swagger";
+    //c.RoutePrefix = "api/bonus/swagger";
     c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
     c.EnableTryItOutByDefault();
     c.DisplayRequestDuration();
