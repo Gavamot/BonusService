@@ -21,10 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var urls= configuration.GetSection("Urls").Value;
-Console.WriteLine($"Running address is urls={urls}/api/bonus/swagger");
+Console.WriteLine($"Running address is urls={urls}/swagger");
 
 var services = builder.Services;
-
 
 services.AddCors(options =>
 {
@@ -78,7 +77,7 @@ services.AddBonusServices(configuration);
 
 services.AddJwtAuthorization(configuration);
 
-services.AddSwagger();
+services.AddSwagger(BonusService.Program.IsLocal() || BonusService.Program.IsNswagBuild());
 
 services.AddMediator(opt =>
 {
@@ -92,26 +91,28 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+app.UseHangfire();
 app.UseSwagger(c =>
 {
-   // c.RouteTemplate = "/api/bonus/swagger/{documentName}/swagger.json";
+   // c.RouteTemplate = "swagger/{documentName}/swagger.json";
 });
 app.UseSwaggerUI(c=>
 {
-    //c.RoutePrefix = "/api/bonus";
+   // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
     c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
+    // c.RoutePrefix = "api/bonus/swagger";
     c.EnableTryItOutByDefault();
     c.DisplayRequestDuration();
 });
 
 app.UseHttpLogging();
-app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseJwtAuthorization();
 
-app.UseHangfire();
-
+app.UseHttpsRedirection();
 app.MapControllers();
+
 app.ApplyPostgresMigrations();
 
 /*if (BonusService.Program.IsNotAppTest())

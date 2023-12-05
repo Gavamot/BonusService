@@ -7,7 +7,7 @@ namespace BonusService.Common;
 
 public static class SwaggerExt
 {
-    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    public static IServiceCollection AddSwagger(this IServiceCollection services, bool isLocal)
     {
         services.AddFluentValidationRulesToSwagger();
         services.AddEndpointsApiExplorer();
@@ -18,6 +18,11 @@ public static class SwaggerExt
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
                 c.SchemaFilter<SwaggerExcludeFilter>();
+
+                if (isLocal == false)
+                {
+                    c.DocumentFilter<PathPrefixInsertDocumentFilter>("/api/bonus");
+                }
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
