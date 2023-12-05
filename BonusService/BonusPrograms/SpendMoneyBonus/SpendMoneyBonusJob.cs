@@ -1,7 +1,8 @@
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
-using Hangfire;
+using Hangfire.Console;
+using Hangfire.Server;
 using MongoDB.Driver;
 namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
@@ -23,7 +24,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         _mongo = mongo;
     }
 
-    private string GenerateTransactionId(int bonusProgram,  string PersonId,int bankId, DateTimeInterval period)
+    private string GenerateTransactionId(int bonusProgram,  string PersonId,int bankId, DateInterval period)
         => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay, BonusProgram bonusProgram)
@@ -35,11 +36,17 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         return new (level.AwardSum, bonus);
     }
 
+
     protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var bonusProgramMark = GetBonusProgramMark(bonusProgram);
+
+        var interval = DateInterval.GetPrevDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+
+        _logger.LogInformation("{BonusProgramMark} - выборка данных за интервал {Interval} по валюте {BankId}", bonusProgramMark, interval, bankId);
+        ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {interval} по валюте {bankId}");
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
@@ -53,11 +60,17 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 && x.chargeEndTime >= interval.from.UtcDateTime && x.chargeEndTime < interval.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
 
-        var capacity = 4096;
-        List<Transaction> transactions = new(4096);
+        if (data.Any() == false)
+        {
+            _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено");
+            ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
+            return new BonusProgramJobResult(interval, 0, 0);
+        }
 
         int clientBalanceCount = 0;
         long totalBonusSum = 0;
+        var capacity = 4096;
+        List<Transaction> transactions = new(4096);
 
         foreach (var group in data)
         {
@@ -78,14 +91,15 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = now,
-                Description = $"Начислено по {bonusProgram.Id}_{bonusProgram.Name}(банк={bankId})login={userName} за {interval.from.Month} месяц. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgramMark}(банк={bankId})login={userName} за {interval}. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 UserName = userName,
                 OwnerId = null,
                 EzsId = null,
             };
             transactions.Add(transaction);
 
-            _logger.LogInformation("Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов", clientNodeId, transaction.BonusBase, transaction.BonusSum);
+            _logger.LogInformation("{BonusProgramMark} - Клиент clientNodeId={clientNodeId} зарядился на {transactionBonusBase} руб./кВт, начислено {transactionBonusSum} бонусов", bonusProgramMark, clientNodeId, transaction.BonusBase, transaction.BonusSum);
+            ctx.WriteLine($"{bonusProgramMark} - Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов");
             clientBalanceCount++;
             totalBonusSum += transaction.BonusSum;
 
@@ -95,7 +109,8 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 options.InsertIfNotExists = true;
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
-
+            _logger.LogInformation("{BonusProgramMark} - было начисленно бонусов для {transactionsCount} пользователей. Даныне в бд добавленны", bonusProgramMark, transactions.Count);
+            ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
             transactions = new List<Transaction>(capacity);
         }
 
@@ -106,7 +121,10 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 options.InsertIfNotExists = true;
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
+            _logger.LogInformation("{BonusProgramMark} - было начисленно бонусов для {transactionsCount} пользователей. Даныне в бд добавленны", bonusProgramMark, transactions.Count);
+            ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
         }
+
         return new BonusProgramJobResult(interval, clientBalanceCount, totalBonusSum);
     }
 }

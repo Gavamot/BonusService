@@ -3,6 +3,7 @@ using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using Hangfire;
+using Hangfire.Server;
 using Hangfire.Storage;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.BonusPrograms;
@@ -61,7 +62,7 @@ public class BonusProgramsRunner : IBonusProgramsRunner
         string jobId = GenerateJobId(bonusProgram.Id);
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync(bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
+            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync((PerformContext)null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
         }
         else
         {

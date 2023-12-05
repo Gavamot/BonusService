@@ -28,7 +28,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public static readonly DateTimeOffset IntervalMoth1Start = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         public static readonly DateTimeOffset IntervalMoth1End = IntervalMoth1Start.AddMonths(1);
-        public readonly static DateTimeInterval IntervalMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
+        public readonly static DateInterval IntervalMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
 
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
@@ -129,12 +129,6 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         //InitDatabases(server).GetAwaiter().GetResult();
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
             ReturnsNextFromSequence(Q.DateTimeSequence);
-        A.CallTo(() => this.server.DateTimeService.GetCurrentMonth())
-            .ReturnsNextFromSequence(Q.IntervalMoth1);
-
-        A.CallTo(() => this.server.DateTimeService.GetDateTimeInterval(A<BonusService.Common.Postgres.Entity.FrequencyTypes>.Ignored, A<int>.Ignored, A<DateTimeOffset>.Ignored))
-            .WithAnyArguments()
-            .ReturnsLazily((BonusService.Common.Postgres.Entity.FrequencyTypes a, int b , DateTimeOffset c) => new DateTimeService().GetDateTimeInterval(a, b, c));
 
         scope = CreateScope();
         postgres = scope.GetRequiredService<PostgresDbContext>();
@@ -149,6 +143,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         hangfireDb = scope.GetRequiredService<HangfireDbContext>();
         hangfireDb.Database.Migrate();
+
     }
 
     protected async Task InitDatabases(FakeApplicationFactory<Program> server)

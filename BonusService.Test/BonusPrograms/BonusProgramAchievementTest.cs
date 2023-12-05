@@ -103,9 +103,9 @@ public class BonusProgramAchievementTest : BonusTestApi
             }
         });
 
-        /*Fake.ClearRecordedCalls(this.server.DateTimeService);
+        Fake.ClearRecordedCalls(this.server.DateTimeService);
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
-            Returns(Q.IntervalMoth1Start);*/
+            Returns(Q.IntervalMoth1Start.AddHours(-1));
 
         var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
         var res = bonusPrograms.Items.First();

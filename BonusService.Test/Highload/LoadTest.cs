@@ -53,7 +53,7 @@ public class LoadTest : BonusTestApi
         }
 
         var job = GetService<SpendMoneyBonusJob>();
-        job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime).GetAwaiter().GetResult();
+        job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.from.UtcDateTime).GetAwaiter().GetResult();
 
         var res = postgres.Transactions.Count();
         res.Should().BeGreaterThan(0);
