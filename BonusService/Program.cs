@@ -94,12 +94,12 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseSwagger(c =>
 {
-    c.RouteTemplate = "/api/bonus/swagger/{documentName}/swagger.json";
+    c.RouteTemplate = "/swagger/{documentName}/swagger.json";
 });
 app.UseSwaggerUI(c=>
 {
-    //c.RoutePrefix = "api/bonus/swagger";
-    c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
+    //c.RoutePrefix = "/swagger";
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Bonus API V1");
     c.EnableTryItOutByDefault();
     c.DisplayRequestDuration();
 });
@@ -114,11 +114,11 @@ app.UseHangfire();
 app.MapControllers();
 app.ApplyPostgresMigrations();
 
-/*if (BonusService.Program.IsNotAppTest())
+if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
     scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
-}*/
+}
 
 app.Run();
 
