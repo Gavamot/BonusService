@@ -12,7 +12,7 @@ public static class BonusExt
         services.AddScoped<BonusProgramRep>();
         services.AddScoped<BonusProgramLevelRep>();
 
-        services.AddSingleton<IBonusProgramsRunner, BonusProgramsRunner>();
+        services.AddScoped<IBonusProgramsRunner, BonusProgramsRunner>();
         services.AddScoped<SpendMoneyBonusJob>();
         return services;
     }
