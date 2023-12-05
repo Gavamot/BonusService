@@ -11,12 +11,17 @@ namespace BonusService.BonusPrograms.RestartJobs;
 [Route("/[controller]/[action]")]
 public sealed partial class BonusProgramController : ControllerBase
 {
+    private readonly IBonusProgramsRunner _bonusProgramsRunner;
+
+    public BonusProgramController(IBonusProgramsRunner bonusProgramsRunner)
+    {
+        _bonusProgramsRunner = bonusProgramsRunner;
+    }
+
     [HttpPost]
     [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
-    public async Task<BonusProgramAchievementResponse> RestartJobs([FromServices] IMediator mediator, CancellationToken ct)
+    public async Task RestartJobs()
     {
-        throw new NotImplementedException();
-        /*var res = await mediator.Send(request, ct);
-        return res;*/
+        await _bonusProgramsRunner.RestartAsync();
     }
 }

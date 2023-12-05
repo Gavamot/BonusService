@@ -104,8 +104,6 @@ app.UseSwaggerUI(c=>
     c.DisplayRequestDuration();
 });
 
-
-
 app.UseHttpLogging();
 app.UseHttpsRedirection();
 
@@ -119,10 +117,8 @@ app.ApplyPostgresMigrations();
 if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().Init();
+    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
 }
-
-BonusService.Program.AddPostgresSeed(app.Services);
 
 app.Run();
 

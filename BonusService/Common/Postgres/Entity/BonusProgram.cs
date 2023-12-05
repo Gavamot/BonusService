@@ -69,6 +69,4 @@ public class BonusProgram : ICatalogEntity, IDeletable
     [SwaggerSchema(ReadOnly = true, Nullable = true)]
     [SwaggerExclude]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
-
-    public string CreateMark() => $"{Id}_{Name}";
 }

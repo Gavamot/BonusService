@@ -2,6 +2,7 @@ using System.Data;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.BonusPrograms;

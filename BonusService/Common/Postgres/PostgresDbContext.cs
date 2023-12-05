@@ -35,12 +35,21 @@ public class PostgresDbContext : DbContext
     public DbSet<BonusProgramLevel> BonusProgramsLevels { get; set; }
     public DbSet<BonusProgramHistory> BonusProgramHistory { get; set; }
 
-    public IQueryable<BonusProgram> GetActiveBonusPrograms(DateTimeOffset now)
+    public IQueryable<BonusProgram> GetBonusPrograms()
     {
-        return BonusPrograms.Where(x => x.IsDeleted == false && x.DateStart <= now && ((x.DateStop == null) || x.DateStop > now))
+        return BonusPrograms.Where(x => x.IsDeleted == false)
             .Include(x=> x.ProgramLevels)
             .AsNoTracking();
     }
+
+    public BonusProgram? GetBonusProgramById(int id, CancellationToken ct = default)
+    {
+        return this.BonusPrograms
+            .Include(x => x.ProgramLevels)
+            .AsNoTracking()
+            .FirstOrDefault(x => x.IsDeleted == false);
+    }
+
 
     public PostgresDbContext(){ }
 

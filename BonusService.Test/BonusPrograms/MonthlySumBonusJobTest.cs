@@ -31,7 +31,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
     public MonthlySumBonusJobTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.BonusPrograms.First();
+        bonusProgram = postgres.GetBonusProgramById(1) ?? throw new Exception();
     }
 
     private void CheckEmptyHistory(BonusProgramHistory bonusProgramHistory)
@@ -104,7 +104,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     public async Task EmptySessions_EmptyResultHistoryAdded()
     {
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.DateTimeSequence.First());
+        await job.ExecuteAsync(bonusProgram, Q.DateTimeSequence.First());
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
@@ -115,7 +115,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     {
         AddUnmatchedSessions();
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
         postgres.Transactions.Any().Should().BeFalse();
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
@@ -133,10 +133,10 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
         AddUnmatchedSessions();
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
 
         var job2 = GetService<SpendMoneyBonusJob>();
-        await job2.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job2.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
 
         postgres.Transactions.Any().Should().BeFalse();
 
@@ -160,7 +160,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
 
         using var scope = CreateScope();
         var newPostgres = scope.GetRequiredService<PostgresDbContext>();
@@ -198,7 +198,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
 
         postgres.Transactions.Count().Should().Be(1);
 
@@ -233,7 +233,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(bonusProgram.Id, Q.IntervalMoth1.from.UtcDateTime);
+        await job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime);
 
         postgres.Transactions.Count().Should().Be(2);
 

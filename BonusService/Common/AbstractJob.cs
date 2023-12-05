@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
-using Microsoft.EntityFrameworkCore;
+using Hangfire;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
@@ -38,14 +38,11 @@ public abstract class AbstractBonusProgramJob
         }
     }
 
-    public async Task ExecuteAsync(int bonusProgramId, DateTimeOffset now)
+    public async Task ExecuteAsync(BonusProgram bonusProgram, DateTimeOffset now)
     {
-        BonusProgram bonusProgram = _postgres.BonusPrograms
-            .Include(x=> x.ProgramLevels)
-            .FirstOrDefault(x => x.Id == bonusProgramId);
         Validate(bonusProgram, now);
         Stopwatch stopwatch = Stopwatch.StartNew();
-        var bonusProgramMark = bonusProgram!.CreateMark();
+        string bonusProgramMark = $"{bonusProgram.Id}_{bonusProgram.Name}";
         using var activity = new Activity(bonusProgramMark);
         activity.Start();
         _logger.LogInformation("Job {bonusProgramMark} start", bonusProgramMark);
@@ -72,7 +69,7 @@ public abstract class AbstractBonusProgramJob
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles
             });
-            _logger.LogInformation("Job {bonusProgramMark} status => {History}", bonusProgramMark, json);
+            _logger.LogInformation("Job {BonusProgramMark} status => {History}", bonusProgramMark, json);
         }
         catch (Exception e)
         {

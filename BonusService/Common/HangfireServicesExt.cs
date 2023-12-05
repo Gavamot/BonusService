@@ -45,7 +45,6 @@ public static class HangfireServicesExt
         {
             using var scope = provider.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
-            var a=  db.Database.GetConnectionString();
             db.Database.EnsureCreated();
 
             config
