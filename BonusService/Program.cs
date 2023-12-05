@@ -21,7 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var urls= configuration.GetSection("Urls").Value;
-Console.WriteLine($"Running address is urls={urls}/api/bonus/swagger");
+Console.WriteLine($"Running address is urls={urls}/swagger");
 
 var services = builder.Services;
 
@@ -94,7 +94,7 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseSwagger(c =>
 {
-    c.RouteTemplate = "/swagger/{documentName}/swagger.json";
+    //c.RouteTemplate = "/swagger/{documentName}/swagger.json";
 });
 app.UseSwaggerUI(c=>
 {
