@@ -28,7 +28,7 @@ public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanc
 
 [ApiController]
 [Authorize]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed partial class BalanceController : ControllerBase
 {
     /// <summary>

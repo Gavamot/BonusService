@@ -34,7 +34,7 @@ public sealed record AccrualManualRequestDto([Required]string PersonId, [Require
 
 [ApiController]
 [Authorize]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed partial class BalanceController : ControllerBase
 {
     /// <summary>

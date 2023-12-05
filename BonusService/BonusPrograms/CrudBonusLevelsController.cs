@@ -55,7 +55,7 @@ public class BonusProgramLevelRep : DbEntityRep<BonusProgramLevel>
 
 [ApiController]
 [Authorize]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed class BonusLevelsController : CrudController<BonusProgramLevel, BonusProgramLevelDto>
 {
     private readonly PostgresDbContext _db;

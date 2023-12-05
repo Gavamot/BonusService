@@ -37,7 +37,7 @@ public class BonusProgramRep : DbEntityRep<BonusProgram>
 
 [ApiController]
 [Authorize]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : CrudController<BonusProgram, BonusProgramDto>
 {
     public BonusProgramController(PostgresDbContext db, BonusProgramRep rep) : base(rep, new BonusProgramMapper())

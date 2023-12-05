@@ -24,7 +24,7 @@ public record class BalanceTransactionRequest(string PersonId, int BankId, int S
 /// </summary>
 [ApiController]
 [Authorize]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {
     public BalanceController()

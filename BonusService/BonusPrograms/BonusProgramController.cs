@@ -8,7 +8,7 @@ namespace BonusService.BonusPrograms.RestartJobs;
 
 [Authorize]
 [ApiController]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : ControllerBase
 {
     private readonly IBonusProgramsRunner _bonusProgramsRunner;

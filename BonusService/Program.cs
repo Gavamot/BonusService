@@ -114,11 +114,11 @@ app.UseHangfire();
 app.MapControllers();
 app.ApplyPostgresMigrations();
 
-if (BonusService.Program.IsNotAppTest())
+/*if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
     scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
-}
+}*/
 
 app.Run();
 
