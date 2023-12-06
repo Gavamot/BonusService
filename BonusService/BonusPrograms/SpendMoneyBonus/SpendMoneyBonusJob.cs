@@ -43,7 +43,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
         int bankId = bonusProgram.BankId;
         var bonusProgramMark = GetBonusProgramMark(bonusProgram);
 
-        var interval = DateInterval.GetPrevDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = DateInterval.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
 
         _logger.LogInformation("{BonusProgramMark} - выборка данных за интервал {Interval} по валюте {BankId}", bonusProgramMark, interval, bankId);
         ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {interval} по валюте {bankId}");
