@@ -43,7 +43,7 @@ public sealed partial class BalanceController : ControllerBase
     /// Оператор не может списывать бонусы в минус
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.AccrualManualExecute)]
+    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
     public async Task<long> PayManual([FromServices]IMediator mediator, [FromBody][Required]PayManualRequestDto request, CancellationToken ct)
     {
         request = request with { UserName = HttpContext.GetUserName() };

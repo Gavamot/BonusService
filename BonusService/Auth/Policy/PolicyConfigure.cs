@@ -1,114 +1,52 @@
+using System.Net;
+using System.Security.Claims;
+using Amazon.Runtime.Internal.Transform;
 using BonusService.Auth.Claims;
-using BonusService.Auth.Rights;
 using BonusService.Auth.Roles;
 using Microsoft.AspNetCore.Authorization;
 
 namespace BonusService.Auth.Policy;
 
+public static class PolicyNames
+{
+    public const string BonusServiceRead = nameof(BonusServiceRead);
+    public const string BonusServiceWrite = nameof(BonusServiceWrite);
+    public const string BonusServiceExecute = nameof(BonusServiceExecute);
+    public const string PersonRead = nameof(PersonRead);
+}
+
 public static class PolicyConfigure
 {
+    private readonly static Dictionary<string, Action<AuthorizationPolicyBuilder>> ALl = new()
+    {
+        new (PolicyNames.PersonRead, Read(ClaimsNames.Person)),
+        new (PolicyNames.BonusServiceRead, Read(ClaimsNames.BonusService)),
+        new (PolicyNames.BonusServiceWrite, Write(ClaimsNames.BonusService)),
+        new (PolicyNames.BonusServiceExecute, Execute(ClaimsNames.BonusService)),
+    };
 
-    public static void AccrualManualRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.AccrualManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void AccrualManualWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.AccrualManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void AccrualManualExecute(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Execute(claim) &&
-                claim.Value == ControllerNames.AccrualManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
+    public static class ClaimsNames
+    {
+        public const string BonusService = nameof(BonusService);
+        public const string Person = nameof(Person);
+    }
 
-    public static void BalanceRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.Balance) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void BalanceWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.Balance) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void BonusProgramRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.BonusProgram) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void BonusProgramWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.BonusProgram) ||
-            context.User.IsInRole(RolesPlatform.Admin));
+    public static void AddBonusServicePolices(AuthorizationOptions options)
+    {
+        foreach (var policy in ALl)
+        {
+            options.AddPolicy(policy.Key, policy.Value);
+        }
+    }
 
-    public static void OwnerMaxBonusPayRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
+    private static Action<AuthorizationPolicyBuilder> GetAction(string claimValue, Func<Claim, bool> checkClaim)
+    {
+        return policy => policy.RequireAssertion(context =>
             context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.OwnerMaxBonusPay) ||
+                checkClaim.Invoke(claim) && claim.Value == claimValue) ||
             context.User.IsInRole(RolesPlatform.Admin));
-    public static void OwnerMaxBonusPayWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.OwnerMaxBonusPay) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-
-    public static void PayRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.Pay) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void PayWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.Pay) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-
-    public static void PayWriteExecute(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Execute(claim) &&
-                claim.Value == ControllerNames.Pay) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-
-    public static void PayManualRead(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Read(claim) &&
-                claim.Value == ControllerNames.PayManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-
-    public static void PayManualWrite(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Write(claim) &&
-                claim.Value == ControllerNames.PayManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-    public static void PayManualExecute(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Execute(claim) &&
-                claim.Value == ControllerNames.PayManual) ||
-            context.User.IsInRole(RolesPlatform.Admin));
-
-    public static void BonusProgramAchievementExecute(AuthorizationPolicyBuilder policy)
-        => policy.RequireAssertion(context =>
-            context.User.HasClaim(claim =>
-                ClaimsTypeHelper.Execute(claim) &&
-                claim.Value == ControllerNames.BonusProgramAchievement) ||
-            context.User.IsInRole(RolesPlatform.Admin));
+    }
+    private static Action<AuthorizationPolicyBuilder> Read(string claimValue) => GetAction(claimValue, ClaimsTypeHelper.Read);
+    private static Action<AuthorizationPolicyBuilder> Write(string claimValue)=> GetAction(claimValue, ClaimsTypeHelper.Write);
+    private static Action<AuthorizationPolicyBuilder> Execute(string claimValue)=> GetAction(claimValue, ClaimsTypeHelper.Execute);
 }

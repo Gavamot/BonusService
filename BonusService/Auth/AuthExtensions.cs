@@ -59,27 +59,8 @@ public static class AuthExtensions
                     .RequireAuthenticatedUser()
                     .Build();
 
-            options.AddPolicy(PolicyNames.AccrualManualRead, PolicyConfigure.AccrualManualRead);
-            options.AddPolicy(PolicyNames.AccrualManualWrite, PolicyConfigure.AccrualManualWrite);
-            options.AddPolicy(PolicyNames.AccrualManualExecute, PolicyConfigure.AccrualManualExecute);
+            PolicyConfigure.AddBonusServicePolices(options);
 
-            options.AddPolicy(PolicyNames.BalanceRead, PolicyConfigure.BalanceRead);
-            options.AddPolicy(PolicyNames.BalanceWrite, PolicyConfigure.BalanceWrite);
-
-            options.AddPolicy(PolicyNames.BonusProgramRead, PolicyConfigure.BonusProgramRead);
-            options.AddPolicy(PolicyNames.BonusProgramWrite, PolicyConfigure.BonusProgramWrite);
-
-            options.AddPolicy(PolicyNames.OwnerMaxBonusPayRead, PolicyConfigure.OwnerMaxBonusPayRead);
-            options.AddPolicy(PolicyNames.OwnerMaxBonusPayWrite, PolicyConfigure.OwnerMaxBonusPayWrite);
-
-            options.AddPolicy(PolicyNames.PayManualRead, PolicyConfigure.PayManualRead);
-            options.AddPolicy(PolicyNames.PayManualWrite, PolicyConfigure.PayManualWrite);
-
-            options.AddPolicy(PolicyNames.PayRead, PolicyConfigure.PayRead);
-            options.AddPolicy(PolicyNames.PayWrite, PolicyConfigure.PayWrite);
-            options.AddPolicy(PolicyNames.PayExecute, PolicyConfigure.PayWrite);
-
-            options.AddPolicy(PolicyNames.GetBonusProgramAchievementRead, PolicyConfigure.BonusProgramAchievementExecute);
         });
 
         return services;

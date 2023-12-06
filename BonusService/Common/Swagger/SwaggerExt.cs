@@ -2,6 +2,7 @@ using System.Reflection;
 using BonusService.Common.Swagger;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 namespace BonusService.Common;
 
@@ -38,6 +39,7 @@ public static class SwaggerExt
                 c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 
+
                 c.SchemaFilter<SwaggerExcludeFilter>();
 
                 if (isInternal == false)
@@ -49,6 +51,8 @@ public static class SwaggerExt
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlCommentsWithRemarks(xmlPath);
                 c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
+                c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+                c.OperationFilter<SecurityRequirementsOperationFilter>(xmlPath);
 
                 c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
                 {

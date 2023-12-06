@@ -73,7 +73,7 @@ public sealed partial class BalanceController : ControllerBase
     /// Списание бонусных баллов сервисом оплаты
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.PayExecute)]
+    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
     public async Task<long> Pay([FromServices]IMediator mediator, [FromBody][Required]PayRequestDto request, CancellationToken ct)
     {
         request = request with { UserName = HttpContext.GetUserName() };

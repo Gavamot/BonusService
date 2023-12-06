@@ -122,8 +122,11 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 [Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : ControllerBase
 {
+    /// <summary>
+    /// Получение прогресса достиждений в текущем периоде по бонусной программе
+    /// </summary>
     [HttpGet]
-    [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
+    [Authorize(Policy = PolicyNames.PersonRead)]
     public async Task<BonusProgramAchievementResponse> GetPersonAchievement([FromServices] IMediator mediator, [FromQuery][Required]BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);

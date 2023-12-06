@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
-using BonusService.Common.Postgres;
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+// ReSharper disable once CheckNamespace
 namespace BonusService.Balance.GetBalance;
 
 public sealed class GetPersonBalanceRequestDtoValidator : AbstractValidator<GetPersonBalanceRequest>
@@ -25,9 +24,8 @@ public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<GetBalanc
     }
 }
 
-
-[ApiController]
 [Authorize]
+[ApiController]
 [Route("[controller]/[action]")]
 public sealed partial class BalanceController : ControllerBase
 {
@@ -35,7 +33,7 @@ public sealed partial class BalanceController : ControllerBase
     /// Получить баланс пользователя по всем валютам
     /// </summary>
     [HttpGet]
-    [Authorize(Policy = PolicyNames.BalanceRead)]
+    [Authorize(Policy = PolicyNames.PersonRead)]
     public async Task<GetPersonBalanceResponseDto> GetAll([FromServices]IMediator mediator, [FromQuery][Required]GetPersonBalanceRequest request)
     {
         var res = await mediator.Send(request);
@@ -46,7 +44,7 @@ public sealed partial class BalanceController : ControllerBase
     /// Получить баланс пользователя по конкретной валюте
     /// </summary>
     [HttpGet]
-    [Authorize(Policy = PolicyNames.BalanceRead)]
+    [Authorize(Policy = PolicyNames.PersonRead)]
     public async Task<long> Get([FromServices]IMediator mediator, [FromQuery][Required]GetBalanceByBankIdRequest data)
     {
         var res = await mediator.Send(data);

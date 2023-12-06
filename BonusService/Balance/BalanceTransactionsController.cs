@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,12 +28,12 @@ public record class BalanceTransactionRequest(string PersonId, int BankId, int S
 [Route("[controller]/[action]")]
 public sealed class BalanceController : ControllerBase
 {
-    public BalanceController()
-    {
 
-    }
-
+    /// <summary>
+    /// Получчение истории начисления/списания бонусов
+    /// </summary>
     [HttpGet]
+    [Authorize(Policy = PolicyNames.PersonRead)]
     public Task<BalanceTransactionResponse> Transactions([FromQuery]BalanceTransactionRequest request, CancellationToken ct)
     {
         throw new NotImplementedException();

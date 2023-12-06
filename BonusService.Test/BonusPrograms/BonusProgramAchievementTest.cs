@@ -1,5 +1,3 @@
-using BonusApi;
-using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FakeItEasy;
