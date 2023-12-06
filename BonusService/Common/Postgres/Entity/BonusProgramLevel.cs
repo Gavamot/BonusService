@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using BonusService.Common.Swagger;
 using Swashbuckle.AspNetCore.Annotations;
 #pragma warning disable CS8618
 #nullable enable
@@ -15,9 +16,11 @@ public class BonusProgramLevel : ICatalogEntity
     public int Level { get; set; }
 
     public int BonusProgramId { get; set; }
+
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true)]
-    public BonusProgram BonusProgram { get; set; }
+    [SwaggerExclude]
+    public BonusProgram? BonusProgram { get; set; } = null;
     /// <summary>
     /// Условие срабатывания программы например общая сумма в рублях
     /// </summary>

@@ -3,11 +3,13 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
+using Hangfire.Console;
+using Hangfire.Server;
 using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
-public record BonusProgramJobResult(DateTimeInterval interval, int clientBalanceCount, long totalBonusSum);
+public record BonusProgramJobResult(DateInterval interval, int clientBalanceCount, long totalBonusSum);
 public abstract class AbstractBonusProgramJob
 {
     protected readonly ILogger _logger;
@@ -21,18 +23,14 @@ public abstract class AbstractBonusProgramJob
     }
 
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram bonusProgram, DateTimeOffset now)
+    protected void Validate(BonusProgram? bonusProgram, DateTimeOffset now)
     {
         try
         {
-            if (bonusProgram.BonusProgramType != BonusProgramType.SpendMoney)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Неверный тип бонусной программы начисляющей джобы. Должен быть {BonusProgramType.SpendMoney} а задан {bonusProgram.BonusProgramType}");
+            if (bonusProgram == null)
+                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} бонусной программы нет в бд");
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
-            if (bonusProgram.DateStart > now)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу раньше срока бонусной программы");
-            if ((bonusProgram.DateStop ?? DateTimeOffset.MaxValue) < now)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} Попытка запустить джобу на завершенную бонусную программу");
         }
         catch (Exception e)
         {
@@ -40,12 +38,15 @@ public abstract class AbstractBonusProgramJob
             throw;
         }
     }
-
-    public async Task ExecuteAsync(BonusProgram bonusProgram, DateTimeOffset now)
+    protected string GetBonusProgramMark(BonusProgram bonusProgram) => $"{bonusProgram.Id}_{bonusProgram.Name}";
+    protected PerformContext ctx;
+    public async Task ExecuteAsync(PerformContext ctx, BonusProgram bonusProgram, DateTimeOffset now)
     {
+        this.ctx = ctx;
         Validate(bonusProgram, now);
         Stopwatch stopwatch = Stopwatch.StartNew();
-        var bonusProgramMark = bonusProgram.CreateMark();
+        string bonusProgramMark = GetBonusProgramMark(bonusProgram);
+
         using var activity = new Activity(bonusProgramMark);
         activity.Start();
         _logger.LogInformation("Job {bonusProgramMark} start", bonusProgramMark);
@@ -72,11 +73,14 @@ public abstract class AbstractBonusProgramJob
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles
             });
-            _logger.LogInformation("Job {bonusProgramMark} status => {History}", bonusProgramMark, json);
+            _logger.LogInformation("Job {BonusProgramMark} status => {History}", bonusProgramMark, json);
+            ctx.WriteLine($"To db added BonusProgramHistory => {json}");
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "job { {bonusProgramMark} } execution error -> {Error}", bonusProgramMark, e.Message);
+            _logger.LogError(e, "job {bonusProgramMark} execution error -> {Error}", bonusProgramMark, e.Message);
+            activity.Stop();
+            throw;
         }
         activity.Stop();
     }
@@ -92,9 +96,10 @@ public abstract class AbstractJob : IJob
     }
 
     public abstract string Name { get; }
-
-    public async Task ExecuteAsync(object parameter)
+    protected PerformContext ctx;
+    public async Task ExecuteAsync(PerformContext ctx, object parameter)
     {
+        this.ctx = ctx;
         var jobContext = new JobLogContext(Name, Guid.NewGuid());
         ScopeContext.PushNestedState(jobContext);
         logger.LogInformation("Job start");
@@ -117,7 +122,7 @@ public record JobLogContext(string JobName, Guid jobGuid);
 public interface IJob
 {
     string Name { get; }
-    Task ExecuteAsync(object parameter);
+    Task ExecuteAsync(PerformContext ctx, object parameter);
 }
 
 public interface IJobRunParameter {}

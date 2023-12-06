@@ -2,6 +2,7 @@ using System.Data;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 namespace BonusService.BonusPrograms;
@@ -34,7 +35,7 @@ public class TransactionShrinkerJob : AbstractJob
     // https://learn.microsoft.com/en-us/ef/core/performance/advanced-performance-topics?tabs=with-di%2Cexpression-api-with-constant
     protected override async Task ExecuteJobAsync(object parameter)
     {
-        var curDay = _dateTimeService.GetStartOfCurrentDay();
+        var curDay = _dateTimeService.GetNowUtc().AddYears(-1);
 
         // В данном алгоритме возвожно консолидация многих транзакций во многие дял каждого счета
         // Но зато работает быстро и решает задачу сжатия. Чем больше chunkSize тем меньше шансов на подобную ситуацию

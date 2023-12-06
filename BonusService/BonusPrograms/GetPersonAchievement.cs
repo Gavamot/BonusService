@@ -89,7 +89,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
     private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = _dateTimeService.GetDateTimeInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = DateInterval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         switch (bonusProgram.BonusProgramType)
         {
             case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));
@@ -100,7 +100,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     public async ValueTask<BonusProgramAchievementResponse> Handle(BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var now = _dateTimeService.GetNowUtc();
-        var bonusPrograms = await _postgres.GetActiveBonusPrograms(now).ToArrayAsync(ct);
+        var bonusPrograms = await _postgres.GetBonusPrograms().ToArrayAsync(ct);
         List<BonusProgramAchievementResponseItem> items = new();
         var mapper = new BonusProgramDtoMapper();
 
@@ -119,7 +119,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
 [Authorize]
 [ApiController]
-[Route("/[controller]/[action]")]
+[Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : ControllerBase
 {
     [HttpGet]

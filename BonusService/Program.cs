@@ -21,10 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 var urls= configuration.GetSection("Urls").Value;
-Console.WriteLine($"Running address is urls={urls}/bonus/swagger");
+Console.WriteLine($"Running address is urls={urls}/swagger");
 
 var services = builder.Services;
-
 
 services.AddCors(options =>
 {
@@ -78,7 +77,7 @@ services.AddBonusServices(configuration);
 
 services.AddJwtAuthorization(configuration);
 
-services.AddSwagger();
+services.AddSwagger(BonusService.Program.IsLocal() || BonusService.Program.IsNswagBuild());
 
 services.AddMediator(opt =>
 {
@@ -92,57 +91,35 @@ app.UseCors("AllowAllHeaders");
 app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
-app.MapGet("/method1", () =>
-    {
-        return 1;
-    })
-    .WithName("method1")
-    .WithGroupName("Group")
-    .WithSummary("Super method")
-    .WithDescription("Oxerenni method .....fsdf s")
-    .WithOpenApi();
-
-app.MapGet("/method2", () =>
-    {
-        return 1;
-    })
-    .WithName("method2")
-    .WithGroupName("Group")
-    .WithOpenApi();
-
-
-
+app.UseHangfire();
 app.UseSwagger(c =>
 {
-    c.RouteTemplate = "/bonus/swagger/{documentName}/swagger.json";
+   // c.RouteTemplate = "swagger/{documentName}/swagger.json";
 });
 app.UseSwaggerUI(c=>
 {
-    c.RoutePrefix = "bonus/swagger";
-    c.SwaggerEndpoint("/bonus/swagger/v1/swagger.json", "Bonus API V1");
+   // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
+    c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
+    // c.RoutePrefix = "api/bonus/swagger";
     c.EnableTryItOutByDefault();
     c.DisplayRequestDuration();
 });
 
-
-
 app.UseHttpLogging();
-app.UseHttpsRedirection();
+app.UseRouting();
 
 app.UseJwtAuthorization();
 
-app.UseHangfire();
-
+app.UseHttpsRedirection();
 app.MapControllers();
+
 app.ApplyPostgresMigrations();
 
-if (BonusService.Program.IsNotAppTest())
+/*if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().Init();
-}
-
-BonusService.Program.AddPostgresSeed(app.Services);
+    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
+}*/
 
 app.Run();
 

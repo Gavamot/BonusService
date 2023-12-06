@@ -34,12 +34,13 @@ public sealed class MongoSessionFaker : AutoFaker<MongoSession>
 [SuppressMessage("Usage", "xUnit1031:Do not use blocking task operations in test method")]
 public class LoadTest : BonusTestApi
 {
+    private BonusProgram bonusProgram;
     public LoadTest(FakeApplicationFactory<Program> server) : base(server)
     {
-
+        bonusProgram = postgres.GetBonusProgramById(1);
     }
 
-    private BonusProgram bonusProgram = BonusProgramSeed.Get();
+
 
     [Fact(Skip = "Long execution")]
     public void AddManySessions()
@@ -52,7 +53,7 @@ public class LoadTest : BonusTestApi
         }
 
         var job = GetService<SpendMoneyBonusJob>();
-        job.ExecuteAsync(bonusProgram, Q.IntervalMoth1.from.UtcDateTime).GetAwaiter().GetResult();
+        job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.from.UtcDateTime).GetAwaiter().GetResult();
 
         var res = postgres.Transactions.Count();
         res.Should().BeGreaterThan(0);

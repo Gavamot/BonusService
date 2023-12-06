@@ -114,6 +114,15 @@ namespace BonusApi
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllByBonusProgramIdAsync(int? bonusProgramId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllByBonusProgramIdAsync(int? bonusProgramId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsGetByIdAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -1596,11 +1605,11 @@ namespace BonusApi
     public partial class BonusProgramLevel : System.ComponentModel.INotifyPropertyChanged
     {
         private int? _id = default!;
-        private string? _name = default!;
+        private string _name = default!;
         private System.DateTimeOffset? _lastUpdated = default!;
-        private int? _level = default!;
-        private int? _bonusProgramId = default!;
-        private long? _condition = default!;
+        private int _level = default!;
+        private int _bonusProgramId = default!;
+        private long _condition = default!;
         private int? _awardPercent = default!;
         private int? _awardSum = default!;
 
@@ -1623,8 +1632,9 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonPropertyName("name")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public string? Name
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        [System.ComponentModel.DataAnnotations.Required]
+        public string Name
         {
             get { return _name; }
 
@@ -1657,8 +1667,8 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonPropertyName("level")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? Level
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public int Level
         {
             get { return _level; }
 
@@ -1674,8 +1684,8 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? BonusProgramId
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public int BonusProgramId
         {
             get { return _bonusProgramId; }
 
@@ -1695,8 +1705,8 @@ namespace BonusApi
 
         [System.Text.Json.Serialization.JsonPropertyName("condition")]
 
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public long? Condition
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.Never)]   
+        public long Condition
         {
             get { return _condition; }
 
@@ -1779,9 +1789,9 @@ namespace BonusApi
     public partial class BonusProgramLevelDto : System.ComponentModel.INotifyPropertyChanged
     {
         private int _id = default!;
+        private int? _bonusProgramId = default!;
         private string? _name = default!;
         private int? _level = default!;
-        private int? _bonusProgramId = default!;
         private long? _condition = default!;
         private int? _awardPercent = default!;
         private int? _awardSum = default!;
@@ -1798,6 +1808,23 @@ namespace BonusApi
                 if (_id != value)
                 {
                     _id = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
+
+        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
+        public int? BonusProgramId
+        {
+            get { return _bonusProgramId; }
+
+            set
+            {
+                if (_bonusProgramId != value)
+                {
+                    _bonusProgramId = value;
                     RaisePropertyChanged();
                 }
             }
@@ -1832,23 +1859,6 @@ namespace BonusApi
                 if (_level != value)
                 {
                     _level = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        [System.Text.Json.Serialization.JsonPropertyName("bonusProgramId")]
-
-        [System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingDefault)]   
-        public int? BonusProgramId
-        {
-            get { return _bonusProgramId; }
-
-            set
-            {
-                if (_bonusProgramId != value)
-                {
-                    _bonusProgramId = value;
                     RaisePropertyChanged();
                 }
             }

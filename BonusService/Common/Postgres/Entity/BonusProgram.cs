@@ -1,6 +1,7 @@
 #nullable enable
 
 using System.Text.Json.Serialization;
+using BonusService.Common.Swagger;
 using Swashbuckle.AspNetCore.Annotations;
 #pragma warning disable CS8618
 namespace BonusService.Common.Postgres.Entity;
@@ -57,14 +58,15 @@ public class BonusProgram : ICatalogEntity, IDeletable
 
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true)]
+    [SwaggerExclude]
     public bool IsDeleted { get; set; }
 
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true, Nullable = true)]
+    [SwaggerExclude]
     public List<BonusProgramLevel> ProgramLevels { get; set; } = new List<BonusProgramLevel>();
     [JsonIgnore]
     [SwaggerSchema(ReadOnly = true, Nullable = true)]
+    [SwaggerExclude]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
-
-    public string CreateMark() => $"{Id}_{Name}";
 }

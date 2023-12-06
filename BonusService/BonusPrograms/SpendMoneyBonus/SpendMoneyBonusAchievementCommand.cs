@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
-public record SpendMoneyBonusAchievementRequest(string PersonId, DateTimeInterval Interval, int BankId) : IRequest<long>;
+public record SpendMoneyBonusAchievementRequest(string PersonId, DateInterval Interval, int BankId) : IRequest<long>;
 public sealed class SpendMoneyBonusAchievementCommand : IRequestHandler<SpendMoneyBonusAchievementRequest, long>
 {
     private readonly MongoDbContext _mongo;

@@ -49,6 +49,7 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
     }
     public virtual async Task<T> AddAsync(T entity, CancellationToken cs)
     {
+        entity.Id = default; // ! Id должно быть по дефолту чтобы двигалась последовательность
         entity.LastUpdated = _dateTimeService.GetNowUtc();
         await _postgres.Set<T>().AddAsync(entity, cs);
         await _postgres.SaveChangesAsync(cs);

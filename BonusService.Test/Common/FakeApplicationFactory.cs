@@ -1,6 +1,7 @@
+using System.Collections;
 using BonusService.Common;
+using BonusService.Common.Postgres.Entity;
 using FakeItEasy;
-using Hangfire;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 namespace BonusService.Test.Common;
+
 
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
