@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using BonusService.Common.Postgres;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Dashboard.BasicAuthorization;
@@ -43,7 +44,6 @@ public static class HangfireServicesExt
         var conStr = configuration.GetHangfireConnectionString();
         //var delays = new [] { 1, 5, 10 };
         services.AddDbContext<HangfireDbContext>(opt => opt.UseNpgsql(conStr));
-
         services.AddHangfire((provider, config) =>
         {
             using var scope = provider.CreateScope();
@@ -51,7 +51,6 @@ public static class HangfireServicesExt
             db.Database.EnsureCreated();
 
             config
-                .UseConsole()
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseSerializerSettings(new JsonSerializerSettings
@@ -60,7 +59,6 @@ public static class HangfireServicesExt
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                     MaxDepth = 10
                 })
-                //.UseFilter(new AutomaticRetryAttribute { Attempts = delays.Length, DelaysInSeconds = delays })
                 .UsePostgreSqlStorage((opt) =>
                 {
                     opt.UseNpgsqlConnection(conStr, connection =>
@@ -68,6 +66,8 @@ public static class HangfireServicesExt
 
                     });
                 });
+            if(Program.IsAppTest()) return;
+            config.UseConsole();
         });
 
         services.AddHangfireServer(opt =>
@@ -120,11 +120,17 @@ public static class HangfireServicesExt
     public static void UseHangfire(this WebApplication app)
     {
         var scope = app.Services.CreateScope();
+        using var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        db.Database.Migrate();
+
         var scopeFactory = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>();
         GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(scopeFactory));
-        app.UseHangfireDashboard("/hangfire", new DashboardOptions
+
+        if (Program.IsAppTest()) return;
+        var options = new DashboardOptions();
+        if (Program.IsLocal() == false)
         {
-            Authorization = new[]
+            options.Authorization = new []
             {
                 new BasicAuthAuthorizationFilter(new BasicAuthAuthorizationFilterOptions
                 {
@@ -140,7 +146,8 @@ public static class HangfireServicesExt
                         }
                     }
                 })
-            }
-        });
+            };
+        }
+        app.UseHangfireDashboard("/hangfire", options);
     }
 }

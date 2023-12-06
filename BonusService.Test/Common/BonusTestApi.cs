@@ -127,7 +127,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
         this.server = server;
-        //InitDatabases(server).GetAwaiter().GetResult();
+        //InitDatabases(server);
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
             ReturnsNextFromSequence(Q.DateTimeSequence);
 
@@ -147,11 +147,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
     }
 
-    protected async Task InitDatabases(FakeApplicationFactory<Program> server)
+    protected void InitDatabases(FakeApplicationFactory<Program> server)
     {
-        var postgres = InfraHelper.RunPostgresContainer();
-        var mongo = InfraHelper.RunMongo(this.server.DbName);
-        await Task.WhenAll(postgres, mongo);
+        InfraHelper.RunPostgresContainer();
+        InfraHelper.RunMongo(this.server.DbName);
     }
 
     public async Task InitializeAsync()
@@ -160,16 +159,12 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     async Task IAsyncLifetime.DisposeAsync()
     {
-        var postgresDelete = postgres.Database.EnsureDeletedAsync();
-
-         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
-         var hangfireDelete = hangfire.Database.EnsureDeletedAsync();
-
-          await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);
-          var mongoDelete =  InfraHelper.DropMongoDatabase(server.DbName);
-          var tasks = new [] { postgresDelete, mongoDelete, hangfireDelete };
-          await Task.WhenAll(tasks);
-          scope.Dispose();
+        await postgres.Database.EnsureDeletedAsync();
+        var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
+        await hangfire.Database.EnsureDeletedAsync();
+        await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);
+        InfraHelper.DropMongoDatabase(server.DbName);
+        scope.Dispose();
     }
     public async ValueTask DisposeAsync()
     {

@@ -13,7 +13,7 @@ namespace BonusService.Test.Common;
 
 public class FakeApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
-    public readonly string DbName = $"bonus_{Guid.NewGuid():N}_{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+    public readonly string DbName = $"bonus_{Guid.NewGuid():N}_{Random.Shared.Next(1, 100)}";
 
     public readonly IDateTimeService DateTimeService = A.Fake<IDateTimeService>();
 

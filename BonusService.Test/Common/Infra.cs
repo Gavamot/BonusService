@@ -5,7 +5,7 @@ namespace BonusService.Test.Common;
 
 public static class SystemTerminalHelper
 {
-    public static Task ExecuteCommand(string command)
+    public static void ExecuteCommand(string command)
     {
         using var proc = new Process();
         proc.StartInfo.FileName = "/bin/bash";
@@ -22,9 +22,6 @@ public static class SystemTerminalHelper
         {
             output.Append(proc.StandardOutput.ReadLine());
         }
-        var a = output.ToString();
-        Console.WriteLine(a);
-        return Task.CompletedTask;
     }
 }
 
@@ -33,30 +30,30 @@ public static class InfraHelper
     public const string PostgresContainerName = "postgres-test";
     public const string PostgresContainerPort = "9999";
 
-    public static Task RunPostgresContainer()
+    public static void RunPostgresContainer()
     {
         var dockerCmd = $"""docker run --name {PostgresContainerName} -e POSTGRES_HOST_AUTH_METHOD=trust -e POSTGRES_USER=postgres -d -p {PostgresContainerPort}:5432 postgres -N 500""";
-        return SystemTerminalHelper.ExecuteCommand(dockerCmd);
+        SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 
     public const string MongoContainerName = "mongo-test";
     public const string MongoContainerPort = "9998";
 
-    public static Task RunMongo(string dbName)
+    public static void RunMongo(string dbName)
     {
         var dockerCmd =  $"""docker run --name {MongoContainerName} -d -p {MongoContainerPort}:27017 mongo""";;
-        return SystemTerminalHelper.ExecuteCommand(dockerCmd);
+        SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 
-    public static Task CreateMongoDatabase(string dbName)
+    public static void CreateMongoDatabase(string dbName)
     {
         var dockerCmd = $"""docker exec -i {MongoContainerName} mongosh use --eval 'use {dbName}''""";
-        return SystemTerminalHelper.ExecuteCommand(dockerCmd);
+        SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 
-    public static Task DropMongoDatabase(string dbName)
+    public static void DropMongoDatabase(string dbName)
     {
         var dockerCmd = $"""docker exec -i {MongoContainerName} mongosh --eval 'use {dbName}' --eval  'db.dropDatabase()'""";
-        return SystemTerminalHelper.ExecuteCommand(dockerCmd);
+        SystemTerminalHelper.ExecuteCommand(dockerCmd);
     }
 }

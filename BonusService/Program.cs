@@ -72,13 +72,10 @@ services.AddControllers().AddJsonOptions(opt =>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-
 services.AddBonusServices(configuration);
 
 services.AddJwtAuthorization(configuration);
-
-services.AddSwagger(BonusService.Program.IsLocal() || BonusService.Program.IsNswagBuild());
-
+services.AddAppSwagger();
 services.AddMediator(opt =>
 {
     opt.ServiceLifetime = ServiceLifetime.Scoped;
@@ -92,18 +89,7 @@ app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHangfire();
-app.UseSwagger(c =>
-{
-   // c.RouteTemplate = "swagger/{documentName}/swagger.json";
-});
-app.UseSwaggerUI(c=>
-{
-   // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
-    c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
-    // c.RoutePrefix = "api/bonus/swagger";
-    c.EnableTryItOutByDefault();
-    c.DisplayRequestDuration();
-});
+app.UseAppSwagger();
 
 app.UseHttpLogging();
 app.UseRouting();
@@ -115,11 +101,13 @@ app.MapControllers();
 
 app.ApplyPostgresMigrations();
 
-/*if (BonusService.Program.IsNotAppTest())
+
+if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
-}*/
+    var runner = scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>();
+    await runner.RestartAsync();
+}
 
 app.Run();
 

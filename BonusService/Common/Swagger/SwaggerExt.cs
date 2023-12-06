@@ -7,8 +7,29 @@ namespace BonusService.Common;
 
 public static class SwaggerExt
 {
-    public static IServiceCollection AddSwagger(this IServiceCollection services, bool isLocal)
+    public static void UseAppSwagger(this WebApplication app)
     {
+        if (Program.IsAppTest()) return;
+        app.UseSwagger(c =>
+        {
+            // c.RouteTemplate = "swagger/{documentName}/swagger.json";
+        });
+        app.UseSwaggerUI(c=>
+        {
+            // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
+            c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
+            // c.RoutePrefix = "api/bonus/swagger";
+            c.EnableTryItOutByDefault();
+            c.DisplayRequestDuration();
+        });
+    }
+
+    public static void AddAppSwagger(this IServiceCollection services)
+    {
+        if (Program.IsAppTest()) return;
+        // API geteway настроен криво поэтому нужно добавлять префиксы чтобы с внешнего адреса можно было вызывать свагер методы через API Gateway
+        // Но для локального окружения и для генеренного клиента это ненужно так как наши сервисы могут обращатся в контейнер напрямую миную API Geteway
+        var isInternal = Program.IsLocal() || Program.IsNswagBuild();
         services.AddFluentValidationRulesToSwagger();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(
@@ -19,7 +40,7 @@ public static class SwaggerExt
 
                 c.SchemaFilter<SwaggerExcludeFilter>();
 
-                if (isLocal == false)
+                if (isInternal == false)
                 {
                     c.DocumentFilter<PathPrefixInsertDocumentFilter>("/api/bonus");
                 }
@@ -55,6 +76,5 @@ public static class SwaggerExt
                     }
                 });
             });
-        return services;
     }
 }
