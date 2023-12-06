@@ -20,7 +20,7 @@ public sealed partial class BonusProgramController : ControllerBase
     /// Перезапуск всех джоб начисляющих бонусы по бонусным программам
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
+    [Authorize(Policy = PolicyNames.BonusServiceWrite)]
     public async Task RestartJobs()
     {
         await _bonusProgramsRunner.RestartAsync();
