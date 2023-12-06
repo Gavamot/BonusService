@@ -68,7 +68,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public const string ClientLogin = "8909113342";
         public const string ClientLogin2 = "8909163142";
-        public static MongoSession CreateSession(DateTime date) => new MongoSession()
+        public static MongoSession CreateSession(DateTimeOffset date) => CreateSession(date.UtcDateTime);
+        public static MongoSession CreateSession(DateTime date) => new ()
         {
             //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
