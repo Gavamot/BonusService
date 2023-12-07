@@ -74,7 +74,7 @@ public static class HangfireServicesExt
         {
             //opt.CancellationCheckInterval = TimeSpan.FromSeconds(1);
             opt.SchedulePollingInterval = TimeSpan.FromSeconds(1);
-            opt.WorkerCount = 2;
+            opt.WorkerCount = 12;
             //opt.StopTimeout = TimeSpan.FromSeconds(30);
             //opt.ShutdownTimeout = TimeSpan.FromSeconds(30.0);
             //opt.ServerTimeout = TimeSpan.FromMinutes(10);
@@ -149,6 +149,7 @@ public static class HangfireServicesExt
                 })
             };
         }
+        //app.UseHangfireServer();
         app.UseHangfireDashboard("/hangfire", options);
     }
 }
