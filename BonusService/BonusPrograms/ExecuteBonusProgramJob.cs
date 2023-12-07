@@ -40,7 +40,7 @@ public sealed class ExecuteBonusProgramJobCommand: ICommandHandler<ExecuteBonusP
         var jobId = $"bonus_program_{bonusProgram.Id}_{Guid.NewGuid():N}";
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-            BackgroundJob.Enqueue<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync((PerformContext)null, bonusProgram, command.Now));
+            BackgroundJob.Schedule<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync((PerformContext)null, bonusProgram, command.Now), TimeSpan.Zero);
         }
         else
         {
@@ -62,8 +62,7 @@ public sealed class BonusProgramController : ControllerBase
     /// Фековое время нужно так как бонусные программы считаются от текущей даты для тестов или если необходимо расчитать за предыдущие периоды поможет этот метод
     /// </summary>
     [HttpPost]
-    [Authorize]
-    //[Authorize(Policy = PolicyNames.BonusServiceExecute)]
+    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
     public async Task<string> ExecuteBonusProgramJob([FromServices] IMediator mediator, [FromBody]ExecuteBonusProgramJobRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);

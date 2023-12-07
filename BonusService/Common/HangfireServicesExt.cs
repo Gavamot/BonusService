@@ -73,7 +73,7 @@ public static class HangfireServicesExt
         services.AddHangfireServer(opt =>
         {
             //opt.CancellationCheckInterval = TimeSpan.FromSeconds(1);
-            //opt.SchedulePollingInterval = TimeSpan.FromSeconds(1);
+            opt.SchedulePollingInterval = TimeSpan.FromSeconds(1);
             opt.WorkerCount = 2;
             //opt.StopTimeout = TimeSpan.FromSeconds(30);
             //opt.ShutdownTimeout = TimeSpan.FromSeconds(30.0);
@@ -127,6 +127,7 @@ public static class HangfireServicesExt
         GlobalConfiguration.Configuration.UseActivator(new HangfireActivator(scopeFactory));
 
         if (Program.IsAppTest()) return;
+
         var options = new DashboardOptions();
         if (Program.IsLocal() == false)
         {
