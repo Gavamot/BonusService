@@ -52,7 +52,7 @@ public static class SwaggerExt
                 c.IncludeXmlCommentsWithRemarks(xmlPath);
                 c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
-                c.OperationFilter<SecurityRequirementsOperationFilter>(xmlPath);
+                //c.OperationFilter<SecurityRequirementsOperationFilter>(xmlPath);
 
                 c.AddSecurityDefinition(name: "Bearer", new OpenApiSecurityScheme
                 {

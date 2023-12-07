@@ -1,4 +1,5 @@
 using BonusService.Auth.Policy;
+using BonusService.Auth.Roles;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
@@ -61,7 +62,8 @@ public sealed class BonusProgramController : ControllerBase
     /// Фековое время нужно так как бонусные программы считаются от текущей даты для тестов или если необходимо расчитать за предыдущие периоды поможет этот метод
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
+    [Authorize]
+    //[Authorize(Policy = PolicyNames.BonusServiceExecute)]
     public async Task<string> ExecuteBonusProgramJob([FromServices] IMediator mediator, [FromBody]ExecuteBonusProgramJobRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);
