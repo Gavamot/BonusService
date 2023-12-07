@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using BonusService;
 using BonusService.Auth;
@@ -15,6 +16,7 @@ using NLog.Web;
 
 // TOKEN -
 // Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAxOTM5MTI0LCJleHAiOjE3OTM0NzUxMjQsImlhdCI6MTcwMTkzOTEyNCwiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.7OzTUP5ScmLWtoyCXnYqxWIPJcNuBFweMxep9WKf1BluKyP-i2ZvAcYXPaIRuQdbcc21ghvAMn6UFmQqvBw6Qg
+Console.OutputEncoding = Encoding.UTF8;
 Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 var builder = WebApplication.CreateBuilder(args);
 
