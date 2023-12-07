@@ -2,6 +2,7 @@ using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using Hangfire.Console;
+using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
@@ -59,13 +60,6 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 && x.chargeEndTime >= interval.from.UtcDateTime && x.chargeEndTime < interval.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
 
-        if (data.Any() == false)
-        {
-            _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено");
-            ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
-            return new BonusProgramJobResult(interval, 0, 0);
-        }
-
         int clientBalanceCount = 0;
         long totalBonusSum = 0;
         var capacity = 4096;
@@ -76,7 +70,11 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
             var userName = group.FirstOrDefault()?.user?.clientLogin ?? "null";
             var totalPay = group.Sum(y => y.operation!.calculatedPayment ?? 0);
             var bonus = CalculateBonusSum(totalPay, bonusProgram);
-            if (bonus.sum <= 0) { continue; }
+            if (bonus.sum <= 0)
+            {
+                ctx.WriteLine($"У пользователя с PersonId={group.Key} не достаточно достижения для получения бонусов. Он набрал только {totalPay}");
+                continue;
+            }
 
             string clientNodeId = group?.Key ?? "null";
 
@@ -122,6 +120,13 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
             });
             _logger.LogInformation("{BonusProgramMark} - было начисленно бонусов для {transactionsCount} пользователей. Даныне в бд добавленны", bonusProgramMark, transactions.Count);
             ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
+        }
+
+        if (clientBalanceCount == 0)
+        {
+            _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено");
+            ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
+            return new BonusProgramJobResult(interval, 0, 0);
         }
 
         return new BonusProgramJobResult(interval, clientBalanceCount, totalBonusSum);
