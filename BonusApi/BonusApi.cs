@@ -52,7 +52,7 @@ namespace BonusApi
         /// <summary>
         /// Списание бонусных баллов оператором
         /// <br/>Возращает число списанных оператором бонусов.
-        /// <br/>Оператор не может списывать бонусы в минус
+        /// <br/>Оператор не может списывать бонусы в минус (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -65,7 +65,7 @@ namespace BonusApi
         /// <summary>
         /// Списание бонусных баллов оператором
         /// <br/>Возращает число списанных оператором бонусов.
-        /// <br/>Оператор не может списывать бонусы в минус
+        /// <br/>Оператор не может списывать бонусы в минус (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -141,7 +141,7 @@ namespace BonusApi
         }
 
         /// <summary>
-        /// Списание бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -152,7 +152,7 @@ namespace BonusApi
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Списание бонусных баллов сервисом оплаты
+        /// Списание бонусных баллов сервисом оплаты (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -228,7 +228,7 @@ namespace BonusApi
         }
 
         /// <summary>
-        /// Получить баланс пользователя по всем валютам
+        /// Получить баланс пользователя по всем валютам (Auth policies: PersonRead)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -239,7 +239,7 @@ namespace BonusApi
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Получить баланс пользователя по всем валютам
+        /// Получить баланс пользователя по всем валютам (Auth policies: PersonRead)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -313,7 +313,7 @@ namespace BonusApi
         }
 
         /// <summary>
-        /// Получить баланс пользователя по конкретной валюте
+        /// Получить баланс пользователя по конкретной валюте (Auth policies: PersonRead)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -324,7 +324,7 @@ namespace BonusApi
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Получить баланс пользователя по конкретной валюте
+        /// Получить баланс пользователя по конкретной валюте (Auth policies: PersonRead)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -401,35 +401,57 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
+        /// </summary>
+        /// <remarks>
+        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
+        /// </remarks>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BalanceTransactionResponse> BalanceTransactionsAsync(string? personId, int? bankId, int? skip, int? take)
+        public virtual System.Threading.Tasks.Task<BalanceTransactionResponse> BalanceGetTransactionsAsync(string personId, int bankId, int? page, int? limit, System.DateTimeOffset? dateFrom, System.DateTimeOffset? dateTo)
         {
-            return BalanceTransactionsAsync(personId, bankId, skip, take, System.Threading.CancellationToken.None);
+            return BalanceGetTransactionsAsync(personId, bankId, page, limit, dateFrom, dateTo, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
+        /// </summary>
+        /// <remarks>
+        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
+        /// </remarks>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BalanceTransactionResponse> BalanceTransactionsAsync(string? personId, int? bankId, int? skip, int? take, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<BalanceTransactionResponse> BalanceGetTransactionsAsync(string personId, int bankId, int? page, int? limit, System.DateTimeOffset? dateFrom, System.DateTimeOffset? dateTo, System.Threading.CancellationToken cancellationToken)
         {
+            if (personId == null)
+                throw new System.ArgumentNullException("personId");
+
+            if (bankId == null)
+                throw new System.ArgumentNullException("bankId");
+
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("Balance/Transactions?");
-            if (personId != null)
+            urlBuilder_.Append("Balance/GetTransactions?");
+            urlBuilder_.Append(System.Uri.EscapeDataString("PersonId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            urlBuilder_.Append(System.Uri.EscapeDataString("BankId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(bankId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            if (page != null)
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("PersonId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(personId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("Page") + "=").Append(System.Uri.EscapeDataString(ConvertToString(page, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
-            if (bankId != null)
+            if (limit != null)
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("BankId") + "=").Append(System.Uri.EscapeDataString(ConvertToString(bankId, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("Limit") + "=").Append(System.Uri.EscapeDataString(ConvertToString(limit, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
-            if (skip != null)
+            if (dateFrom != null)
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("Skip") + "=").Append(System.Uri.EscapeDataString(ConvertToString(skip, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("DateFrom") + "=").Append(System.Uri.EscapeDataString(dateFrom.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
-            if (take != null)
+            if (dateTo != null)
             {
-                urlBuilder_.Append(System.Uri.EscapeDataString("Take") + "=").Append(System.Uri.EscapeDataString(ConvertToString(take, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+                urlBuilder_.Append(System.Uri.EscapeDataString("DateTo") + "=").Append(System.Uri.EscapeDataString(dateTo.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             urlBuilder_.Length--;
 
@@ -493,7 +515,7 @@ namespace BonusApi
         }
 
         /// <summary>
-        /// Начисление бонусных баллов оператором
+        /// Начисление бонусных баллов оператором (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -504,7 +526,7 @@ namespace BonusApi
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Начисление бонусных баллов оператором
+        /// Начисление бонусных баллов оператором (Auth policies: BonusServiceExecute)
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -573,6 +595,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllByBonusProgramIdAsync(int? bonusProgramId)
@@ -581,6 +606,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllByBonusProgramIdAsync(int? bonusProgramId, System.Threading.CancellationToken cancellationToken)
@@ -652,6 +680,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsGetByIdAsync(int id)
@@ -660,6 +691,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
@@ -730,6 +764,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllAsync()
@@ -738,6 +775,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgramLevel>> BonusLevelsGetAllAsync(System.Threading.CancellationToken cancellationToken)
@@ -804,6 +844,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsAddAsync(BonusProgramLevel body)
@@ -812,6 +855,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BonusProgramLevel> BonusLevelsAddAsync(BonusProgramLevel body, System.Threading.CancellationToken cancellationToken)
@@ -885,6 +931,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task BonusLevelsUpdateAsync(BonusProgramLevelDto body)
@@ -893,6 +942,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BonusLevelsUpdateAsync(BonusProgramLevelDto body, System.Threading.CancellationToken cancellationToken)
@@ -960,6 +1012,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task BonusLevelsDeleteByIdAsync(int id)
@@ -968,6 +1023,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BonusLevelsDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
@@ -1032,6 +1090,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// Получение прогресса достиждений в текущем периоде по бонусной программе (Auth policies: PersonRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramGetPersonAchievementAsync(string personId)
@@ -1040,6 +1101,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Получение прогресса достиждений в текущем периоде по бонусной программе (Auth policies: PersonRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramGetPersonAchievementAsync(string personId, System.Threading.CancellationToken cancellationToken)
@@ -1111,6 +1175,89 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// Запусить job по бонусной программе прямо сейчас 1 раз игнорируя cronExpression в бонусной программе c передачей фейкового текущего времени
+        /// <br/>Фековое время нужно так как бонусные программы считаются от текущей даты для тестов или если необходимо расчитать за предыдущие периоды поможет этот метод (Auth policies: BonusServiceExecute)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task BonusProgramExecuteBonusProgramJobAsync(ExecuteBonusProgramJobRequest? body)
+        {
+            return BonusProgramExecuteBonusProgramJobAsync(body, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Запусить job по бонусной программе прямо сейчас 1 раз игнорируя cronExpression в бонусной программе c передачей фейкового текущего времени
+        /// <br/>Фековое время нужно так как бонусные программы считаются от текущей даты для тестов или если необходимо расчитать за предыдущие периоды поможет этот метод (Auth policies: BonusServiceExecute)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task BonusProgramExecuteBonusProgramJobAsync(ExecuteBonusProgramJobRequest? body, System.Threading.CancellationToken cancellationToken)
+        {
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("BonusProgram/ExecuteBonusProgramJob");
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    var json_ = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(body, _settings.Value);
+                    var content_ = new System.Net.Http.ByteArrayContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("POST");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BonusProgram> BonusProgramGetByIdAsync(int id)
@@ -1119,6 +1266,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BonusProgram> BonusProgramGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
@@ -1189,6 +1339,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync()
@@ -1197,6 +1350,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BonusProgram>> BonusProgramGetAllAsync(System.Threading.CancellationToken cancellationToken)
@@ -1263,6 +1419,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body)
@@ -1271,6 +1430,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body, System.Threading.CancellationToken cancellationToken)
@@ -1344,6 +1506,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task BonusProgramUpdateAsync(BonusProgramDto body)
@@ -1352,6 +1517,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BonusProgramUpdateAsync(BonusProgramDto body, System.Threading.CancellationToken cancellationToken)
@@ -1419,6 +1587,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task BonusProgramDeleteByIdAsync(int id)
@@ -1427,6 +1598,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task BonusProgramDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
@@ -1491,17 +1665,23 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// Перезапуск всех джоб начисляющих бонусы по бонусным программам (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramRestartJobsAsync()
+        public virtual System.Threading.Tasks.Task BonusProgramRestartJobsAsync()
         {
             return BonusProgramRestartJobsAsync(System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// Перезапуск всех джоб начисляющих бонусы по бонусным программам (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BonusProgramAchievementResponse> BonusProgramRestartJobsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task BonusProgramRestartJobsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("BonusProgram/RestartJobs");
@@ -1512,9 +1692,8 @@ namespace BonusApi
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "text/plain");
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -1539,12 +1718,7 @@ namespace BonusApi
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<BonusProgramAchievementResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {
@@ -1566,6 +1740,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByIdAsync(int id)
@@ -1574,6 +1751,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByIdAsync(int id, System.Threading.CancellationToken cancellationToken)
@@ -1644,6 +1824,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> OwnerMaxBonusPayGetAllAsync()
@@ -1652,6 +1835,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<OwnerMaxBonusPay>> OwnerMaxBonusPayGetAllAsync(System.Threading.CancellationToken cancellationToken)
@@ -1718,6 +1904,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body)
@@ -1726,6 +1915,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayAddAsync(OwnerMaxBonusPay body, System.Threading.CancellationToken cancellationToken)
@@ -1799,6 +1991,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task OwnerMaxBonusPayUpdateAsync(OwnerByPayDto body)
@@ -1807,6 +2002,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task OwnerMaxBonusPayUpdateAsync(OwnerByPayDto body, System.Threading.CancellationToken cancellationToken)
@@ -1874,6 +2072,9 @@ namespace BonusApi
             }
         }
 
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id)
@@ -1882,6 +2083,9 @@ namespace BonusApi
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceWrite)
+        /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task OwnerMaxBonusPayDeleteByIdAsync(int id, System.Threading.CancellationToken cancellationToken)

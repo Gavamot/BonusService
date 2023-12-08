@@ -2,6 +2,7 @@ using System.Reflection;
 using BonusService.Common.Swagger;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using SwaggerExampleAttrLib;
 using Swashbuckle.AspNetCore.Filters;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 namespace BonusService.Common;
@@ -29,6 +30,7 @@ public static class SwaggerExt
         // API geteway настроен криво поэтому нужно добавлять префиксы чтобы с внешнего адреса можно было вызывать свагер методы через API Gateway
         // Но для локального окружения и для генеренного клиента это ненужно так как наши сервисы могут обращатся в контейнер напрямую миную API Geteway
         var isInternal = Program.IsLocal() || Program.IsNswagBuild();
+        services.AddDateOnlyTimeOnlyStringConverters();
         services.AddFluentValidationRulesToSwagger();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(
@@ -38,6 +40,7 @@ public static class SwaggerExt
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
                 c.SchemaFilter<SwaggerExcludeFilter>();
 
+                c.UseDateOnlyTimeOnlyStringConverters();
                 if (isInternal == false)
                 {
                     c.DocumentFilter<PathPrefixInsertDocumentFilter>("/api/bonus");
@@ -47,6 +50,7 @@ public static class SwaggerExt
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlCommentsWithRemarks(xmlPath);
                 c.SchemaFilter<EnumTypesSchemaFilter>(xmlPath);
+                c.SchemaFilter<ExampleSchemaFilter>();
                 c.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
                 //c.OperationFilter<SecurityRequirementsOperationFilter>(xmlPath);
 

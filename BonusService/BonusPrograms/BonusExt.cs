@@ -14,6 +14,7 @@ public static class BonusExt
 
         services.AddScoped<IBonusProgramsRunner, BonusProgramsRunner>();
         services.AddScoped<SpendMoneyBonusJob>();
+
         return services;
     }
 }

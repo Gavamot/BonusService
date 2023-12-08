@@ -44,7 +44,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
     }
 
-    private void AddUnmatchedSessions()
+    private void AddNoiseSession()
     {
 
         var session = Q.CreateSession(new DateTime(1990, 1, 1));
@@ -116,7 +116,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     [Fact]
     public async Task EmptyCalculationForPeriod_EmptyResultHistoryAdded()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
         postgres.Transactions.Any().Should().BeFalse();
@@ -129,7 +129,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     [Fact]
     public async Task EmptyCalculationForPeriodTwiceExecution_EmptyResult2HistoryAdded()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
@@ -185,7 +185,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     [Fact]
     public async Task SessionFromDifferentBunk_OnlyBonusProgramBankCalculated()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
         MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel2);
@@ -218,7 +218,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     [Fact]
     public async Task SessionsFrom1Person_FirstLevelCalculated()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel1);
         mongo.Sessions.InsertMany(new []
@@ -248,7 +248,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     [Fact]
     public async Task TwoPersonsPayed_CalculatedCorrectly()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
         MongoSession user2RusAccountSession1 = Q.CreateSession(bonusIntervalStart);

@@ -1,4 +1,6 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BonusApi;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -8,12 +10,26 @@ using FluentAssertions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using FrequencyTypes = BonusApi.FrequencyTypes;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncLifetime
 {
+    private string ToJson(object a)
+    {
+        var opt = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+        return JsonSerializer.Serialize(a, opt);
+    }
+    protected void AssertEqualJson(object expected, object actual)
+    {
+        ToJson(expected).Should().Be(ToJson(actual));
+    }
     public static class Q
     {
         public static Transaction CreateTransaction(string personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()

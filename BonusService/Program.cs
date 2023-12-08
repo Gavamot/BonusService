@@ -2,7 +2,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using BonusService;
 using BonusService.Auth;
-using BonusService.Balance;
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Common.Postgres;
