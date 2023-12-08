@@ -21,39 +21,49 @@ public abstract class AbstractBonusProgramJob
         _postgres = postgres;
         _dateTimeService = dateTimeService;
     }
-
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram? bonusProgram, DateTimeOffset now)
+    protected void Validate(BonusProgram? bonusProgram, DateInterval interval)
     {
         try
         {
             if (bonusProgram == null)
-                throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} бонусной программы нет в бд");
+                throw new ArgumentException($"бонусной программы не задана");
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
+            if (bonusProgram.BonusProgramType != BonusProgramType)
+                throw new ArgumentException("Неверная связка в коде джобы и бонусной программы в бд. Обратитесь к разработчику сисетмы");
+            if(bonusProgram.DateStart < interval.from)
+                throw new ArgumentException($"bonusProgram.DateStart = {bonusProgram.DateStart} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа еще не активна. Поменяйте bonusProgram.DateStart на входящую в интервал дату или дождитесь начисления в дату входящую в интервал.");
+            if(bonusProgram.DateStop != default && bonusProgram.DateStop < interval.to)
+                throw new ArgumentException($"bonusProgram.DateEnd = {bonusProgram.DateStop} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа уже закончилась. Поменяйте bonusProgram.DateEnd на входящую в интервал дату или создайте новую.");
+            if (bonusProgram.ProgramLevels == null || bonusProgram.ProgramLevels.Count <= 0)
+                throw new ArgumentException($"Бонусная программа не имеет уровней. Добавте хотябы 1 уровень для бонусной программы");
         }
         catch (Exception e)
         {
+            _ctx.WriteLine(e.Message);
             _logger.LogError(e, e.Message);
             throw;
         }
     }
     protected string GetBonusProgramMark(BonusProgram bonusProgram) => $"{bonusProgram.Id}_{bonusProgram.Name}";
-    protected PerformContext ctx;
+    protected PerformContext _ctx;
     public async Task ExecuteAsync(PerformContext ctx, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        this.ctx = ctx;
-        Validate(bonusProgram, now);
+        var interval = DateInterval.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        this._ctx = ctx;
+        Validate(bonusProgram, interval);
         Stopwatch stopwatch = Stopwatch.StartNew();
         string bonusProgramMark = GetBonusProgramMark(bonusProgram);
 
         using var activity = new Activity(bonusProgramMark);
         activity.Start();
-        _logger.LogInformation("Job {bonusProgramMark} start", bonusProgramMark);
+        _logger.LogInformation("Job {BonusProgramMark} start for interval {Interval}", bonusProgramMark, interval);
         try
         {
-            var bonusProgramJobResult = await ExecuteJobAsync(bonusProgram, now);
-            _logger.LogInformation("Job {bonusProgramMark} end", bonusProgramMark);
+            ctx.WriteLine($"Starting job execution for interval = {interval}. bonusProgram.Id = {bonusProgram.Id} , bonusProgram.BankId = {bonusProgram.BankId}, bonusProgram.BonusProgramType = {bonusProgram.BonusProgramType}");
+            var bonusProgramJobResult = await ExecuteJobAsync(bonusProgram, interval, now);
+            _logger.LogInformation("Job {BonusProgramMark} end for interval {Interval}", bonusProgramMark, interval);
             stopwatch.Stop();
             var history = new BonusProgramHistory()
             {
@@ -73,18 +83,18 @@ public abstract class AbstractBonusProgramJob
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles
             });
-            _logger.LogInformation("Job {BonusProgramMark} status => {History}", bonusProgramMark, json);
+            _logger.LogInformation("Job {BonusProgramMark}  for {Interval} status => {History}", bonusProgramMark, interval, json);
             ctx.WriteLine($"To db added BonusProgramHistory => {json}");
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "job {bonusProgramMark} execution error -> {Error}", bonusProgramMark, e.Message);
+            _logger.LogError(e, "job {BonusProgramMark} for {Interval} execution error -> {Error}", bonusProgramMark, interval, e.Message);
             activity.Stop();
             throw;
         }
         activity.Stop();
     }
-    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now);
+    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateInterval interval, DateTimeOffset now);
 }
 
 public abstract class AbstractJob : IJob

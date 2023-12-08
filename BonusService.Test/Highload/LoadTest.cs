@@ -37,7 +37,7 @@ public class LoadTest : BonusTestApi
     private BonusProgram bonusProgram;
     public LoadTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1);
+        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
     }
 
 

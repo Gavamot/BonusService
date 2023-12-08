@@ -30,7 +30,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
     public MonthlySumBonusJob_1MonthOnly_Test(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1) ?? throw new Exception();
+        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
     }
 
     private readonly DateTimeOffset bonusIntervalStart = new (2023, 10, 1, 0, 0, 0, new TimeSpan(0));
@@ -187,8 +187,8 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
     {
         AddUnmatchedSessions();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
-        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
+        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel2);
         user1RusAccountSession2.tariff.BankId = Q.BankIdKaz;
         mongo.Sessions.InsertMany(new []
         {
@@ -213,6 +213,36 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
         bonusProgramHistory.ClientBalancesCount.Should().Be(1);
         bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100);
+    }
+
+    [Fact]
+    public async Task SessionsFrom1Person_FirstLevelCalculated()
+    {
+        AddUnmatchedSessions();
+
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel1);
+        mongo.Sessions.InsertMany(new []
+        {
+            user1RusAccountSession1
+        });
+
+        var job = GetService<SpendMoneyBonusJob>();
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
+
+        postgres.Transactions.Count().Should().Be(1);
+
+        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
+        tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
+        ValidateTransactionCommonFields(tranUser1Rus);
+
+
+        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        bonusProgramHistories.Length.Should().Be(1);
+        var bonusProgramHistory = bonusProgramHistories.First();
+        ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
+        bonusProgramHistory.ClientBalancesCount.Should().Be(1);
+        bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 1 / 100);
     }
 
     [Fact]

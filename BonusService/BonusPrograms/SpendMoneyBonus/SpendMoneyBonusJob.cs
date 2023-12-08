@@ -37,16 +37,14 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
     }
 
 
-    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeOffset now)
+    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateInterval interval, DateTimeOffset now)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
         var bonusProgramMark = GetBonusProgramMark(bonusProgram);
 
-        var interval = DateInterval.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
-
         _logger.LogInformation("{BonusProgramMark} - выборка данных за интервал {Interval} по валюте {BankId}", bonusProgramMark, interval, bankId);
-        ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {interval} по валюте {bankId}");
+        _ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {interval} по валюте {bankId}");
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
@@ -72,7 +70,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
             var bonus = CalculateBonusSum(totalPay, bonusProgram);
             if (bonus.sum <= 0)
             {
-                ctx.WriteLine($"У пользователя с PersonId={group.Key} не достаточно достижения для получения бонусов. Он набрал только {totalPay}");
+                _ctx.WriteLine($"У пользователя с PersonId={group.Key} не достаточно достижения для получения бонусов. Он набрал только {totalPay}");
                 continue;
             }
 
@@ -96,7 +94,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
             transactions.Add(transaction);
 
             _logger.LogInformation("{BonusProgramMark} - Клиент clientNodeId={clientNodeId} зарядился на {transactionBonusBase} руб./кВт, начислено {transactionBonusSum} бонусов", bonusProgramMark, clientNodeId, transaction.BonusBase, transaction.BonusSum);
-            ctx.WriteLine($"{bonusProgramMark} - Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов");
+            _ctx.WriteLine($"{bonusProgramMark} - Клиент clientNodeId={clientNodeId} зарядился на {transaction.BonusBase} руб./кВт, начислено {transaction.BonusSum} бонусов");
             clientBalanceCount++;
             totalBonusSum += transaction.BonusSum;
 
@@ -107,7 +105,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
             _logger.LogInformation("{BonusProgramMark} - было начисленно бонусов для {transactionsCount} пользователей. Даныне в бд добавленны", bonusProgramMark, transactions.Count);
-            ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
+            _ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
             transactions = new List<Transaction>(capacity);
         }
 
@@ -119,13 +117,13 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
             });
             _logger.LogInformation("{BonusProgramMark} - было начисленно бонусов для {transactionsCount} пользователей. Даныне в бд добавленны", bonusProgramMark, transactions.Count);
-            ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
+            _ctx.WriteLine($"{bonusProgramMark} - было начисленно бонусов для {transactions.Count} пользователей. Даныне в бд добавленны");
         }
 
         if (clientBalanceCount == 0)
         {
             _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено");
-            ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
+            _ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
             return new BonusProgramJobResult(interval, 0, 0);
         }
 

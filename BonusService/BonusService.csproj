@@ -15,8 +15,8 @@
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
         <PackageReference Include="Gavamot.Hangfire.Console" Version="1.0.0" />
         <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
-        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.11" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.11">
+        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.13" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.13">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -40,8 +40,8 @@
         <PackageReference Include="Hangfire.PostgreSql" Version="1.20.4" />
         <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
         <PackageReference Include="NLog" Version="5.2.7" />
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.5" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.7" />
         <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.5" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />

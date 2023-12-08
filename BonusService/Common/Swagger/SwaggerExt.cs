@@ -13,13 +13,11 @@ public static class SwaggerExt
         if (Program.IsAppTest()) return;
         app.UseSwagger(c =>
         {
-            // c.RouteTemplate = "swagger/{documentName}/swagger.json";
+
         });
         app.UseSwaggerUI(c=>
         {
-            // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
             c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
-            // c.RoutePrefix = "api/bonus/swagger";
             c.EnableTryItOutByDefault();
             c.DisplayRequestDuration();
         });
@@ -38,8 +36,6 @@ public static class SwaggerExt
             {
                 c.EnableAnnotations();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-
                 c.SchemaFilter<SwaggerExcludeFilter>();
 
                 if (isInternal == false)
@@ -59,7 +55,7 @@ public static class SwaggerExt
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement

@@ -33,9 +33,9 @@ public sealed class ExecuteBonusProgramJobCommand: ICommandHandler<ExecuteBonusP
         _logger = logger;
     }
 
-    public async ValueTask<Unit> Handle(ExecuteBonusProgramJobRequest command, CancellationToken cancellationToken)
+    public async ValueTask<Unit> Handle(ExecuteBonusProgramJobRequest command, CancellationToken ct)
     {
-        var bonusProgram = await _postgres.BonusPrograms.FirstOrDefaultAsync(x=> x.Id == command.BonusProgramId && x.IsDeleted == false, cancellationToken: cancellationToken);
+        var bonusProgram = await _postgres.GetBonusProgramById(command.BonusProgramId, ct);
         if (bonusProgram == default) throw new ArgumentException("Бонусная программа не найдена или удалена");
 
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)

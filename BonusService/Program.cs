@@ -137,7 +137,8 @@ namespace BonusService
         public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();
         public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
         public static bool IsNotAppTest() => !IsAppTest();
-        public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
+        public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local"
+            || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "DevRemote";
         public static bool IsNotLocal() => !IsLocal();
         public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
         public static bool IsNotNswagBuild() => !IsNswagBuild();

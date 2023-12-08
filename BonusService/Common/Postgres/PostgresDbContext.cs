@@ -1,6 +1,7 @@
 #pragma warning disable CS8618
 using BonusService.Common.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 namespace BonusService.Common.Postgres;
 
 // dotnet ef migrations add InitialCreate --context PostgresDbContext
@@ -31,7 +32,7 @@ public class PostgresDbContext : DbContext
     public DbSet<TransactionHistory> TransactionHistory  { get; set; }
     public DbSet<OwnerMaxBonusPay> OwnerMaxBonusPays { get; set; }
 
-    public DbSet<BonusProgram?> BonusPrograms { get; set; }
+    public DbSet<BonusProgram> BonusPrograms { get; set; }
     public DbSet<BonusProgramLevel> BonusProgramsLevels { get; set; }
     public DbSet<BonusProgramHistory> BonusProgramHistory { get; set; }
 
@@ -42,12 +43,12 @@ public class PostgresDbContext : DbContext
             .AsNoTracking();
     }
 
-    public BonusProgram? GetBonusProgramById(int id, CancellationToken ct = default)
+    public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {
         return this.BonusPrograms
-            .Include(x => x.ProgramLevels)
             .AsNoTracking()
-            .FirstOrDefault(x => x.IsDeleted == false);
+            .Include(x => x.ProgramLevels)
+            .FirstOrDefaultAsync(x => x.IsDeleted == false, ct);
     }
 
 
