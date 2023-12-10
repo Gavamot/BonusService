@@ -9,7 +9,7 @@ using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
-public record BonusProgramJobResult(DateInterval interval, int clientBalanceCount, long totalBonusSum);
+public record BonusProgramJobResult(DateTimeExt TimeExt, int clientBalanceCount, long totalBonusSum);
 public abstract class AbstractBonusProgramJob
 {
     protected readonly ILogger _logger;
@@ -22,7 +22,7 @@ public abstract class AbstractBonusProgramJob
         _dateTimeService = dateTimeService;
     }
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram? bonusProgram, DateInterval interval)
+    protected void Validate(BonusProgram? bonusProgram, DateTimeExt timeExt)
     {
         try
         {
@@ -32,10 +32,10 @@ public abstract class AbstractBonusProgramJob
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
             if (bonusProgram.BonusProgramType != BonusProgramType)
                 throw new ArgumentException("Неверная связка в коде джобы и бонусной программы в бд. Обратитесь к разработчику сисетмы");
-            if(bonusProgram.DateStart < interval.from)
-                throw new ArgumentException($"bonusProgram.DateStart = {bonusProgram.DateStart} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа еще не активна. Поменяйте bonusProgram.DateStart на входящую в интервал дату или дождитесь начисления в дату входящую в интервал.");
-            if(bonusProgram.DateStop != default && bonusProgram.DateStop < interval.to)
-                throw new ArgumentException($"bonusProgram.DateEnd = {bonusProgram.DateStop} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа уже закончилась. Поменяйте bonusProgram.DateEnd на входящую в интервал дату или создайте новую.");
+            if(bonusProgram.DateStart < timeExt.from)
+                throw new ArgumentException($"bonusProgram.DateStart = {bonusProgram.DateStart} | interval = {timeExt}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа еще не активна. Поменяйте bonusProgram.DateStart на входящую в интервал дату или дождитесь начисления в дату входящую в интервал.");
+            if(bonusProgram.DateStop != default && bonusProgram.DateStop < timeExt.to)
+                throw new ArgumentException($"bonusProgram.DateEnd = {bonusProgram.DateStop} | interval = {timeExt}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа уже закончилась. Поменяйте bonusProgram.DateEnd на входящую в интервал дату или создайте новую.");
             if (bonusProgram.ProgramLevels == null || bonusProgram.ProgramLevels.Count <= 0)
                 throw new ArgumentException($"Бонусная программа не имеет уровней. Добавте хотябы 1 уровень для бонусной программы");
         }
@@ -50,7 +50,7 @@ public abstract class AbstractBonusProgramJob
     protected PerformContext _ctx;
     public async Task ExecuteAsync(PerformContext ctx, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = DateInterval.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = DateTimeExt.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         this._ctx = ctx;
         Validate(bonusProgram, interval);
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -69,8 +69,8 @@ public abstract class AbstractBonusProgramJob
             {
                 BonusProgramId = bonusProgram.Id,
                 BankId = bonusProgram.BankId,
-                ExecTimeStart = bonusProgramJobResult.interval.from,
-                ExecTimeEnd = bonusProgramJobResult.interval.to,
+                ExecTimeStart = bonusProgramJobResult.TimeExt.from,
+                ExecTimeEnd = bonusProgramJobResult.TimeExt.to,
                 DurationMilliseconds = stopwatch.ElapsedMilliseconds,
                 ClientBalancesCount = bonusProgramJobResult.clientBalanceCount,
                 TotalBonusSum = bonusProgramJobResult.totalBonusSum,
@@ -94,7 +94,7 @@ public abstract class AbstractBonusProgramJob
         }
         activity.Stop();
     }
-    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateInterval interval, DateTimeOffset now);
+    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt timeExt, DateTimeOffset now);
 }
 
 public abstract class AbstractJob : IJob

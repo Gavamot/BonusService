@@ -89,7 +89,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
     private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = DateInterval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = DateTimeExt.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         switch (bonusProgram.BonusProgramType)
         {
             case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));

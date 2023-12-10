@@ -44,7 +44,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public static readonly DateTimeOffset IntervalMoth1Start = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         public static readonly DateTimeOffset IntervalMoth1End = IntervalMoth1Start.AddMonths(1);
-        public readonly static DateInterval IntervalMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
+        public readonly static DateTimeExt TimeExtMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
 
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");

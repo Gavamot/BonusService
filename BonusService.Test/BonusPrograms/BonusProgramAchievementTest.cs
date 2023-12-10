@@ -70,7 +70,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -97,7 +97,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -128,7 +128,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             },
             new MongoSession()
             {
@@ -136,14 +136,14 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }, new MongoSession()
             {
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition/3 + 3 },
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -170,7 +170,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 

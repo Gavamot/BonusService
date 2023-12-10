@@ -10,8 +10,8 @@ namespace BonusService.Test;
 
 public sealed class MongoSessionFaker : AutoFaker<MongoSession>
 {
-    public static DateTime from = BonusTestApi.Q.IntervalMoth1.from.UtcDateTime - TimeSpan.FromDays(100);
-    public static DateTime to = BonusTestApi.Q.IntervalMoth1.from.UtcDateTime + TimeSpan.FromDays(100);
+    public static DateTime from = BonusTestApi.Q.TimeExtMoth1.from.UtcDateTime - TimeSpan.FromDays(100);
+    public static DateTime to = BonusTestApi.Q.TimeExtMoth1.from.UtcDateTime + TimeSpan.FromDays(100);
     public static readonly string [] Users = Enumerable.Range(0, 50_000).Select(x => Guid.NewGuid().ToString("B")).ToArray();
     public static readonly long [] sums = new long [] { 1_00, 100_00, 500_00, 300_00, 700_00, 990_00, 4500_00 };
     public MongoSessionFaker()
@@ -53,7 +53,7 @@ public class LoadTest : BonusTestApi
         }
 
         var job = GetService<SpendMoneyBonusJob>();
-        job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.from.UtcDateTime).GetAwaiter().GetResult();
+        job.ExecuteAsync(null, bonusProgram, Q.TimeExtMoth1.from.UtcDateTime).GetAwaiter().GetResult();
 
         var res = postgres.Transactions.Count();
         res.Should().BeGreaterThan(0);

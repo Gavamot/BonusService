@@ -60,7 +60,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
         var session4 = Q.CreateSession(new DateTime(1990, 1, 1));
         session3.user.chargingClientType = MongoChargingClientType.CompanyEntity;
 
-        var session5 = Q.CreateSession(Q.IntervalMoth1.to.UtcDateTime);
+        var session5 = Q.CreateSession(Q.TimeExtMoth1.to.UtcDateTime);
 
         mongo.Sessions.InsertMany(new []
         {
