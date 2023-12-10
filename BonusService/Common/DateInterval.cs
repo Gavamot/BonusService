@@ -13,58 +13,88 @@ public record DateInterval
         this.to = to;
     }
 
-    protected static DateInterval GetFromNowToNextDays(DateTimeOffset now, int frequencyValue = 1)
-    {
-        var start = new DateTimeOffset(now.Year, now.Month, now.Day, 0, 0, 0, now.Offset);
-        var end = start + TimeSpan.FromDays(frequencyValue);
-        return new DateInterval(start, end);
-    }
-
-    protected static DateInterval GetFromNowToNextMonths(DateTimeOffset now, int frequencyValue = 1)
-    {
-        var start = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, now.Offset);
-        var end =  start.AddMonths(frequencyValue);
-        return new DateInterval(start, end);
-    }
-
     public static DateInterval GetFromNowToFutureDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
     {
         switch (frequencyType)
         {
-            case FrequencyTypes.Day: throw new NotImplementedException();//return GetFromNowToNextDays(now, frequencyValue);
-            case FrequencyTypes.Week : throw new NotImplementedException("Необходжимо найти либу или написать свой алгоритм для недельнольного предстваления из даты");
-            case FrequencyTypes.Month : return GetFromNowToNextMonths(now, frequencyValue);
+            case FrequencyTypes.Day: return now.GetFromNowToNextDays(frequencyValue);
+            case FrequencyTypes.Week : return now.GetFromNowToNextWeeks(frequencyValue);
+            case FrequencyTypes.Month : return now.GetFromNowToNextMonths(frequencyValue);
             default: throw new NotImplementedException();
         }
-    }
-
-    protected static DateInterval GetFromPrevMonthsToNow(DateTimeOffset now, int frequencyValue = 1)
-    {
-        var startOfMonth = new DateTimeOffset(now.Year, now.Month, 1, 0, 0, 0, now.Offset);
-        var @from =  startOfMonth.AddMonths(frequencyValue * -1);
-        var to = startOfMonth;
-        return new DateInterval(@from, to);
-    }
-
-    protected static DateInterval GetFromPrevDaysToNow(DateTimeOffset now, int frequencyValue = 1)
-    {
-        var startOfDay = new DateTimeOffset(now.Year, now.Month, now.Day, 0, 0, 0, now.Offset);
-        var start = startOfDay - TimeSpan.FromDays(frequencyValue * -1);
-        var end = startOfDay;
-        return new DateInterval(start, end);
     }
 
 
     public static DateInterval GetPrevToNowDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
     {
-        if (frequencyType != FrequencyTypes.Month) throw new NotImplementedException();
         switch (frequencyType)
         {
-            case FrequencyTypes.Day: throw new NotImplementedException(); //return GetFromPrevDaysToNow(now, frequencyValue);
-            case FrequencyTypes.Week : throw new NotImplementedException("Необходжимо найти либу или написать свой алгоритм для недельнольного предстваления из даты");
-            case FrequencyTypes.Month : return GetFromPrevMonthsToNow(now, frequencyValue);
+            case FrequencyTypes.Day: return now.GetFromPrevDaysToNow(frequencyValue);
+            case FrequencyTypes.Week : return now.GetFromPrevToNowWeeks(frequencyValue);
+            case FrequencyTypes.Month : return now.GetFromNowToNextMonths(frequencyValue);
             default: throw new NotImplementedException();
         }
     }
     public override string ToString() => $"{from.Day}.{from.Month}.{from.Year}-{to.Day}.{to.Month}.{to.Year}";
-};
+}
+
+public static class DateTimeExtensions
+{
+    public static DateTimeOffset StartOfDay(this DateTimeOffset dt)
+    {
+        return new DateTimeOffset(dt.Year, dt.Month, dt.Day, 0, 0, 0, dt.Offset);
+    }
+
+    public static DateTimeOffset StartOfWeek(this DateTimeOffset dt, DayOfWeek startOfWeek = DayOfWeek.Monday)
+    {
+        int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
+        return dt.AddDays(-1 * diff).Date;
+    }
+
+    public static DateTimeOffset StartOfMonth(this DateTimeOffset dt)
+    {
+        return new DateTimeOffset(dt.Year, dt.Month, 1, 0, 0, 0, dt.Offset);
+    }
+
+    public static DateInterval GetFromNowToNextDays(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var start = now.StartOfDay();
+        var end = start.AddDays(frequencyValue);
+        return new DateInterval(start, end);
+    }
+
+    public  static DateInterval GetFromNowToNextWeeks(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var start =  now.StartOfWeek();
+        var end = start.AddDays(frequencyValue * 7);
+        return new DateInterval(start, end);
+    }
+
+    public  static DateInterval GetFromNowToNextMonths(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var start = now.StartOfMonth();
+        var end =  start.AddMonths(frequencyValue);
+        return new DateInterval(start, end);
+    }
+
+    public static DateInterval GetFromPrevDaysToNow(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var end = now.StartOfDay();
+        var start = end.AddDays(frequencyValue * -1);
+        return new DateInterval(start, end);
+    }
+
+    public static DateInterval GetFromPrevToNowWeeks(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var end = now.StartOfWeek();
+        var start = end.AddDays(frequencyValue * -7);
+        return new DateInterval(start, end);
+    }
+
+    public static DateInterval GetFromPrevToNowMonths(this DateTimeOffset now, int frequencyValue = 1)
+    {
+        var end = now.StartOfMonth();
+        var start = end.AddMonths(frequencyValue * -1);
+        return new DateInterval(start, end);
+    }
+}
