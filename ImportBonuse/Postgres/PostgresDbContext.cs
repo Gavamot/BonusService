@@ -1,7 +1,7 @@
 #pragma warning disable CS8618
 using ImportBonuse.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
-namespace ImportBonus.Postgres;
+namespace ImportBonuse.Postgres;
 
 public class PostgresDbContext : DbContext
 {

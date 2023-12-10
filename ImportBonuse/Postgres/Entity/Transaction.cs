@@ -1,8 +1,7 @@
 #nullable enable
 
-using BonusService.Common.Postgres;
 #pragma warning disable CS8618
-namespace ImportBonus.Postgres.Entity;
+namespace ImportBonuse.Postgres.Entity;
 
 public enum TransactionType
 {

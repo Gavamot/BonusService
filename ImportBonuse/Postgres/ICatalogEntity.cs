@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-namespace BonusService.Common.Postgres;
+namespace ImportBonuse.Postgres;
 
 #pragma warning disable CS8618
 

@@ -2,7 +2,7 @@
 
 using System.Text.Json;
 using CommandLine;
-using ImportBonus.Postgres;
+using ImportBonuse.Postgres;
 using ImportBonuse.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
