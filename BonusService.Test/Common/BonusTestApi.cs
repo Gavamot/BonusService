@@ -11,6 +11,7 @@ using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using FrequencyTypes = BonusApi.FrequencyTypes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -32,6 +33,20 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     public static class Q
     {
+        public static void AddPostgresSeed(IServiceProvider serviceProvider)
+        {
+            // Времянка пока юонусные программы захардкоженны
+            using var scope1 = serviceProvider.CreateScope();
+            var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
+            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
+            if (bp == null)
+            {
+                bp = BonusProgramSeed.Get();
+                bp.Id = 0;
+                postgres.BonusPrograms.Add(bp);
+                postgres.SaveChanges();
+            }
+        }
         public static Transaction CreateTransaction(string personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()
         {
             Description = Q.Description1,
@@ -151,7 +166,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         postgres = scope.GetRequiredService<PostgresDbContext>();
         postgres.Database.EnsureDeleted();
         postgres.Database.Migrate();
-        Program.AddPostgresSeed(server.Services);
+        BonusProgramSeed.AddPostgresSeed(server.Services);
 
         //InfraHelper.CreateMongoDatabase(this.server.DbName).GetAwaiter().GetResult();
         mongo = scope.GetRequiredService<MongoDbContext>();

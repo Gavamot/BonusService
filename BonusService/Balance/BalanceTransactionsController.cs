@@ -20,7 +20,7 @@ public record class BalanceTransactionDto
 {
     public DateTimeOffset Date { get; set; }
     public long BonusSum { get; set; }
-    public string Description { get; set; }
+    public string Description { get; set; } = "";
 }
 
 [Mapper]

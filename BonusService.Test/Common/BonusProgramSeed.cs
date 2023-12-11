@@ -1,8 +1,25 @@
+using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
-namespace BonusService.BonusPrograms;
+using Microsoft.Extensions.DependencyInjection;
+namespace BonusService.Test.Common;
 
+#pragma warning disable CS1998
 public static class BonusProgramSeed
 {
+    public static void AddPostgresSeed(IServiceProvider serviceProvider)
+    {
+        // Времянка пока юонусные программы захардкоженны
+        using var scope1 = serviceProvider.CreateScope();
+        var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
+        if (bp == null)
+        {
+            bp = BonusProgramSeed.Get();
+            bp.Id = 0;
+            postgres.BonusPrograms.Add(bp);
+            postgres.SaveChanges();
+        }
+    }
     public static  BonusProgram Get()
     {
         var lastUpdated = new DateTimeOffset(2023, 11, 1, 0, 0, 0, new TimeSpan(0));
@@ -17,7 +34,7 @@ public static class BonusProgramSeed
             IsDeleted = false,
             ExecutionCron = "0 9 1 * *",
             LastUpdated = lastUpdated,
-            FrequencyType = FrequencyTypes.Month,
+            FrequencyType = BonusService.Common.Postgres.Entity.FrequencyTypes.Month,
             FrequencyValue = 1,
             BonusProgramHistory = new List<BonusProgramHistory>(),
             ProgramLevels = new List<BonusProgramLevel>()

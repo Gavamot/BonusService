@@ -14,7 +14,7 @@ Parser.Default.ParseArguments<Options>(args)
         using StreamReader read = new StreamReader(o.File);
         int n = 1;
         var dt = DateTimeOffset.UtcNow.ToOffset(TimeSpan.Zero);
-        Transaction t = null;
+        Transaction t = null!;
         while (read.ReadLine() is { } line)
         {
             try
@@ -63,8 +63,8 @@ Parser.Default.ParseArguments<Options>(args)
 class Options
 {
     [Option('f', "file", Required = true, HelpText = "Path to file csv - фортмат -> PersonId;BonusSum -> Пример: 1.txt")]
-    public string File { get; set; }
+    required public string File { get; set; }
 
     [Option('p', "postgres", Required = true, HelpText = "Connection string for postgres -> Host=sql-postgre;Port=5432;Database=Identity;Username=postgres;Password=pass;")]
-    public string ConStr { get; set; }
+    required public string ConStr { get; set; }
 }

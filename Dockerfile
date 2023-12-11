@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 #FROM registry.gitlab.nvg.ru/ezs/bonusservice:build AS build
 ARG APPVERSION
 ENV APPVERSION=$APPVERSION
@@ -15,7 +15,7 @@ RUN \
     --mount=type=cache,target=/root/.nuget \
     dotnet publish BonusService -c Release -o build -p:Product="BonusService" -p:AssemblyTitle="Sitronics. BonusService." \
    -p:InformationalVersion=$APPVERSION -p:FileVersion=$APPVERSION
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 ENV ASPNETCORE_URLS=http://+:9100
 RUN apt update -y && \
       apt install -y --no-install-recommends net-tools && \

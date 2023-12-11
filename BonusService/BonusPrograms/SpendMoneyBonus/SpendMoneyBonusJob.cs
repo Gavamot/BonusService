@@ -37,14 +37,14 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
     }
 
 
-    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt timeExt, DateTimeOffset now)
+    protected override async Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt interval, DateTimeOffset now)
     {
         int bonusProgramId = bonusProgram.Id;
         int bankId = bonusProgram.BankId;
         var bonusProgramMark = GetBonusProgramMark(bonusProgram);
 
-        _logger.LogInformation("{BonusProgramMark} - выборка данных за интервал {Interval} по валюте {BankId}", bonusProgramMark, timeExt, bankId);
-        _ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {timeExt} по валюте {bankId}");
+        _logger.LogInformation("{BonusProgramMark} - выборка данных за интервал {Interval} по валюте {BankId}", bonusProgramMark, interval, bankId);
+        _ctx.WriteLine($"{bonusProgramMark} - выборка данных за интервал {interval} по валюте {bankId}");
         var data = _mongo.Sessions.AsQueryable().Where(x =>
                 x.status == MongoSessionStatus.Paid
                 && x.user != null
@@ -55,7 +55,7 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
                 && x.tariff.BankId == bankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime >= timeExt.from.UtcDateTime && x.chargeEndTime < timeExt.to.UtcDateTime)
+                && x.chargeEndTime >= interval.from.UtcDateTime && x.chargeEndTime < interval.to.UtcDateTime)
             .GroupBy(x => x.user!.clientNodeId);
 
         int clientBalanceCount = 0;
@@ -80,13 +80,13 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
             {
                 PersonId = clientNodeId,
                 BankId = bankId,
-                TransactionId = GenerateTransactionId(bonusProgramId, clientNodeId, bankId, timeExt),
+                TransactionId = GenerateTransactionId(bonusProgramId, clientNodeId, bankId, interval),
                 BonusProgramId = bonusProgramId,
                 BonusBase = totalPay,
                 BonusSum = bonus.sum,
                 Type = TransactionType.Auto,
                 LastUpdated = now,
-                Description = $"Начислено по {bonusProgramMark}(банк={bankId})login={userName} за {timeExt}. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
+                Description = $"Начислено по {bonusProgramMark}(банк={bankId})login={userName} за {interval}. С суммы платежей {totalPay} к-во процентов {bonus.percentages}.",
                 UserName = userName,
                 OwnerId = null,
                 EzsId = null,
@@ -122,11 +122,11 @@ public class SpendMoneyBonusJob : AbstractBonusProgramJob
 
         if (clientBalanceCount == 0)
         {
-            _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено");
-            _ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {timeExt} не найдено.");
-            return new BonusProgramJobResult(timeExt, 0, 0);
+            _logger.LogInformation("{BonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {Interval} не найдено", bonusProgramMark, interval);
+            _ctx.WriteLine($"{bonusProgramMark} по данной бонусной программе данных для начисления бонусов за интервал {interval} не найдено.");
+            return new BonusProgramJobResult(interval, 0, 0);
         }
 
-        return new BonusProgramJobResult(timeExt, clientBalanceCount, totalBonusSum);
+        return new BonusProgramJobResult(interval, clientBalanceCount, totalBonusSum);
     }
 }

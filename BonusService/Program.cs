@@ -102,7 +102,6 @@ app.MapControllers();
 
 app.ApplyPostgresMigrations();
 
-
 if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
@@ -117,20 +116,6 @@ namespace BonusService
 {
     public partial class Program
     {
-        public static void AddPostgresSeed(IServiceProvider serviceProvider)
-        {
-            // Времянка пока юонусные программы захардкоженны
-            using var scope1 = serviceProvider.CreateScope();
-            var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
-            if (bp == null)
-            {
-                bp = BonusProgramSeed.Get();
-                bp.Id = 0;
-                postgres.BonusPrograms.Add(bp);
-                postgres.SaveChanges();
-            }
-        }
         public const string AppTest = nameof(AppTest);
 
         public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();
