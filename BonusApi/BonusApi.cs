@@ -18,7 +18,7 @@ using BonusApi;
 #pragma warning disable 3016 // Disable "CS3016 Arrays as attribute arguments is not CLS-compliant"
 #pragma warning disable 8603 // Disable "CS8603 Possible null reference return"
 #pragma warning disable 8604 // Disable "CS8604 Possible null reference argument for parameter"
-
+//
 namespace BonusApi
 {
     using System = global::System;
