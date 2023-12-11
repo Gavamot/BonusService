@@ -1,27 +1,21 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Text;
 using System.Text.Json;
 using CommandLine;
 using ImportBonuse.Postgres;
 using ImportBonuse.Postgres.Entity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Transaction = ImportBonuse.Postgres.Entity.Transaction;
 
+Console.OutputEncoding = Encoding.UTF8;
 Parser.Default.ParseArguments<Options>(args)
     .WithParsed(o =>
     {
-        var services = new ServiceCollection();
-        services.AddDbContext<PostgresDbContext>(opt =>
-        {
-            services.AddDbContext<PostgresDbContext>(opt => opt.UseNpgsql(o.ConStr));
-        });
-        var p = services.BuildServiceProvider();
-        using var scope = p.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
-
+        using var db = new PostgresDbContext(o.ConStr);
         using StreamReader read = new StreamReader(o.File);
         int n = 1;
+        var dt = DateTimeOffset.UtcNow.ToOffset(TimeSpan.Zero);
+        Transaction t = null;
         while (read.ReadLine() is { } line)
         {
             try
@@ -32,7 +26,8 @@ Parser.Default.ParseArguments<Options>(args)
                 {
                     throw new Exception($"Нет бонусов");
                 }
-                var t = new Transaction()
+
+                t = new Transaction()
                 {
                     Type = TransactionType.Shrink,
                     BankId = 1,
@@ -40,15 +35,19 @@ Parser.Default.ParseArguments<Options>(args)
                     TransactionId = $"migrate_{personId}",
                     BonusSum = sum,
                     PersonId = personId,
-                    LastUpdated = DateTimeOffset.Now,
+                    LastUpdated = dt,
                 };
                 db.Transactions.Add(t);
                 db.SaveChanges();
-                Console.WriteLine($"[{n}] red {line} - added - {JsonSerializer.Serialize(t)}");
+                Console.WriteLine($"[{n}] red {line} - added - id = {t.Id}");
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[{n}] can not insert the line - {line} - error = {e.Message}");
+                Console.WriteLine($"[{n}] can not insert the line - {line} - error = {e.InnerException?.Message}");
+                if (t != null)
+                {
+                    db.Transactions.Remove(t);
+                }
             }
             n++;
         }

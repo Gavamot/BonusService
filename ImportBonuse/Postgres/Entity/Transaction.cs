@@ -1,6 +1,3 @@
-#nullable enable
-
-#pragma warning disable CS8618
 namespace ImportBonuse.Postgres.Entity;
 
 public enum TransactionType
