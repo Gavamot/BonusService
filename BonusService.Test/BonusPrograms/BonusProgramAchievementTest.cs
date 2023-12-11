@@ -4,6 +4,7 @@ using FakeItEasy;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
 namespace BonusService.Test.BonusPrograms;
 
@@ -184,7 +185,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task MongoSessionHasEmptyFields_WorksCorrectly()
     {
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {
@@ -251,7 +252,7 @@ public class BonusProgramAchievementTest : BonusTestApi
 [Fact]
     public async Task ZeroAchievement_ReturnLevels0and1()
     {
-        mongo.Sessions.InsertOne(new MongoSession()
+        await mongo.Sessions.InsertOneAsync(new MongoSession()
         {
             operation = new MongoOperation() { calculatedPayment = 100 },
             status = 6,

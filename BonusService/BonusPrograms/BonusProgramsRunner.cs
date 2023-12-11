@@ -62,7 +62,9 @@ public class BonusProgramsRunner : IBonusProgramsRunner
         string jobId = GenerateJobId(bonusProgram.Id);
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync((PerformContext)null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            _scheduler.AddOrUpdate<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync(null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
         else
         {

@@ -5,6 +5,7 @@ using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FluentAssertions;
+using Hangfire.Server;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 namespace BonusService.Test;
 

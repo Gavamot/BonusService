@@ -2,6 +2,7 @@ using BonusService.Balance.BalanceTransactions;
 using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using Newtonsoft.Json;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace BonusService.Test;
 
 public class BalanceGetTransactionsTest : BonusTestApi

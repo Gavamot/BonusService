@@ -1,15 +1,9 @@
-using System.Net.Http.Json;
-using System.Security.Cryptography;
-using System.Text.Json;
 using BonusApi;
 using BonusService.Common.Postgres;
 using BonusService.Test.Common;
-using FluentAssertions;
-using FSharp.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
-using OwnerMaxBonusPay = BonusService.Common.Postgres.Entity.OwnerMaxBonusPay;
 namespace BonusService.Test;
 
 public class BonusProgramLevelCrudTest : BonusTestApi
