@@ -8,6 +8,7 @@ using Hangfire;
 using MongoDB.Driver;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 using BonusProgramHistory = BonusService.Common.Postgres.Entity.BonusProgramHistory;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace BonusService.Test.BonusPrograms;
 
@@ -227,6 +228,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
+
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Count().Should().Be(1);

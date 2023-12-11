@@ -40,7 +40,9 @@ public sealed class ExecuteBonusProgramJobCommand: ICommandHandler<ExecuteBonusP
 
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-             _jobClient.Enqueue<SpendMoneyBonusJob>(x => x.ExecuteAsync((PerformContext)null, bonusProgram, command.Now));
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            _jobClient.Enqueue<SpendMoneyBonusJob>(x => x.ExecuteAsync(null, bonusProgram, command.Now));
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
         else
         {

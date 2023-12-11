@@ -54,7 +54,9 @@ public class LoadTest : BonusTestApi
         }
 
         var job = GetService<SpendMoneyBonusJob>();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         job.ExecuteAsync(null, bonusProgram, Q.TimeExtMoth1.from.UtcDateTime).GetAwaiter().GetResult();
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
         var res = postgres.Transactions.Count();
         res.Should().BeGreaterThan(0);

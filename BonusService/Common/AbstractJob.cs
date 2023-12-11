@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using BonusService.Common.Postgres;
@@ -10,17 +11,12 @@ using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
 public record BonusProgramJobResult(DateTimeExt TimeExt, int clientBalanceCount, long totalBonusSum);
-public abstract class AbstractBonusProgramJob
+[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext postgres, IDateTimeService dateTimeService)
 {
-    protected readonly ILogger _logger;
-    protected readonly PostgresDbContext _postgres;
-    protected readonly IDateTimeService _dateTimeService;
-    public AbstractBonusProgramJob(ILogger logger, PostgresDbContext postgres, IDateTimeService dateTimeService)
-    {
-        _logger = logger;
-        _postgres = postgres;
-        _dateTimeService = dateTimeService;
-    }
+    protected readonly ILogger _logger = logger;
+    protected readonly PostgresDbContext _postgres = postgres;
+    protected readonly IDateTimeService _dateTimeService = dateTimeService;
     protected abstract BonusProgramType BonusProgramType { get; }
     protected void Validate(BonusProgram? bonusProgram, DateTimeExt timeExt)
     {
@@ -42,16 +38,17 @@ public abstract class AbstractBonusProgramJob
         catch (Exception e)
         {
             _ctx.WriteLine(e.Message);
+            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
             _logger.LogError(e, e.Message);
             throw;
         }
     }
     protected string GetBonusProgramMark(BonusProgram bonusProgram) => $"{bonusProgram.Id}_{bonusProgram.Name}";
-    protected PerformContext _ctx;
+    protected PerformContext _ctx = null!;
     public async Task ExecuteAsync(PerformContext ctx, BonusProgram bonusProgram, DateTimeOffset now)
     {
         var interval = DateTimeExt.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
-        this._ctx = ctx;
+        _ctx = ctx;
         Validate(bonusProgram, interval);
         Stopwatch stopwatch = Stopwatch.StartNew();
         string bonusProgramMark = GetBonusProgramMark(bonusProgram);
@@ -94,33 +91,33 @@ public abstract class AbstractBonusProgramJob
         }
         activity.Stop();
     }
-    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt timeExt, DateTimeOffset now);
+    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt interval, DateTimeOffset now);
 }
 
 public abstract class AbstractJob : IJob
 {
-    protected readonly ILogger logger;
+    protected readonly ILogger _logger;
     public AbstractJob(ILogger logger)
     {
-        this.logger = logger;
+        this._logger = logger;
     }
 
     public abstract string Name { get; }
-    protected PerformContext ctx;
+    protected PerformContext _ctx = null!;
     public async Task ExecuteAsync(PerformContext ctx, object parameter)
     {
-        this.ctx = ctx;
+        this._ctx = ctx;
         var jobContext = new JobLogContext(Name, Guid.NewGuid());
         ScopeContext.PushNestedState(jobContext);
-        logger.LogInformation("Job start");
+        _logger.LogInformation("Job start");
         try
         {
             await ExecuteJobAsync(parameter);
-            logger.LogInformation("Job end");
+            _logger.LogInformation("Job end");
         }
         catch (Exception e)
         {
-            logger.LogError(e, "job execution error -> {Error}", e.Message);
+            _logger.LogError(e, "job execution error -> {Error}", e.Message);
         }
     }
     protected abstract Task ExecuteJobAsync(object parameter);

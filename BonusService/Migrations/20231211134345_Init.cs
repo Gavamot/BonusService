@@ -27,8 +27,8 @@ namespace BonusService.Migrations
                     ExecutionCron = table.Column<string>(type: "text", nullable: false),
                     FrequencyType = table.Column<int>(type: "integer", nullable: false),
                     FrequencyValue = table.Column<int>(type: "integer", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    LastUpdated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

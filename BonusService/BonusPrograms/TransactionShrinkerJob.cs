@@ -44,7 +44,7 @@ public class TransactionShrinkerJob : AbstractJob
         int i = 1;
         int consolidationLength = 0;
 
-        logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Начат процесс консолидации транзакций на {curDay} с размером партиции {chunkSize}", curDay, chunkSize);
+        _logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Начат процесс консолидации транзакций на {curDay} с размером партиции {chunkSize}", curDay, chunkSize);
         do
         {
             var transactions = await _postgres.Transactions.Where(x => x.LastUpdated < curDay)
@@ -76,13 +76,13 @@ public class TransactionShrinkerJob : AbstractJob
                 await _postgres.TransactionHistory.BulkInsertAsync(transactions.Where(x => x.Type != TransactionType.Shrink)
                     .Select(x => mapper.FromTransaction(x)));
                 await _postgres.BulkDeleteAsync(transactions);
-                logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Даннные успешно сконсолидированы({consolidationLength}->{consolidation}) на {curDay} итерация {iteration} с размером партиции {chunkSize}", consolidationLength, consolidation, curDay, i, chunkSize);
+                _logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Даннные успешно сконсолидированы({consolidationLength}->{consolidation}) на {curDay} итерация {iteration} с размером партиции {chunkSize}", consolidationLength, consolidation, curDay, i, chunkSize);
                 i++;
                 await transactionDb.CommitAsync();
             }
             catch (Exception e)
             {
-                logger.LogError(AppEvents.TransactionShrinkerEvent, e, "Не удалось сконсолидировать на {curDay} итерация {iteration} с размером партиции {chunkSize}", curDay, i, chunkSize);
+                _logger.LogError(AppEvents.TransactionShrinkerEvent, e, "Не удалось сконсолидировать на {curDay} итерация {iteration} с размером партиции {chunkSize}", curDay, i, chunkSize);
                 await transactionDb.RollbackAsync();
             }
         }while(consolidationLength == chunkSize);
