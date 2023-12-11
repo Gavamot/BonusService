@@ -31,7 +31,7 @@ public record DateTimeExt
         {
             case FrequencyTypes.Day: return now.GetFromPrevDaysToNow(frequencyValue);
             case FrequencyTypes.Week : return now.GetFromPrevToNowWeeks(frequencyValue);
-            case FrequencyTypes.Month : return now.GetFromNowToNextMonths(frequencyValue);
+            case FrequencyTypes.Month : return now.GetFromPrevToNowMonths(frequencyValue);
             default: throw new NotImplementedException();
         }
     }

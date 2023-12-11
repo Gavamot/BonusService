@@ -1,7 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Text;
-using System.Text.Json;
 using CommandLine;
 using ImportBonuse.Postgres;
 using ImportBonuse.Postgres.Entity;
@@ -63,9 +62,9 @@ Parser.Default.ParseArguments<Options>(args)
 
 class Options
 {
-    [Option('f', "file", Required = true, HelpText = "Path to file csv")]
+    [Option('f', "file", Required = true, HelpText = "Path to file csv - фортмат -> PersonId;BonusSum -> Пример: 1.txt")]
     public string File { get; set; }
 
-    [Option('p', "postgres", Required = true, HelpText = "Connection string for postgres")]
+    [Option('p', "postgres", Required = true, HelpText = "Connection string for postgres -> Host=sql-postgre;Port=5432;Database=Identity;Username=postgres;Password=pass;")]
     public string ConStr { get; set; }
 }

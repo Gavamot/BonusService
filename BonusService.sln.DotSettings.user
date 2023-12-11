@@ -36,11 +36,7 @@
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ca96b90e_002Dece2_002D49a4_002Da6d4_002D1ef0833d8349/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetFromNowToFutureDateInterval_Days" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.DateTimeExtTest.GetFromNowToFutureDateInterval_Days&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.DateTimeExtTest.GetFromPrevToNowDateInterval_Days&lt;/TestId&gt;&#xD;
-    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.DateTimeExtTest.GetFromPrevToNowDateInterval_Weeks&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ed45dce7_002D6d3a_002D49e4_002D8128_002D84b778032900/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PositiveCase" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
