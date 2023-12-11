@@ -1,6 +1,4 @@
 using BonusService.Auth.Policy;
-using BonusService.BonusPrograms.BonusProgramAchievement;
-using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 // ReSharper disable once CheckNamespace
@@ -18,8 +16,11 @@ public sealed partial class BonusProgramController : ControllerBase
         _bonusProgramsRunner = bonusProgramsRunner;
     }
 
+    /// <summary>
+    /// Перезапуск всех джоб начисляющих бонусы по бонусным программам
+    /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
+    [Authorize(Policy = PolicyNames.BonusServiceWrite)]
     public async Task RestartJobs()
     {
         await _bonusProgramsRunner.RestartAsync();

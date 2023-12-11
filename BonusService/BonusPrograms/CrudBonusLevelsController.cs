@@ -1,3 +1,4 @@
+using BonusService.Auth.Policy;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
@@ -65,6 +66,7 @@ public sealed class BonusLevelsController : CrudController<BonusProgramLevel, Bo
     }
 
     [HttpGet]
+    [Authorize(Policy = PolicyNames.BonusServiceRead)]
     public async Task<BonusProgramLevel[]> GetAllByBonusProgramId(int bonusProgramId, CancellationToken ct)
     {
        return await _db.BonusProgramsLevels.Where(x => x.BonusProgramId == bonusProgramId).ToArrayAsync(ct);

@@ -89,7 +89,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
     private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = DateInterval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = DateTimeExt.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         switch (bonusProgram.BonusProgramType)
         {
             case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));
@@ -122,8 +122,11 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 [Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : ControllerBase
 {
+    /// <summary>
+    /// Получение прогресса достиждений в текущем периоде по бонусной программе
+    /// </summary>
     [HttpGet]
-    [Authorize(Policy = PolicyNames.GetBonusProgramAchievementRead)]
+    [Authorize(Policy = PolicyNames.PersonRead)]
     public async Task<BonusProgramAchievementResponse> GetPersonAchievement([FromServices] IMediator mediator, [FromQuery][Required]BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(request, ct);

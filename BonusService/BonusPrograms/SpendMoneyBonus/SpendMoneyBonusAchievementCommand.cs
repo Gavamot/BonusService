@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 namespace BonusService.BonusPrograms.SpendMoneyBonus;
 
-public record SpendMoneyBonusAchievementRequest(string PersonId, DateInterval Interval, int BankId) : IRequest<long>;
+public record SpendMoneyBonusAchievementRequest(string PersonId, DateTimeExt TimeExt, int BankId) : IRequest<long>;
 public sealed class SpendMoneyBonusAchievementCommand : IRequestHandler<SpendMoneyBonusAchievementRequest, long>
 {
     private readonly MongoDbContext _mongo;
@@ -29,7 +29,7 @@ public sealed class SpendMoneyBonusAchievementCommand : IRequestHandler<SpendMon
                 && x.tariff.BankId == request.BankId
                 && x.operation != null
                 && x.operation.calculatedPayment > 0
-                && x.chargeEndTime>= request.Interval.from.UtcDateTime && x.chargeEndTime< request.Interval.to.UtcDateTime)
+                && x.chargeEndTime>= request.TimeExt.from.UtcDateTime && x.chargeEndTime< request.TimeExt.to.UtcDateTime)
             .Sum(x=> x.operation!.calculatedPayment ?? 0);
         return ValueTask.FromResult(payment);
     }

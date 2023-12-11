@@ -1,11 +1,10 @@
-using BonusApi;
-using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Test.Common;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
 namespace BonusService.Test.BonusPrograms;
 
@@ -72,7 +71,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -99,7 +98,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -130,7 +129,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             },
             new MongoSession()
             {
@@ -138,14 +137,14 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }, new MongoSession()
             {
                 operation = new MongoOperation() { calculatedPayment = curLevel.Condition/3 + 3 },
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -172,7 +171,7 @@ public class BonusProgramAchievementTest : BonusTestApi
                 status = 7,
                 tariff = new MongoTariff() { BankId = 1 },
                 user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
-                chargeEndTime = Q.IntervalMoth1.from.UtcDateTime,
+                chargeEndTime = Q.TimeExtMoth1.from.UtcDateTime,
             }
         });
 
@@ -186,7 +185,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task MongoSessionHasEmptyFields_WorksCorrectly()
     {
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {
@@ -253,7 +252,7 @@ public class BonusProgramAchievementTest : BonusTestApi
 [Fact]
     public async Task ZeroAchievement_ReturnLevels0and1()
     {
-        mongo.Sessions.InsertOne(new MongoSession()
+        await mongo.Sessions.InsertOneAsync(new MongoSession()
         {
             operation = new MongoOperation() { calculatedPayment = 100 },
             status = 6,

@@ -5,18 +5,20 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Correlate.AspNetCore" Version="5.2.0" />
+        <PackageReference Include="DateOnlyTimeOnly.AspNet" Version="2.1.1" />
+        <PackageReference Include="DateOnlyTimeOnly.AspNet.Swashbuckle" Version="2.1.1" />
         <PackageReference Include="FluentValidation" Version="11.8.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
-        <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="7.0.1" />
+        <PackageReference Include="Gavamot.Hangfire.Console" Version="1.0.0" />
         <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
-        <PackageReference Include="IdentityStream.Hangfire.Console" Version="2.0.0" />
-        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.11" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.11">
+        <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.13" />
+        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.13">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -40,11 +42,13 @@
         <PackageReference Include="Hangfire.PostgreSql" Version="1.20.4" />
         <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
         <PackageReference Include="NLog" Version="5.2.7" />
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.5" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.5" />
-        <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.5" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.7" />
+        <PackageReference Include="Riok.Mapperly" Version="3.3.0-next.6" />
+        <PackageReference Include="SwaggerExampleAttrLib" Version="0.1.23" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.12" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
         <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="7.101.0" />
@@ -53,6 +57,10 @@
     <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <NoWarn>1701;1702;1591;3277</NoWarn>
     </PropertyGroup>
     
     <ItemGroup>

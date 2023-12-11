@@ -1,4 +1,6 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using BonusApi;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -8,12 +10,26 @@ using FluentAssertions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using FrequencyTypes = BonusApi.FrequencyTypes;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace BonusService.Test.Common;
 
 public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsyncLifetime
 {
+    private string ToJson(object a)
+    {
+        var opt = new JsonSerializerOptions(JsonSerializerDefaults.Web)
+        {
+            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+        };
+        return JsonSerializer.Serialize(a, opt);
+    }
+    protected void AssertEqualJson(object expected, object actual)
+    {
+        ToJson(expected).Should().Be(ToJson(actual));
+    }
     public static class Q
     {
         public static Transaction CreateTransaction(string personId, int bankId = Q.BankIdRub, long sum = Q.Sum1000) => new ()
@@ -28,7 +44,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public static readonly DateTimeOffset IntervalMoth1Start = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
         public static readonly DateTimeOffset IntervalMoth1End = IntervalMoth1Start.AddMonths(1);
-        public readonly static DateInterval IntervalMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
+        public readonly static DateTimeExt TimeExtMoth1 = new (IntervalMoth1Start, IntervalMoth1End);
 
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
@@ -68,12 +84,13 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public const string ClientLogin = "8909113342";
         public const string ClientLogin2 = "8909163142";
-        public static MongoSession CreateSession(DateTime date) => new MongoSession()
+        public static MongoSession CreateSession(DateTimeOffset date, long payment = Q.SumLevel2) => CreateSession(date.UtcDateTime, payment);
+        public static MongoSession CreateSession(DateTime date , long payment = Q.SumLevel2) => new ()
         {
             //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
             {
-                calculatedPayment = Q.SumLevel2
+                calculatedPayment = payment
             },
             chargeEndTime = date,
             status = MongoSessionStatus.Paid,
@@ -126,7 +143,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     public BonusTestApi(FakeApplicationFactory<Program> server)
     {
         this.server = server;
-        //InitDatabases(server).GetAwaiter().GetResult();
+        //InitDatabases(server);
         A.CallTo(() => this.server.DateTimeService.GetNowUtc()).
             ReturnsNextFromSequence(Q.DateTimeSequence);
 
@@ -146,11 +163,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
     }
 
-    protected async Task InitDatabases(FakeApplicationFactory<Program> server)
+    protected void InitDatabases(FakeApplicationFactory<Program> server)
     {
-        var postgres = InfraHelper.RunPostgresContainer();
-        var mongo = InfraHelper.RunMongo(this.server.DbName);
-        await Task.WhenAll(postgres, mongo);
+        InfraHelper.RunPostgresContainer();
+        InfraHelper.RunMongo(this.server.DbName);
     }
 
     public async Task InitializeAsync()
@@ -159,16 +175,12 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     async Task IAsyncLifetime.DisposeAsync()
     {
-        var postgresDelete = postgres.Database.EnsureDeletedAsync();
-
-         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
-         var hangfireDelete = hangfire.Database.EnsureDeletedAsync();
-
-          await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);
-          var mongoDelete =  InfraHelper.DropMongoDatabase(server.DbName);
-          var tasks = new [] { postgresDelete, mongoDelete, hangfireDelete };
-          await Task.WhenAll(tasks);
-          scope.Dispose();
+        await postgres.Database.EnsureDeletedAsync();
+        var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
+        await hangfire.Database.EnsureDeletedAsync();
+        await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);
+        InfraHelper.DropMongoDatabase(server.DbName);
+        scope.Dispose();
     }
     public async ValueTask DisposeAsync()
     {

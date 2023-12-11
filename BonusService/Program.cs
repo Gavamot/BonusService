@@ -1,7 +1,7 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using BonusService;
 using BonusService.Auth;
-using BonusService.Balance;
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -14,7 +14,8 @@ using NLog.Web;
 
 
 // TOKEN -
-// Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAwNjUyODQzLCJleHAiOjE3OTA2NTI4NDMsImlhdCI6MTcwMDY1Mjg0MywiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.C3zc6s9FH7emLZVpRyaulc_aw2QD4gNzaUNTLXVnj_FDhSQzDxijr7aWYrT3XT2gPziHYUFh8uBtIAY_nfQ3Mw
+// Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW4iLCJSb2xlcyI6IkFkbWluIiwibmJmIjoxNzAxOTM5MTI0LCJleHAiOjE3OTM0NzUxMjQsImlhdCI6MTcwMTkzOTEyNCwiaXNzIjoiUGxhdGZvcm1XZWJBcGkifQ.7OzTUP5ScmLWtoyCXnYqxWIPJcNuBFweMxep9WKf1BluKyP-i2ZvAcYXPaIRuQdbcc21ghvAMn6UFmQqvBw6Qg
+Console.OutputEncoding = Encoding.UTF8;
 Console.WriteLine($"Environment = {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,13 +73,10 @@ services.AddControllers().AddJsonOptions(opt =>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-
 services.AddBonusServices(configuration);
 
 services.AddJwtAuthorization(configuration);
-
-services.AddSwagger(BonusService.Program.IsLocal() || BonusService.Program.IsNswagBuild());
-
+services.AddAppSwagger();
 services.AddMediator(opt =>
 {
     opt.ServiceLifetime = ServiceLifetime.Scoped;
@@ -92,18 +90,7 @@ app.UseHealthChecks("/healthz");
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHangfire();
-app.UseSwagger(c =>
-{
-   // c.RouteTemplate = "swagger/{documentName}/swagger.json";
-});
-app.UseSwaggerUI(c=>
-{
-   // c.SwaggerEndpoint("/api/bonus/swagger/v1/swagger.json", "Bonus API V1");
-    c.SwaggerEndpoint("v1/swagger.json", "Bonus API V1");
-    // c.RoutePrefix = "api/bonus/swagger";
-    c.EnableTryItOutByDefault();
-    c.DisplayRequestDuration();
-});
+app.UseAppSwagger();
 
 app.UseHttpLogging();
 app.UseRouting();
@@ -115,11 +102,13 @@ app.MapControllers();
 
 app.ApplyPostgresMigrations();
 
-/*if (BonusService.Program.IsNotAppTest())
+
+if (BonusService.Program.IsNotAppTest())
 {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>().RestartAsync();
-}*/
+    var runner = scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>();
+    await runner.RestartAsync();
+}
 
 app.Run();
 
@@ -147,7 +136,8 @@ namespace BonusService
         public static bool IsAllowDisableAuth() => IsNswagBuild() || IsAppTest();
         public static bool IsAppTest() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable(AppTest)) == false;
         public static bool IsNotAppTest() => !IsAppTest();
-        public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local";
+        public static bool IsLocal() => Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Local"
+            || Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "DevRemote";
         public static bool IsNotLocal() => !IsLocal();
         public static bool IsNswagBuild() => string.IsNullOrEmpty(Environment.GetEnvironmentVariable("NswagGen")) == false;
         public static bool IsNotNswagBuild() => !IsNswagBuild();

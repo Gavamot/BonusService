@@ -41,7 +41,7 @@ public sealed partial class BalanceController : ControllerBase
     /// Начисление бонусных баллов оператором
     /// </summary>
     [HttpPost]
-    [Authorize(Policy = PolicyNames.AccrualManualExecute)]
+    [Authorize(Policy = PolicyNames.BonusServiceExecute)]
     public async Task AccrualManual([FromServices]IMediator mediator, [FromBody][Required]AccrualManualRequestDto request, CancellationToken ct)
     {
         request = request with { UserName = HttpContext.GetUserName() };

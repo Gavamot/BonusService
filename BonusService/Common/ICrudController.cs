@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using BonusService.Auth.Policy;
 using BonusService.Common.Postgres;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common;
@@ -29,24 +31,28 @@ public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudContr
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Policy = PolicyNames.BonusServiceRead)]
     public async Task<TEntity?> GetById([FromRoute][Required]int id, CancellationToken ct)
     {
         return await _rep.GetAsync(id, ct);
     }
 
     [HttpGet]
+    [Authorize(Policy = PolicyNames.BonusServiceRead)]
     public async Task<TEntity[]> GetAll(CancellationToken ct)
     {
         return await _rep.GetAll().ToArrayAsync(ct);
     }
 
     [HttpPost]
+    [Authorize(Policy = PolicyNames.BonusServiceWrite)]
     public async Task<TEntity> Add([Required]TEntity entity, CancellationToken ct)
     {
         return await _rep.AddAsync(entity, ct);
     }
 
     [HttpPatch]
+    [Authorize(Policy = PolicyNames.BonusServiceWrite)]
     public async Task Update([Required]TDto dto, CancellationToken ct)
     {
         var entity = await _rep.GetAsync(dto.Id, ct);
@@ -56,6 +62,7 @@ public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudContr
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = PolicyNames.BonusServiceWrite)]
     public async Task DeleteById([FromRoute][Required]int id, CancellationToken ct)
     {
         await _rep.DeleteAsync(id, ct);

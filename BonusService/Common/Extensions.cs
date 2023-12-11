@@ -6,4 +6,9 @@ public static class Extensions
     {
         return httpContext.User.Claims.FirstOrDefault(x => x.Type == "name")?.Value ?? "";
     }
+
+    public static DateTimeOffset ToDateTimeOffset(this DateOnly dateOnly)
+    {
+        return new DateTimeOffset(dateOnly.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+    }
 }

@@ -1,12 +1,11 @@
-using BonusService.BonusPrograms;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
-using FakeItEasy;
 using FluentAssertions;
 using Hangfire;
+using MongoDB.Driver;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 using BonusProgramHistory = BonusService.Common.Postgres.Entity.BonusProgramHistory;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -25,14 +24,18 @@ public static class BackgroundJobClientExt
 }
 
 
-public class MonthlySumBonusJobTest : BonusTestApi
+public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
 {
     private BonusProgram bonusProgram;
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
-    public MonthlySumBonusJobTest(FakeApplicationFactory<Program> server) : base(server)
+    public MonthlySumBonusJob_1MonthOnly_Test(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1) ?? throw new Exception();
+        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
     }
+
+    private readonly DateTimeOffset bonusIntervalStart = new (2023, 10, 1, 0, 0, 0, new TimeSpan(0));
+    private readonly DateTimeOffset bonusIntervalEnd = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
+    private readonly DateTimeOffset dateOfJobExecution = new(2023, 11, 2, 9, 0, 0, new TimeSpan(0));
 
     private void CheckEmptyHistory(BonusProgramHistory bonusProgramHistory)
     {
@@ -41,7 +44,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
     }
 
-    private void AddUnmatchedSessions()
+    private void AddNoiseSession()
     {
 
         var session = Q.CreateSession(new DateTime(1990, 1, 1));
@@ -57,7 +60,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         var session4 = Q.CreateSession(new DateTime(1990, 1, 1));
         session3.user.chargingClientType = MongoChargingClientType.CompanyEntity;
 
-        var session5 = Q.CreateSession(Q.IntervalMoth1.to.UtcDateTime);
+        var session5 = Q.CreateSession(Q.TimeExtMoth1.to.UtcDateTime);
 
         mongo.Sessions.InsertMany(new []
         {
@@ -85,8 +88,8 @@ public class MonthlySumBonusJobTest : BonusTestApi
 
     private void ValidateBonusProgramHistoryCommonFields(BonusProgramHistory history)
     {
-        history.ExecTimeStart.Should().Be(Q.IntervalMoth1.from.UtcDateTime.AddMonths(-1));
-        history.ExecTimeEnd.Should().Be(Q.IntervalMoth1.from.UtcDateTime);
+        history.ExecTimeStart.Should().Be(bonusIntervalStart);
+        history.ExecTimeEnd.Should().Be(bonusIntervalEnd);
         history.BankId.Should().Be(1);
         history.BonusProgramId.Should().Be(1);
         history.LastUpdated.Should().NotBe(default);
@@ -104,7 +107,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
     public async Task EmptySessions_EmptyResultHistoryAdded()
     {
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
@@ -113,9 +116,9 @@ public class MonthlySumBonusJobTest : BonusTestApi
     [Fact]
     public async Task EmptyCalculationForPeriod_EmptyResultHistoryAdded()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
         postgres.Transactions.Any().Should().BeFalse();
 
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
@@ -126,12 +129,12 @@ public class MonthlySumBonusJobTest : BonusTestApi
     [Fact]
     public async Task EmptyCalculationForPeriodTwiceExecution_EmptyResult2HistoryAdded()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         var job2 = GetService<SpendMoneyBonusJob>();
-        await job2.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job2.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Any().Should().BeFalse();
 
@@ -143,19 +146,20 @@ public class MonthlySumBonusJobTest : BonusTestApi
     [Fact]
     public async Task OnePerson2PayInDifferentTimeByDifferentSum_CalculatedCorrectly()
     {
-        AddUnmatchedSessions();
+        //AddUnmatchedSessions();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
-        MongoSession user1RusAccountSession2 = Q.CreateSession((Q.IntervalMoth1.from + TimeSpan.FromDays(27)).UtcDateTime);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
+        user1RusAccountSession1.operation.calculatedPayment = Q.SumLevel2;
+        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart + TimeSpan.FromDays(27));
         user1RusAccountSession2.operation.calculatedPayment = Q.Sum2000;
         await mongo.Sessions.InsertManyAsync(new []
         {
             user1RusAccountSession1,
             user1RusAccountSession2
         });
-
+        var data = mongo.Sessions.AsQueryable().ToArray();
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         using var scope = CreateScope();
         var newPostgres = scope.GetRequiredService<PostgresDbContext>();
@@ -181,10 +185,10 @@ public class MonthlySumBonusJobTest : BonusTestApi
     [Fact]
     public async Task SessionFromDifferentBunk_OnlyBonusProgramBankCalculated()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
-        MongoSession user1RusAccountSession2 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
+        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel2);
         user1RusAccountSession2.tariff.BankId = Q.BankIdKaz;
         mongo.Sessions.InsertMany(new []
         {
@@ -193,7 +197,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Count().Should().Be(1);
 
@@ -212,12 +216,42 @@ public class MonthlySumBonusJobTest : BonusTestApi
     }
 
     [Fact]
+    public async Task SessionsFrom1Person_FirstLevelCalculated()
+    {
+        AddNoiseSession();
+
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel1);
+        mongo.Sessions.InsertMany(new []
+        {
+            user1RusAccountSession1
+        });
+
+        var job = GetService<SpendMoneyBonusJob>();
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
+
+        postgres.Transactions.Count().Should().Be(1);
+
+        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
+        tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
+        ValidateTransactionCommonFields(tranUser1Rus);
+
+
+        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        bonusProgramHistories.Length.Should().Be(1);
+        var bonusProgramHistory = bonusProgramHistories.First();
+        ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
+        bonusProgramHistory.ClientBalancesCount.Should().Be(1);
+        bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 1 / 100);
+    }
+
+    [Fact]
     public async Task TwoPersonsPayed_CalculatedCorrectly()
     {
-        AddUnmatchedSessions();
+        AddNoiseSession();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
-        MongoSession user2RusAccountSession1 = Q.CreateSession(Q.IntervalMoth1.from.UtcDateTime);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
+        MongoSession user2RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
         user2RusAccountSession1.user.clientLogin = Q.ClientLogin2;
         user2RusAccountSession1.user.clientNodeId = Q.PersonId2;
         user2RusAccountSession1.operation.calculatedPayment = Q.SumLevel1;
@@ -228,7 +262,7 @@ public class MonthlySumBonusJobTest : BonusTestApi
         });
 
         var job = GetService<SpendMoneyBonusJob>();
-        await job.ExecuteAsync(null, bonusProgram, Q.IntervalMoth1.to.UtcDateTime);
+        await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Count().Should().Be(2);
 
