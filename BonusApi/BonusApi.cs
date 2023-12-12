@@ -405,7 +405,8 @@ namespace BonusApi
         /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
         /// </summary>
         /// <remarks>
-        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// LastUpdated - дата транзакции
+        /// <br/>string($date) - дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
         /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
         /// </remarks>
         /// <returns>Success</returns>
@@ -420,7 +421,8 @@ namespace BonusApi
         /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
         /// </summary>
         /// <remarks>
-        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// LastUpdated - дата транзакции
+        /// <br/>string($date) - дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
         /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
         /// </remarks>
         /// <returns>Success</returns>
@@ -1719,6 +1721,90 @@ namespace BonusApi
                         if (status_ == 200)
                         {
                             return;
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByOwnerIdAsync(int ownerId)
+        {
+            return OwnerMaxBonusPayGetByOwnerIdAsync(ownerId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByOwnerIdAsync(int ownerId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (ownerId == null)
+                throw new System.ArgumentNullException("ownerId");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("OwnerMaxBonusPay/GetByOwnerId/{ownerId}");
+            urlBuilder_.Replace("{ownerId}", System.Uri.EscapeDataString(ConvertToString(ownerId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<OwnerMaxBonusPay>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {

@@ -64,8 +64,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static Guid EzsId1 = Guid.Parse("3fa85f64-5717-aaaa-b3fc-2c222f66afa6");
         public readonly static Guid EzsId2 = Guid.Parse("3fa85f61-5717-aaaa-b3fc-2c222f66afa6");
 
-        public readonly static int OwnerId1 = 1;
-        public readonly static int OwnerId2 = 2;
+        public readonly static int OwnerId1 = 2;
+        public readonly static int OwnerId2 = 3;
 
         public const long SumLevel1 = 1_000_00;
         public const long SumLevel2 = 3_000_00;

@@ -25,12 +25,33 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         });
         await postgres.SaveChangesAsync();
 
-        var ow1= await api.OwnerMaxBonusPayGetByIdAsync(Q.OwnerId1);
+        var ow1= await api.OwnerMaxBonusPayGetByIdAsync(1);
         ow1.OwnerId.Should().Be(Q.OwnerId1);
         ow1.MaxBonusPayPercentages.Should().Be(10);
         ow1.Id.Should().BePositive();
 
-        var ow2 = await api.OwnerMaxBonusPayGetByIdAsync(Q.OwnerId2);
+        var ow2 = await api.OwnerMaxBonusPayGetByIdAsync(2);
+        ow2.OwnerId.Should().Be(Q.OwnerId2);
+        ow2.MaxBonusPayPercentages.Should().Be(20);
+        ow2.Id.Should().BePositive();
+    }
+
+    [Fact]
+    public async Task GetByOwnerId()
+    {
+        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        {
+            new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10},
+            new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20}
+        });
+        await postgres.SaveChangesAsync();
+
+        var ow1= await api.OwnerMaxBonusPayGetByOwnerIdAsync(Q.OwnerId1);
+        ow1.OwnerId.Should().Be(Q.OwnerId1);
+        ow1.MaxBonusPayPercentages.Should().Be(10);
+        ow1.Id.Should().BePositive();
+
+        var ow2 = await api.OwnerMaxBonusPayGetByOwnerIdAsync(Q.OwnerId2);
         ow2.OwnerId.Should().Be(Q.OwnerId2);
         ow2.MaxBonusPayPercentages.Should().Be(20);
         ow2.Id.Should().BePositive();

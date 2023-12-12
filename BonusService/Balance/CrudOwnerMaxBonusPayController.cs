@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using BonusService.Auth.Policy;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Riok.Mapperly.Abstractions;
 
 // ReSharper disable once CheckNamespace
@@ -33,11 +35,11 @@ public partial class OwnerByPayMapper : IUpdateMapper<OwnerByPayDto, OwnerMaxBon
 
 public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 {
-    public OwnerByPayRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
+    public OwnerByPayRep(PostgresDbContext postgres, IDateTimeService dateTimeService)
+        : base(postgres, dateTimeService)
     {
 
     }
-
 }
 
 /// <summary>
@@ -48,7 +50,17 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 [Route("[controller]/[action]")]
 public sealed class OwnerMaxBonusPayController : CrudController<OwnerMaxBonusPay, OwnerByPayDto>
 {
-    public OwnerMaxBonusPayController(OwnerByPayRep rep) : base(rep, new OwnerByPayMapper())
+    private readonly PostgresDbContext _postgres;
+    public OwnerMaxBonusPayController(OwnerByPayRep rep, PostgresDbContext postgres) : base(rep, new OwnerByPayMapper())
     {
+        _postgres = postgres;
+
+    }
+
+    [HttpGet("{ownerId:int}")]
+    [Authorize(Policy = PolicyNames.BonusServiceRead)]
+    public async Task<OwnerMaxBonusPay?> GetByOwnerId([FromRoute][Required]int ownerId, CancellationToken ct)
+    {
+        return await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x=> x.OwnerId == ownerId, ct);
     }
 }

@@ -92,7 +92,8 @@ namespace BonusApi
         /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
         /// </summary>
         /// <remarks>
-        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// LastUpdated - дата транзакции
+        /// <br/>string($date) - дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
         /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
         /// </remarks>
         /// <returns>Success</returns>
@@ -104,7 +105,8 @@ namespace BonusApi
         /// Получение истории начисления/списания бонусов (Auth policies: PersonRead)
         /// </summary>
         /// <remarks>
-        /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+        /// LastUpdated - дата транзакции
+        /// <br/>string($date) - дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
         /// <br/>Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
         /// </remarks>
         /// <returns>Success</returns>
@@ -337,6 +339,21 @@ namespace BonusApi
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task BonusProgramRestartJobsAsync(System.Threading.CancellationToken cancellationToken);
+
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByOwnerIdAsync(int ownerId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <summary>
+        /// (Auth policies: BonusServiceRead)
+        /// </summary>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<OwnerMaxBonusPay> OwnerMaxBonusPayGetByOwnerIdAsync(int ownerId, System.Threading.CancellationToken cancellationToken);
 
         /// <summary>
         /// (Auth policies: BonusServiceRead)
