@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 #pragma warning disable CS8618
 namespace BonusService.Common.Postgres.Entity;
 
@@ -17,7 +18,8 @@ public class TransactionHistory
     public long? BonusBase { get; set; }
     public long BonusSum { get; set; }
     public int? BonusProgramId { get; set; }
-    //public virtual BonusProgram? Program { get; set; }
+    [JsonIgnore]
+    public BonusProgram? Program { get; set; }
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>

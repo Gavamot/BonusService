@@ -14,21 +14,41 @@ using SwaggerExampleAttrLib;
 // ReSharper disable once CheckNamespace
 namespace BonusService.Balance.BalanceTransactions;
 
-public record BalanceTransactionResponse(int Count, BalanceTransactionDto [] Items);
-
-public record class BalanceTransactionDto
-{
-    public DateTimeOffset Date { get; set; }
-    public long BonusSum { get; set; }
-    public string Description { get; set; } = "";
-}
-
-[Mapper]
-public partial class BalanceTransactionDtoMapper
-{
-    [MapProperty(nameof(Transaction.LastUpdated), nameof(BalanceTransactionDto.Date))]
-    public partial BalanceTransactionDto ToDto(Transaction requestDto);
-}
+public record BalanceTransactionResponse(int Count, Transaction [] Items);
+//public record BalanceTransactionResponse(int Count, BalanceTransactionDto [] Items);
+//
+// public record class BalanceTransactionDto
+// {
+//     public long Id { get; set; }
+//     public DateTimeOffset Date { get; set; }
+//     public long BonusSum { get; set; }
+//     public string Description { get; set; } = "";
+//     public string TransactionId { get; set; } = "";
+//     public Guid? EzsId { get; set; }
+//     public int? BonusProgramId { get; set; }
+//     public TransactionType Type { get; set; }
+//     public BonusProgramType? BonusProgramType { get; set; }
+//     public string? BonusProgramName { get; set; }
+//     public long? BonusBase { get; set; }
+//     public string? UserName { get; set; }
+//     public int? OwnerId { get; set; }
+// }
+//
+// [Mapper]
+// public partial class BalanceTransactionDtoMapper
+// {
+//     public BalanceTransactionDto ToDto(Transaction transaction)
+//     {
+//         // custom before map code...
+//         var dto = InnerToDto(transaction);
+//         dto.BonusProgramName = transaction.BonusProgram?.Name ?? "";
+//         dto.BonusProgramType = transaction.BonusProgram?.BonusProgramType;
+//         return dto;
+//     }
+//
+//     [MapProperty(nameof(Transaction.LastUpdated), nameof(BalanceTransactionDto.Date))]
+//     private partial BalanceTransactionDto InnerToDto(Transaction transaction);
+// }
 
 public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<BalanceTransactionRequest>
 {
@@ -66,11 +86,13 @@ public sealed class GetBalanceTransactionCommand : IRequestHandler<BalanceTransa
             && x.LastUpdated < end);
 
         var count = await dbQuery.CountAsync(ct);
-        var mapper = new BalanceTransactionDtoMapper();
+        //var mapper = new BalanceTransactionDtoMapper();
+
         var transactions = await dbQuery
             .Skip((request.Page - 1) * request.Limit)
             .Take(request.Limit)
-            .Select(x=> mapper.ToDto(x))
+            //.Include(x=>x.BonusProgram)
+            //.Select(x=> mapper.ToDto(x))
             .AsNoTracking()
             .ToArrayAsync(ct);
 
@@ -97,7 +119,8 @@ public sealed class BalanceController : ControllerBase
     /// Получение истории начисления/списания бонусов
     /// </summary>
     /// <remarks>
-    /// string($date) - Это только дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
+    /// LastUpdated - дата транзакции
+    /// string($date) - дата необходимо передавать в формате yyyy-MM-dd примеры: 2023-12-22 , 2023-01-02
     /// Крайняя дата не влючается в выборку например чтобы получить данные весь 1 день нужно передать { DateFrom :2023-12-22, DateTo : 2023-12-23 }
     /// </remarks>
     [HttpGet]

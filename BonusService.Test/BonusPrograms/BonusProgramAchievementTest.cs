@@ -22,7 +22,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     public async Task AnotherDateNotCounting_OnlySumCurrentMonth()
     {
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {
@@ -63,7 +63,7 @@ public class BonusProgramAchievementTest : BonusTestApi
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
         var sum = curLevel.Condition + 1000;
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {
@@ -90,7 +90,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     {
         var curLevel = bonus.ProgramLevels.OrderBy(x=> x.Level).Last();
 
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {
@@ -163,7 +163,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     {
         var programLevels = bonus.ProgramLevels.OrderBy(x=>x.Level).ToArray();
         var curLevel = programLevels[2];
-        mongo.Sessions.InsertMany(new []
+        await mongo.Sessions.InsertManyAsync(new []
         {
             new MongoSession()
             {

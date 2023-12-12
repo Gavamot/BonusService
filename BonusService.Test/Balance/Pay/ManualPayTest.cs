@@ -3,6 +3,7 @@ using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using TransactionType = BonusService.Common.Postgres.Entity.TransactionType;
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace BonusService.Test;

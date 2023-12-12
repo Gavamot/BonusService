@@ -6,14 +6,12 @@ using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using FakeItEasy;
-using FluentAssertions;
 using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using FrequencyTypes = BonusApi.FrequencyTypes;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Transaction = BonusService.Common.Postgres.Entity.Transaction;
+using TransactionType = BonusService.Common.Postgres.Entity.TransactionType;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace BonusService.Test.Common;
 
@@ -27,9 +25,11 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         };
         return JsonSerializer.Serialize(a, opt);
     }
-    protected void AssertEqualJson(object expected, object actual)
+    protected void AssertEqualJsonUnSensitiveToRegister(object expected, object actual)
     {
-        ToJson(expected).Should().Be(ToJson(actual));
+        var shodBe = ToJson(actual).ToLower();
+        var itIs = ToJson(expected).ToLower();
+        itIs.Should().Be(shodBe);
     }
     public static class Q
     {

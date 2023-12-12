@@ -1,5 +1,9 @@
 #nullable enable
 
+using System.Runtime.Serialization;
+using BonusService.Common.Swagger;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
 #pragma warning disable CS8618
 namespace BonusService.Common.Postgres.Entity;
 
@@ -42,7 +46,11 @@ public class Transaction : IDocumentEntity, IBalanceKey
     public long? BonusBase { get; set; }
     public long BonusSum { get; set; }
     public int? BonusProgramId { get; set; }
-    //public virtual BonusProgram? Program { get; set; }
+
+    [JsonIgnore]
+    [SwaggerSchema(ReadOnly = true)]
+    [SwaggerExclude]
+    public BonusProgram? BonusProgram { get; set; } = null;
     /// <summary>
     /// Id оператора который произвел начисления в случаи если null то начисленно автоматом
     /// </summary>
