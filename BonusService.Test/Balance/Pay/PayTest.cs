@@ -139,7 +139,7 @@ public class PayTest : BonusTestApi
             MaxBonusPayPercentages = 0
         }, new ()
             {
-                OwnerId = 3,
+                OwnerId =  Q.OwnerId3,
                 MaxBonusPayPercentages = 50
             });
 
@@ -184,7 +184,7 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = PercentagesZ
             }, new()
             {
-                OwnerId = 3,
+                OwnerId =  Q.OwnerId3,
                 MaxBonusPayPercentages = 50
             });
 
@@ -230,7 +230,7 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = PercentagesZ
             }, new()
             {
-                OwnerId = 3,
+                OwnerId = Q.OwnerId3,
                 MaxBonusPayPercentages = 50
             });
 

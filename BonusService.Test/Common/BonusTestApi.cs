@@ -66,6 +66,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public readonly static int OwnerId1 = 2;
         public readonly static int OwnerId2 = 3;
+        public readonly static int OwnerId3 = 4;
 
         public const long SumLevel1 = 1_000_00;
         public const long SumLevel2 = 3_000_00;
