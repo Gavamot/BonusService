@@ -19,8 +19,9 @@ Parser.Default.ParseArguments<Options>(args)
         {
             try
             {
-                string personId = line.Split(';')[0];
-                long sum = long.Parse(line.Split(';')[1]);
+                var ln = line.Split(',');
+                string personId = ln[0];
+                long sum = long.Parse(ln[1]);
                 if (sum == 0)
                 {
                     throw new Exception($"Нет бонусов");
