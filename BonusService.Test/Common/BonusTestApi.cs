@@ -83,7 +83,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static string PersonId1 = "5fa85f64-5717-4562-b3fc-2c963f66afa6";
         public readonly static string PersonId2 = "6fa85f64-5717-4562-b3fc-2c963f66afa7";
 
-
+        public const int BonusProgramId1 = 11;
+        public const int BonusProgramId2 = 22;
         public const int BankIdRub = 1;
         public const  int BankIdKaz = 7;
         public static readonly int [] AllBanks = new [] { BankIdRub, BankIdKaz };
