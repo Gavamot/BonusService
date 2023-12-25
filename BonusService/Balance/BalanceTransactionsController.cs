@@ -9,7 +9,6 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Riok.Mapperly.Abstractions;
 using SwaggerExampleAttrLib;
 // ReSharper disable once CheckNamespace
 namespace BonusService.Balance.BalanceTransactions;

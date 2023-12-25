@@ -29,11 +29,11 @@ public enum BonusProgramType
     /// </summary>
     ChargedByCapacity,
     /// <summary>
-    /// потрачено Х денег
+    /// зарядка на Х разных станциях
     /// </summary>
     ChargedByStations,
     /// <summary>
-    /// зарядка на Х разных станциях
+    /// потрачено Х денег
     /// </summary>
     SpendMoney,
     /// <summary>

@@ -106,12 +106,20 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
 
         foreach (var bonusProgram in bonusPrograms)
         {
-            var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, now);
-            items.Add(new()
+            try
             {
-                BonusProgram  = mapper.ToDto(bonusProgram),
-                CurrentSum = sum,
-            });
+                var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, now);
+                items.Add(new()
+                {
+                    BonusProgram = mapper.ToDto(bonusProgram),
+                    CurrentSum = sum,
+                });
+            }
+            catch (NotImplementedException)
+            {
+                // Пока реализованны не все варианты
+            }
+
         }
         return new BonusProgramAchievementResponse(items.ToArray());
     }
