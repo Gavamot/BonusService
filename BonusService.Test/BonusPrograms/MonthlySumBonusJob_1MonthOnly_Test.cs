@@ -34,9 +34,9 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
         bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
     }
 
-    private readonly DateTimeOffset bonusIntervalStart = new (2023, 10, 1, 0, 0, 0, new TimeSpan(0));
-    private readonly DateTimeOffset bonusIntervalEnd = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
-    private readonly DateTimeOffset dateOfJobExecution = new(2023, 11, 2, 9, 0, 0, new TimeSpan(0));
+    private readonly DateTimeOffset bonusIntervalStart = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
+    private readonly DateTimeOffset bonusIntervalEnd = new (2023, 12, 1, 0, 0, 0, new TimeSpan(0));
+    private readonly DateTimeOffset dateOfJobExecution = new(2023, 12, 2, 9, 0, 0, new TimeSpan(0));
 
     private void CheckEmptyHistory(BonusProgramHistory bonusProgramHistory)
     {
