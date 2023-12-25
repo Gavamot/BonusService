@@ -45,7 +45,7 @@ public class PostgresDbContext : DbContext
     }
 
     public IQueryable<BonusProgram> GetActiveBonusPrograms(DateTimeOffset now) => GetBonusPrograms()
-        .Where(x => x.DateStart >= now && (x.DateStop?? DateTimeOffset.MaxValue) < now);
+        .Where(x => x.DateStart <= now && (x.DateStop?? DateTimeOffset.MaxValue) > now);
 
     public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {

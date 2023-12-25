@@ -178,6 +178,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         hangfireDb = scope.GetRequiredService<HangfireDbContext>();
         hangfireDb.Database.Migrate();
 
+
     }
 
     protected void InitDatabases(FakeApplicationFactory<Program> server)
