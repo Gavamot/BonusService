@@ -2,6 +2,7 @@
 using BonusService.Common.Postgres.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using MongoDB.Driver.Linq;
 namespace BonusService.Common.Postgres;
 
 // dotnet ef migrations add InitialCreate --context PostgresDbContext
@@ -42,6 +43,9 @@ public class PostgresDbContext : DbContext
             .Include(x=> x.ProgramLevels)
             .AsNoTracking();
     }
+
+    public IQueryable<BonusProgram> GetActiveBonusPrograms(DateTimeOffset now) => GetBonusPrograms()
+        .Where(x => x.DateStart >= now && (x.DateStop?? DateTimeOffset.MaxValue) < now);
 
     public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {

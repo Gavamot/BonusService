@@ -115,4 +115,13 @@ public class BonusProgramCrudTest : BonusTestApi
         expected.IsDeleted.Should().Be(true);
         db.BonusPrograms.Count().Should().Be(1);
     }
+
+    [Fact]
+    public async Task NotShowDeletedInGetAll()
+    {
+        postgres.BonusPrograms.First().IsDeleted.Should().Be(false);
+        await api.BonusProgramDeleteByIdAsync(1);
+        var bonusPrograms = await api.BonusProgramGetAllAsync();
+        bonusPrograms.Should().BeEmpty();
+    }
 }

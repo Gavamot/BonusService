@@ -33,8 +33,6 @@ public class BonusProgramRep : DbEntityRep<BonusProgram>
     }
 }
 
-
-
 [ApiController]
 [Authorize]
 [Route("[controller]/[action]")]

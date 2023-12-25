@@ -56,7 +56,7 @@ public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudContr
     public async Task Update([Required]TDto dto, CancellationToken ct)
     {
         var entity = await _rep.GetAsync(dto.Id, ct);
-        if (entity == null || (entity as IDeletable)?.IsDeleted == true) throw new CrudNotFountException();
+        if (entity == null || (entity as IDeletable)?.IsDeleted == true) throw new CrudNotFoundException();
         _mapper.Map(dto, entity);
         await _rep.UpdateAsync(entity, ct);
     }

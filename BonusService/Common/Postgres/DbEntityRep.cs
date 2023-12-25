@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver.Linq;
 namespace BonusService.Common.Postgres;
 
 public interface IDbEntityRep<T>
@@ -17,7 +18,7 @@ public class CrudException : Exception
 
 }
 
-public class CrudNotFountException : CrudException
+public class CrudNotFoundException : CrudException
 {
 
 }
@@ -90,6 +91,11 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
     }
     public virtual IQueryable<T> GetAll()
     {
-        return _postgres.Set<T>().AsNoTracking();
+        var res = _postgres.Set<T>().AsNoTracking();
+        if (typeof(T).GetInterface(nameof(IDeletable)) != null)
+        {
+            res  = ((IQueryable<IDeletable>)res).Where(x => x.IsDeleted == false).Cast<T>();
+        }
+        return res;
     }
 }

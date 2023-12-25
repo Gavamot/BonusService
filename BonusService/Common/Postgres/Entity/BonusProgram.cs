@@ -25,7 +25,7 @@ public enum FrequencyTypes
 public enum BonusProgramType
 {
     /// <summary>
-    /// заряжено Х кВт
+    /// заряжено Х Вт
     /// </summary>
     ChargedByCapacity,
     /// <summary>
@@ -69,4 +69,7 @@ public class BonusProgram : ICatalogEntity, IDeletable
     [SwaggerSchema(ReadOnly = true, Nullable = true)]
     [SwaggerExclude]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
+
+    public bool IsActive(DateTimeOffset now) => (DateStart <= now)
+        && ((DateStop ?? DateTimeOffset.MaxValue) > now);
 }

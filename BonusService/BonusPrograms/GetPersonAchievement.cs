@@ -100,7 +100,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     public async ValueTask<BonusProgramAchievementResponse> Handle(BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var now = _dateTimeService.GetNowUtc();
-        var bonusPrograms = await _postgres.GetBonusPrograms().ToArrayAsync(ct);
+        var bonusPrograms = await _postgres.GetActiveBonusPrograms(now).ToArrayAsync(ct);
         List<BonusProgramAchievementResponseItem> items = new();
         var mapper = new BonusProgramDtoMapper();
 

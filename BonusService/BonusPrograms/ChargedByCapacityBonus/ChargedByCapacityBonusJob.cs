@@ -1,30 +1,30 @@
+using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using Hangfire.Console;
 using MongoDB.Driver;
-namespace BonusService.BonusPrograms.SpendMoneyBonus;
-
+namespace BonusService.BonusPrograms.ChargedByCapacityBonus;
 
 /// <summary>
 /// Начисление бонувов каждый календарный месяц(с 1 по последние число) по уровням от общей суммы затрат персоны
-/// https://rnd.sitronics.com/jira/browse/EZSPLAT-244
+/// https://rnd.sitronics.com/jira/browse/EZSPLAT-411
 /// </summary>
-public class SpendMoneyBonusJob : AbstractBonusProgramJob
+public class ChargedByCapacityBonusJob : AbstractBonusProgramJob
 {
     private readonly MongoDbContext _mongo;
     protected override BonusProgramType BonusProgramType => BonusProgramType.SpendMoney;
-    public SpendMoneyBonusJob(
+    public ChargedByCapacityBonusJob(
         MongoDbContext mongo,
         PostgresDbContext postgres,
         IDateTimeService dateTimeService,
-        ILogger<SpendMoneyBonusJob> logger) : base(logger, postgres, dateTimeService)
+        ILogger<ChargedByCapacityBonusJob> logger) : base(logger, postgres, dateTimeService)
     {
         _mongo = mongo;
     }
 
     private string GenerateTransactionId(int bonusProgram,  string PersonId,int bankId, DateTimeExt period)
-        => $"{bonusProgram}_{PersonId}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
+        => $"{bonusProgram}_{PersonId:N}_{bankId}_{period.from:yyyy-M-d}-{period.to:yyyy-M-d}";
 
     private (int percentages, long sum) CalculateBonusSum(long totalPay, BonusProgram bonusProgram)
     {
