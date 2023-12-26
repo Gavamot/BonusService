@@ -1,12 +1,19 @@
 using BonusService.Common;
+using BonusService.Common.Postgres.Entity;
 using BonusService.Test.Common;
 using FakeItEasy;
-using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
+using Riok.Mapperly.Abstractions;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 #pragma warning disable CS8604 // Possible null reference argument.
 namespace BonusService.Test.BonusPrograms;
+
+[Mapper]
+public sealed partial class BonusProgramDtoMapper
+{
+    public partial BonusApi.BonusProgram FromDto(BonusProgram requestDto);
+}
 
 public class BonusProgramAchievementTest : BonusTestApi
 {
@@ -17,6 +24,132 @@ public class BonusProgramAchievementTest : BonusTestApi
             .Include(x=>x.BonusProgramHistory)
             .First();
     }
+
+    [Fact]
+    public async Task ActiveProgramAndInactive_OnlyActiveProgramShows()
+    {
+        var program = BonusProgramSeed.Get();
+        program.Name = "NEW";
+        program.BonusProgramType = BonusProgramType.SpendMoney;
+        program.DateStart = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        program.DateStop = new DateTimeOffset(2001, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        var dto = new BonusProgramDtoMapper().FromDto(program);
+        var newProgram = await api.BonusProgramAddAsync(dto);
+        newProgram.Id.Should().NotBeNull();
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
+        bonusPrograms.Items.Count.Should().Be(1);
+    }
+
+    private const string ChargedByCapacityBonusProgramName = "NEW";
+    private async Task AddActiveChargedByCapacityBonusProgram()
+    {
+        var program = BonusProgramSeed.Get();
+        program.Name = ChargedByCapacityBonusProgramName;
+        program.BonusProgramType = BonusProgramType.ChargedByCapacity;
+        program.DateStart =  Q.IntervalMoth1Start;
+        program.DateStop =  Q.IntervalMoth1Start.AddMonths(3);
+        var dto = new BonusProgramDtoMapper().FromDto(program);
+        var newProgram = await api.BonusProgramAddAsync(dto);
+    }
+    [Fact]
+    public async Task TwoActiveProgram_NoSessions_EmptyResult()
+    {
+        await AddActiveChargedByCapacityBonusProgram();
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
+         bonusPrograms.Items.Count.Should().Be(2);
+        foreach (var response in bonusPrograms.Items)
+        {
+            response.CurrentSum.Should().Be(0);
+        }
+    }
+
+    [Fact]
+    public async Task ChargedByCapacityBonusAndSpendMoneyProgram_CalculationForCharged()
+    {
+        await postgres.SaveChangesAsync();
+        await AddActiveChargedByCapacityBonusProgram();
+        var sessions = new []
+        {
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 1000, calculatedConsume = 2 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.AddHours(1).UtcDateTime,
+            },
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 3000, calculatedConsume = 3 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.AddHours(3).UtcDateTime,
+            },
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 2000, calculatedConsume = 4 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.UtcDateTime,
+            }
+        };
+        await mongo.Sessions.InsertManyAsync(sessions);
+
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
+        var actual = bonusPrograms.Items.First(x=> x.BonusProgram.Name == ChargedByCapacityBonusProgramName);
+        var expected = sessions.Sum(x => x.operation.calculatedConsume) ?? 0;
+        actual.CurrentSum.Should().Be(expected);
+
+        actual = bonusPrograms.Items.First(x=> x.BonusProgram.Name != ChargedByCapacityBonusProgramName);
+        expected = sessions.Sum(x => x.operation.calculatedPayment) ?? 0;
+        actual.CurrentSum.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task ChargedByCapacityBonusProgram_CalculationForCharged()
+    {
+        postgres.BonusPrograms.RemoveRange(postgres.BonusPrograms.ToArray());
+        await postgres.SaveChangesAsync();
+        await AddActiveChargedByCapacityBonusProgram();
+        var sessions = new []
+        {
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 1000, calculatedConsume = 2 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.AddHours(1).UtcDateTime,
+            },
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 3000, calculatedConsume = 3 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.AddHours(3).UtcDateTime,
+            },
+            new MongoSession()
+            {
+                operation = new MongoOperation() { calculatedPayment = 2000, calculatedConsume = 4 },
+                status = 7,
+                tariff = new MongoTariff() { BankId = 1 },
+                user = new MongoUser() { clientLogin = "Vasia", chargingClientType = 0, clientNodeId = Q.PersonId1 },
+                chargeEndTime = Q.IntervalMoth1Start.UtcDateTime,
+            }
+        };
+        await mongo.Sessions.InsertManyAsync(sessions);
+
+        var bonusPrograms = await api.BonusProgramGetPersonAchievementAsync(Q.PersonId1);
+        var actual = bonusPrograms.Items.First();
+
+        var expected = sessions.Sum(x => x.operation.calculatedConsume) ?? 0;
+        actual.CurrentSum.Should().Be(expected);
+
+    }
+
 
     [Fact]
     public async Task AnotherDateNotCounting_OnlySumCurrentMonth()
@@ -249,7 +382,7 @@ public class BonusProgramAchievementTest : BonusTestApi
         bonusPrograms.Should().NotBeNull();
     }
 
-[Fact]
+    [Fact]
     public async Task ZeroAchievement_ReturnLevels0and1()
     {
         await mongo.Sessions.InsertOneAsync(new MongoSession()

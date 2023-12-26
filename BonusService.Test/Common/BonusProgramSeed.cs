@@ -30,7 +30,7 @@ public static class BonusProgramSeed
             Description = "Начиляется 1 числа каждого месяца изходя из общей суммы затрат за предыдущий месяц",
             BonusProgramType  = BonusProgramType.SpendMoney,
             DateStart = new DateTimeOffset(2023, 11, 1, 0,0, 0, TimeSpan.Zero),
-            DateStop = null,
+            DateStop = DateTimeOffset.MaxValue,
             IsDeleted = false,
             ExecutionCron = "0 9 1 * *",
             LastUpdated = lastUpdated,

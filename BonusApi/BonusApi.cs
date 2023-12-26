@@ -1527,7 +1527,7 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body)
+        public virtual Task<BonusProgram> BonusProgramAddAsync(BonusProgram body)
         {
             return BonusProgramAddAsync(body, System.Threading.CancellationToken.None);
         }

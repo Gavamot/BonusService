@@ -45,7 +45,7 @@ public class PostgresDbContext : DbContext
     }
 
     public IQueryable<BonusProgram> GetActiveBonusPrograms(DateTimeOffset now) => GetBonusPrograms()
-        .Where(x => x.DateStart <= now && (x.DateStop?? DateTimeOffset.MaxValue) > now);
+        .Where(x => x.DateStart <= now && x.DateStop > now);
 
     public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {
@@ -67,6 +67,9 @@ public class PostgresDbContext : DbContext
     {
         builder.Entity<BonusProgram>().HasMany(x=>x.ProgramLevels);
         builder.Entity<BonusProgram>().HasMany(x=>x.BonusProgramHistory);
+        builder.Entity<BonusProgram>()
+            .Property(x=>x.DateStop)
+            .HasDefaultValue(DateTimeOffset.MaxValue);
 
         builder.Entity<BonusProgramLevel>().HasOne(x=>x.BonusProgram);
         builder.Entity<BonusProgramHistory>().HasOne(x => x.BonusProgram);

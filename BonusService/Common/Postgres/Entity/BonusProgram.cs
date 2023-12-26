@@ -49,7 +49,7 @@ public class BonusProgram : ICatalogEntity, IDeletable
     public BonusProgramType BonusProgramType { get; set; }
     public string Description { get; set; }
     public DateTimeOffset DateStart { get; set; }
-    public DateTimeOffset? DateStop { get; set; }
+    public DateTimeOffset DateStop { get; set; } = DateTimeOffset.MaxValue;
     public int BankId { get; set; }
     public string ExecutionCron { get; set; }
     public FrequencyTypes FrequencyType { get; set; }
@@ -70,6 +70,6 @@ public class BonusProgram : ICatalogEntity, IDeletable
     [SwaggerExclude]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
 
-    public bool IsActive(DateTimeOffset now) => (DateStart <= now)
-        && ((DateStop ?? DateTimeOffset.MaxValue) > now);
+    public bool IsActive(DateTimeOffset now) => DateStart <= now && DateStop > now;
+    public bool IsActive(Interval now) => IsActive(now.from) || IsActive(now.to);
 }

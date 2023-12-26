@@ -300,7 +300,7 @@ namespace BonusApi
         /// </summary>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BonusProgram> BonusProgramAddAsync(BonusProgram body);
+        Task<BonusProgram> BonusProgramAddAsync(BonusProgram body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>

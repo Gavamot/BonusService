@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using BonusService.Auth.Policy;
+using BonusService.BonusPrograms.ChargedByCapacityBonus;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -34,7 +35,7 @@ public sealed class BonusProgramAchievementDto
     public BonusProgramType BonusProgramType { get; set; }
     public string Description { get; set; }
     public DateTimeOffset DateStart { get; set; }
-    public DateTimeOffset? DateStop { get; set; }
+    public DateTimeOffset DateStop { get; set; } = DateTimeOffset.MaxValue;
     public int BankId { get; set; }
     public string ExecutionCron { get; set; }
     public FrequencyTypes FrequencyType { get; set; }
@@ -86,16 +87,13 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         _dateTimeService = dateTimeService;
     }
 
-
-    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, DateTimeOffset now)
-    {
-        var interval = Interval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
-        switch (bonusProgram.BonusProgramType)
+    private ValueTask<long> CalculateAchievementSumAsync(string personId, BonusProgram bonusProgram, Interval interval) =>
+        bonusProgram.BonusProgramType switch
         {
-            case BonusProgramType.SpendMoney: return _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId));
-            default: throw new NotImplementedException();
-        }
-    }
+            BonusProgramType.SpendMoney => _mediator.Send(new SpendMoneyBonusAchievementRequest(personId, interval, bonusProgram.BankId)),
+            BonusProgramType.ChargedByCapacity => _mediator.Send(new ChargedByCapacityAchievementRequest(personId, interval, bonusProgram.BankId)),
+            _ => throw new NotImplementedException()
+        };
 
     public async ValueTask<BonusProgramAchievementResponse> Handle(BonusProgramAchievementRequest request, CancellationToken ct)
     {
@@ -108,7 +106,9 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
         {
             try
             {
-                var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, now);
+                var interval = Interval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+                if(bonusProgram.IsActive(interval) == false) continue;
+                var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, interval);
                 items.Add(new()
                 {
                     BonusProgram = mapper.ToDto(bonusProgram),

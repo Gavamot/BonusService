@@ -4,13 +4,10 @@ using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using Hangfire;
-using Hangfire.Server;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
-namespace BonusService.BonusPrograms.ExecuteBonusProgramJob;
+namespace BonusService.BonusPrograms;
 
 public sealed class ExecuteBonusProgramJobRequestValidator : AbstractValidator<ExecuteBonusProgramJobRequest>
 {

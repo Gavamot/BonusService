@@ -24,6 +24,8 @@ public static class SwaggerExt
         });
     }
 
+
+
     public static void AddAppSwagger(this IServiceCollection services)
     {
         if (Program.IsAppTest()) return;
@@ -37,7 +39,14 @@ public static class SwaggerExt
             c =>
             {
                 c.EnableAnnotations();
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo {
+                    Title = "Bonus API",
+                    Version = "v1",
+                    Description = string.Join("<br />",
+                            "- При работе с интервалами сервис работает так start <= date < end",
+                            "- Начисления по бонусным программа производится за предыдущие переоды",
+                            "- Показ достижений по бонусным программам за интревал от начало текущего периода по конец текущего периода")
+                });
                 c.SchemaFilter<SwaggerExcludeFilter>();
 
                 c.UseDateOnlyTimeOnlyStringConverters();
