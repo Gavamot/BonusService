@@ -1,19 +1,19 @@
 using BonusService.Common.Postgres.Entity;
 namespace BonusService.Common;
 
-public record DateTimeExt
+public record Interval
 {
     public readonly DateTimeOffset from;
     public readonly DateTimeOffset to;
 
-    public DateTimeExt(DateTimeOffset from, DateTimeOffset to)
+    public Interval(DateTimeOffset from, DateTimeOffset to)
     {
         if (from > to) throw new ArgumentException();
         this.from = from;
         this.to = to;
     }
 
-    public static DateTimeExt GetFromNowToFutureDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
+    public static Interval GetFromNowToFutureDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
     {
         switch (frequencyType)
         {
@@ -25,7 +25,7 @@ public record DateTimeExt
     }
 
 
-    public static DateTimeExt GetPrevToNowDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
+    public static Interval GetPrevToNowDateInterval(FrequencyTypes frequencyType, int frequencyValue, DateTimeOffset now)
     {
         switch (frequencyType)
         {
@@ -56,45 +56,45 @@ public static class DateTimeExtensions
         return new DateTimeOffset(dt.Year, dt.Month, 1, 0, 0, 0, dt.Offset);
     }
 
-    public static DateTimeExt GetFromNowToNextDays(this DateTimeOffset now, int frequencyValue = 1)
+    public static Interval GetFromNowToNextDays(this DateTimeOffset now, int frequencyValue = 1)
     {
         var start = now.StartOfDay();
         var end = start.AddDays(frequencyValue);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 
-    public  static DateTimeExt GetFromNowToNextWeeks(this DateTimeOffset now, int frequencyValue = 1)
+    public  static Interval GetFromNowToNextWeeks(this DateTimeOffset now, int frequencyValue = 1)
     {
         var start =  now.StartOfWeek();
         var end = start.AddDays(frequencyValue * 7);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 
-    public  static DateTimeExt GetFromNowToNextMonths(this DateTimeOffset now, int frequencyValue = 1)
+    public  static Interval GetFromNowToNextMonths(this DateTimeOffset now, int frequencyValue = 1)
     {
         var start = now.StartOfMonth();
         var end =  start.AddMonths(frequencyValue);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 
-    public static DateTimeExt GetFromPrevDaysToNow(this DateTimeOffset now, int frequencyValue = 1)
+    public static Interval GetFromPrevDaysToNow(this DateTimeOffset now, int frequencyValue = 1)
     {
         var end = now.StartOfDay();
         var start = end.AddDays(frequencyValue * -1);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 
-    public static DateTimeExt GetFromPrevToNowWeeks(this DateTimeOffset now, int frequencyValue = 1)
+    public static Interval GetFromPrevToNowWeeks(this DateTimeOffset now, int frequencyValue = 1)
     {
         var end = now.StartOfWeek();
         var start = end.AddDays(frequencyValue * -7);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 
-    public static DateTimeExt GetFromPrevToNowMonths(this DateTimeOffset now, int frequencyValue = 1)
+    public static Interval GetFromPrevToNowMonths(this DateTimeOffset now, int frequencyValue = 1)
     {
         var end = now.StartOfMonth();
         var start = end.AddMonths(frequencyValue * -1);
-        return new DateTimeExt(start, end);
+        return new Interval(start, end);
     }
 }

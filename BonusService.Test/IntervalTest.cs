@@ -2,7 +2,7 @@ using BonusService.Common;
 using BonusService.Common.Postgres.Entity;
 namespace BonusService.Test;
 
-public class DateTimeExtTest
+public class IntervalTest
 {
     private DateTimeOffset date1 = new (2010, 2, 9, 1, 0, 0, TimeSpan.Zero);
     private DateTimeOffset date1StartOfMonth = new (2010, 2, 1, 0, 0, 0, TimeSpan.Zero);
@@ -14,7 +14,7 @@ public class DateTimeExtTest
     {
         Assert.Throws<ArgumentException>(() =>
         {
-            new DateTimeExt(date1, date1.AddHours(-1));
+            new Interval(date1, date1.AddHours(-1));
         });
     }
 
@@ -24,7 +24,7 @@ public class DateTimeExtTest
     [InlineData(23)]
     public void GetFromNowToFutureDateInterval_Moths(int frequency)
     {
-        var interval = DateTimeExt.GetFromNowToFutureDateInterval(FrequencyTypes.Month, frequency, date1);
+        var interval = Interval.GetFromNowToFutureDateInterval(FrequencyTypes.Month, frequency, date1);
         interval.from.Should().Be(date1StartOfMonth);
         interval.to.Should().Be(date1StartOfMonth.AddMonths(frequency));
     }
@@ -35,7 +35,7 @@ public class DateTimeExtTest
     [InlineData(23)]
     public void GetFromPrevMonthsToNowDateInterval_Moths(int frequency)
     {
-        var interval = DateTimeExt.GetPrevToNowDateInterval(FrequencyTypes.Month, frequency, date1);
+        var interval = Interval.GetPrevToNowDateInterval(FrequencyTypes.Month, frequency, date1);
         interval.from.Should().Be(date1StartOfMonth.AddMonths(frequency * -1));
         interval.to.Should().Be(date1StartOfMonth);
     }
@@ -48,7 +48,7 @@ public class DateTimeExtTest
     public void GetFromPrevToNowDateInterval_Days(int frequency)
     {
 
-        var interval = DateTimeExt.GetPrevToNowDateInterval(FrequencyTypes.Day, frequency, date1);
+        var interval = Interval.GetPrevToNowDateInterval(FrequencyTypes.Day, frequency, date1);
         interval.from.Should().Be(date1StartOfDay.AddDays(frequency * -1));
         interval.to.Should().Be(date1StartOfDay);
     }
@@ -60,7 +60,7 @@ public class DateTimeExtTest
     public void  GetFromNowToFutureDateInterval_Days(int frequency)
     {
 
-        var interval = DateTimeExt.GetFromNowToFutureDateInterval(FrequencyTypes.Day, frequency, date1);
+        var interval = Interval.GetFromNowToFutureDateInterval(FrequencyTypes.Day, frequency, date1);
         interval.from.Should().Be(date1StartOfDay);
         interval.to.Should().Be(date1StartOfDay.AddDays(frequency));
     }
@@ -72,7 +72,7 @@ public class DateTimeExtTest
     public void GetFromPrevToNowDateInterval_Weeks(int frequency)
     {
 
-        var interval = DateTimeExt.GetPrevToNowDateInterval(FrequencyTypes.Week, frequency, date1);
+        var interval = Interval.GetPrevToNowDateInterval(FrequencyTypes.Week, frequency, date1);
         interval.from.Should().Be(date1StartOfWeek.AddDays(frequency * -7));
         interval.to.Should().Be(date1StartOfWeek);
     }
@@ -84,7 +84,7 @@ public class DateTimeExtTest
     public void  GetFromNowToFutureDateInterval_Weeks(int frequency)
     {
 
-        var interval = DateTimeExt.GetFromNowToFutureDateInterval(FrequencyTypes.Week, frequency, date1);
+        var interval = Interval.GetFromNowToFutureDateInterval(FrequencyTypes.Week, frequency, date1);
         interval.from.Should().Be(date1StartOfWeek);
         interval.to.Should().Be(date1StartOfWeek.AddDays(frequency * 7));
     }

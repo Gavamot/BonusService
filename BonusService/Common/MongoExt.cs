@@ -120,6 +120,7 @@ public class MongoUser
 public class MongoOperation
 {
     public long? calculatedPayment { get; set; }
+    public long? calculatedConsume { get; set; }
 }
 
 [BsonIgnoreExtraElements]

@@ -10,7 +10,7 @@ using NLog;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
 namespace BonusService.Common;
 
-public record BonusProgramJobResult(DateTimeExt TimeExt, int clientBalanceCount, long totalBonusSum);
+public record BonusProgramJobResult(Interval TimeExt, int clientBalanceCount, long totalBonusSum);
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext postgres, IDateTimeService dateTimeService)
 {
@@ -18,7 +18,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
     protected readonly PostgresDbContext _postgres = postgres;
     protected readonly IDateTimeService _dateTimeService = dateTimeService;
     protected abstract BonusProgramType BonusProgramType { get; }
-    protected void Validate(BonusProgram? bonusProgram, DateTimeExt interval)
+    protected void Validate(BonusProgram? bonusProgram, Interval interval)
     {
         try
         {
@@ -49,7 +49,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
     protected PerformContext _ctx = null!;
     public async Task ExecuteAsync(PerformContext ctx, BonusProgram bonusProgram, DateTimeOffset now)
     {
-        var interval = DateTimeExt.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
+        var interval = Interval.GetPrevToNowDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
         _ctx = ctx;
         Validate(bonusProgram, interval);
         Stopwatch stopwatch = Stopwatch.StartNew();
@@ -93,7 +93,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
         }
         activity.Stop();
     }
-    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, DateTimeExt interval, DateTimeOffset now);
+    protected abstract Task<BonusProgramJobResult> ExecuteJobAsync(BonusProgram bonusProgram, Interval interval, DateTimeOffset now);
 }
 
 public abstract class AbstractJob : IJob

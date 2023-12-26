@@ -12,24 +12,11 @@ using BonusProgramHistory = BonusService.Common.Postgres.Entity.BonusProgramHist
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
 namespace BonusService.Test.BonusPrograms;
 
-public static class BackgroundJobClientExt
-{
-    public static void WaitForEndOfJob(this IBackgroundJobClientV2 client, string jobId)
-    {
-        Thread.Sleep(50);
-        while (client.IsJobNotEnded(jobId))
-        {
-            Thread.Sleep(1);
-        }
-    }
-}
-
-
-public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
+public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
 {
     private BonusProgram bonusProgram;
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
-    public MonthlySumBonusJob_1MonthOnly_Test(FakeApplicationFactory<Program> server) : base(server)
+    public MonthlySumBonusJob_MonthOnlyTest(FakeApplicationFactory<Program> server) : base(server)
     {
         bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
     }
@@ -158,7 +145,7 @@ public class MonthlySumBonusJob_1MonthOnly_Test : BonusTestApi
             user1RusAccountSession1,
             user1RusAccountSession2
         });
-        var data = mongo.Sessions.AsQueryable().ToArray();
+
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 

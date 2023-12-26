@@ -44,6 +44,7 @@ public static class BonusProgramSeed
                     LastUpdated = lastUpdated,
                     Name = "Нет кэшбэка",
                     AwardSum = 0,
+                    AwardPercent = 0,
                     Condition = 0,
                     BonusProgramId = 1,
                     Level = 1,
@@ -52,7 +53,8 @@ public static class BonusProgramSeed
                 {
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 1 уровня",
-                    AwardSum = 1,
+                    AwardSum = 0,
+                    AwardPercent = 1,
                     Condition = 1_000_00,
                     BonusProgramId = 1,
                     Level = 2,
@@ -61,7 +63,8 @@ public static class BonusProgramSeed
                 {
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 2 уровня",
-                    AwardSum = 5,
+                    AwardSum = 0,
+                    AwardPercent = 5,
                     Condition = 3_000_00,
                     BonusProgramId = 1,
                     Level = 3,
@@ -70,7 +73,8 @@ public static class BonusProgramSeed
                 {
                     LastUpdated = lastUpdated,
                     Name = "Кэшбэк 3 уровня",
-                    AwardSum = 10,
+                    AwardSum = 0,
+                    AwardPercent = 10,
                     Condition =5_000_00,
                     BonusProgramId = 1,
                     Level = 4,
