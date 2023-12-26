@@ -68,8 +68,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static int OwnerId2 = 3;
         public readonly static int OwnerId3 = 4;
 
-        public const long SumLevel1 = 1_000_00;
-        public const long SumLevel2 = 3_000_00;
+        public const long SumLevel2 = 1_000_00;
+        public const long SumLevel3 = 3_000_00;
         public const long Sum2000 = 20_00;
         public const long Sum1000 = 10_00;
         public const long Sum500 = 5_00;
@@ -101,8 +101,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
         public const string ClientLogin = "8909113342";
         public const string ClientLogin2 = "8909163142";
-        public static MongoSession CreateSession(DateTimeOffset date, long payment = Q.SumLevel2) => CreateSession(date.UtcDateTime, payment);
-        public static MongoSession CreateSession(DateTime date , long payment = Q.SumLevel2) => new ()
+        public static MongoSession CreateSession(DateTimeOffset date, long payment = Q.SumLevel3) => CreateSession(date.UtcDateTime, payment);
+        public static MongoSession CreateSession(DateTime date , long payment = Q.SumLevel3) => new ()
         {
             //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()

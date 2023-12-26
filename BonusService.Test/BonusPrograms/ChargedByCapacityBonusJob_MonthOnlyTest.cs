@@ -131,7 +131,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         //AddUnmatchedSessions();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
-        user1RusAccountSession1.operation.calculatedPayment = Q.SumLevel2;
+        user1RusAccountSession1.operation.calculatedPayment = Q.SumLevel3;
         MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart + TimeSpan.FromDays(27));
         user1RusAccountSession2.operation.calculatedPayment = Q.Sum2000;
         await mongo.Sessions.InsertManyAsync(new []
@@ -169,8 +169,8 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     {
         AddNoiseSession();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
-        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel2);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel3);
+        MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel3);
         user1RusAccountSession2.tariff.BankId = Q.BankIdKaz;
         mongo.Sessions.InsertMany(new []
         {
@@ -202,7 +202,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     {
         AddNoiseSession();
 
-        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel1);
+        MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
         mongo.Sessions.InsertMany(new []
         {
             user1RusAccountSession1
@@ -237,7 +237,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         MongoSession user2RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
         user2RusAccountSession1.user.clientLogin = Q.ClientLogin2;
         user2RusAccountSession1.user.clientNodeId = Q.PersonId2;
-        user2RusAccountSession1.operation.calculatedPayment = Q.SumLevel1;
+        user2RusAccountSession1.operation.calculatedPayment = Q.SumLevel2;
         mongo.Sessions.InsertMany(new []
         {
             user1RusAccountSession1,

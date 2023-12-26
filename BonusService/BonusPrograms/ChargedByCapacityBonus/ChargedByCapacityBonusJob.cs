@@ -1,8 +1,7 @@
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
-using Hangfire.Console;
-using MongoDB.Driver;
+
 namespace BonusService.BonusPrograms.ChargedByCapacityBonus;
 
 /// <summary>

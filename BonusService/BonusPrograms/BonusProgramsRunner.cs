@@ -1,3 +1,4 @@
+using BonusService.BonusPrograms.ChargedByCapacityBonus;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -6,6 +7,7 @@ using Hangfire;
 using Hangfire.Server;
 using Hangfire.Storage;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
 namespace BonusService.BonusPrograms;
 
 public interface IBonusProgramsRunner
@@ -53,7 +55,14 @@ public class BonusProgramsRunner : IBonusProgramsRunner
        var bonusPrograms = await _postgres.GetBonusPrograms().ToArrayAsync();
        foreach (var bonusProgram in bonusPrograms)
        {
-           Add(bonusProgram);
+           try
+           {
+               Add(bonusProgram);
+           }
+           catch(NotImplementedException e)
+           {
+
+           }
        }
     }
 
@@ -62,9 +71,11 @@ public class BonusProgramsRunner : IBonusProgramsRunner
         string jobId = GenerateJobId(bonusProgram.Id);
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             _scheduler.AddOrUpdate<SpendMoneyBonusJob>(jobId, x => x.ExecuteAsync(null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        }
+        else if(bonusProgram.BonusProgramType == BonusProgramType.ChargedByCapacity)
+        {
+            _scheduler.AddOrUpdate<ChargedByCapacityBonusJob>(jobId, x => x.ExecuteAsync(null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
         }
         else
         {
