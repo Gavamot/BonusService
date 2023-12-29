@@ -59,6 +59,10 @@ public class BonusProgramsRunner : IBonusProgramsRunner
            {
                Add(bonusProgram);
            }
+           catch (System.ArgumentException e)
+           {
+               _logger.LogError("Бонусная программа {BonusProgramId} имеет не верный cron ", bonusProgram.Id);
+           }
            catch(NotImplementedException e)
            {
 

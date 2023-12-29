@@ -27,13 +27,9 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
             if (bonusProgram.IsActive(interval.from) == false)
-                throw new AggregateException($"Bonus program is not active from {bonusProgram.DateStart} to {bonusProgram.DateStop} dateForCalculation={interval.from}");
+                throw new AggregateException($"Богнусная программа не актина с [{bonusProgram.DateStart} по {bonusProgram.DateStop}] дата расчет={interval}");
             if (bonusProgram.BonusProgramType != BonusProgramType)
                 throw new ArgumentException("Неверная связка в коде джобы и бонусной программы в бд. Обратитесь к разработчику сисетмы");
-            if(bonusProgram.DateStart < interval.from)
-                throw new ArgumentException($"bonusProgram.DateStart = {bonusProgram.DateStart} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа еще не активна. Поменяйте bonusProgram.DateStart на входящую в интервал дату или дождитесь начисления в дату входящую в интервал.");
-            if(bonusProgram.DateStop != default && bonusProgram.DateStop < interval.to)
-                throw new ArgumentException($"bonusProgram.DateEnd = {bonusProgram.DateStop} | interval = {interval}.Попытка начисления бонусных за неативный интервал бонусной программы Бонусная программа уже закончилась. Поменяйте bonusProgram.DateEnd на входящую в интервал дату или создайте новую.");
             if (bonusProgram.ProgramLevels == null || bonusProgram.ProgramLevels.Count <= 0)
                 throw new ArgumentException("Бонусная программа не имеет уровней. Добавте хотябы 1 уровень для бонусной программы");
         }

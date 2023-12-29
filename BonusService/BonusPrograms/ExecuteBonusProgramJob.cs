@@ -1,4 +1,5 @@
 using BonusService.Auth.Policy;
+using BonusService.BonusPrograms.ChargedByCapacityBonus;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
@@ -37,9 +38,11 @@ public sealed class ExecuteBonusProgramJobCommand: ICommandHandler<ExecuteBonusP
 
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)
         {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             _jobClient.Enqueue<SpendMoneyBonusJob>(x => x.ExecuteAsync(null, bonusProgram, command.Now));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        }
+        else if (bonusProgram.BonusProgramType == BonusProgramType.ChargedByCapacity)
+        {
+            _jobClient.Enqueue<ChargedByCapacityBonusJob>(x => x.ExecuteAsync(null, bonusProgram, command.Now));
         }
         else
         {
