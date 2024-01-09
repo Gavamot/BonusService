@@ -25,7 +25,6 @@ public sealed class BonusProgramLevelValidator : AbstractValidator<BonusProgramL
     {
         RuleFor(x => x.BonusProgramId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();
-        RuleFor(x => x.Condition).NotEmpty();
         RuleFor(x => x.Level).NotEmpty();
     }
 }
