@@ -4,7 +4,7 @@ using MongoDB.Driver.Linq;
 namespace BonusService.Common.Postgres;
 
 public interface IDbEntityRep<T>
-    where T : class, IHaveId<int>, IHaveDateOfChange
+    where T : class, IHaveDateOfChange
 {
     Task<T> AddAsync(T entity, CancellationToken cs);
     Task<T> UpdateAsync(T entity, CancellationToken ct);
@@ -25,12 +25,12 @@ public class CrudNotFoundException : CrudException
 
 public interface IUpdateMapper<in TDto, in TEntity>
     where TDto : CrudDto<TEntity>
-    where TEntity : IHaveId<int>, IHaveDateOfChange
+    where TEntity: IHaveDateOfChange
 {
     public void Map(TDto dto, TEntity entity);
 }
 
-public abstract class CrudDto <TEntity> : IHaveId<int> where TEntity : IHaveId<int>, IHaveDateOfChange
+public abstract class CrudDto <TEntity> : IHaveId<int> where TEntity : IHaveDateOfChange
 {
     [Required]
     public int Id { get; set; }

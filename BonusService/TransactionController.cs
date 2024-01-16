@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 namespace BonusService;
 
-[Authorize]
+//[Authorize]
 public class TransactionController : ODataController
 {
     private readonly PostgresDbContext _db;

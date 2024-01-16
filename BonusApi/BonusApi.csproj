@@ -10,7 +10,7 @@
 	<PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <Version>0.8.3</Version>
+    <Version>0.8.5</Version>
     <Authors>Sitronics</Authors>
     <Company>Sitronics</Company>
     <PackageDescription>Bonus_Api</PackageDescription>

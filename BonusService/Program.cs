@@ -77,9 +77,10 @@ services.AddControllers().AddJsonOptions(opt =>
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 }).AddOData(opt =>
 
-    opt.AddRouteComponents("api/odata/transaction", GetEdmModel())
+    opt.Filter().Select().Expand().SetMaxTop(100).Count().OrderBy().EnableQueryFeatures());
+    /*opt.AddRouteComponents("api/odata/transaction", GetEdmModel())
         .Filter().Select().Expand().SetMaxTop(100).Count().OrderBy().EnableQueryFeatures()
-    );
+    );*/
 
 
 

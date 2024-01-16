@@ -79,7 +79,8 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         var owner = await api.OwnerMaxBonusPayAddAsync(new BonusApi.OwnerMaxBonusPay()
         {
             OwnerId = Q.OwnerId1,
-            MaxBonusPayPercentages = 20
+            MaxBonusPayPercentages = 20,
+            LastUpdated = DateTimeOffset.UtcNow
         });
 
         owner.Id.Should().BePositive();

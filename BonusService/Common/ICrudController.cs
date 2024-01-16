@@ -7,19 +7,19 @@ using Microsoft.EntityFrameworkCore;
 namespace BonusService.Common;
 
 public interface ICrudController<TEntity, TDto>
-    where TEntity : class, IHaveId<int>, IHaveDateOfChange
+    where TEntity : class, IHaveDateOfChange
     where TDto : CrudDto<TEntity>
 {
     Task<TEntity?> GetById(int id, CancellationToken ct);
     Task<TEntity[]> GetAll(CancellationToken ct);
     Task<TEntity> Add(TEntity entity, CancellationToken ct);
-    //Task Update([Required]TDto dto, CancellationToken ct);
+    Task Update([Required]TDto dto, CancellationToken ct);
     Task DeleteById(int id, CancellationToken ct);
 }
 
 
 public abstract class CrudController<TEntity, TDto> : ControllerBase, ICrudController<TEntity, TDto>
-    where TEntity : class, IHaveId<int>, IHaveDateOfChange
+    where TEntity : class, IHaveDateOfChange
     where TDto : CrudDto<TEntity>
 {
     protected readonly IDbEntityRep<TEntity> _rep;

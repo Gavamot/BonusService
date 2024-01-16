@@ -48,17 +48,57 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 [ApiController]
 [Authorize]
 [Route("[controller]/[action]")]
-public sealed class OwnerMaxBonusPayController : CrudController<OwnerMaxBonusPay, OwnerByPayDto>
+public sealed class OwnerMaxBonusPayController : ICrudController<OwnerMaxBonusPay, OwnerByPayDto>
 {
+    private readonly OwnerByPayRep _rep;
     private readonly PostgresDbContext _postgres;
-    public OwnerMaxBonusPayController(OwnerByPayRep rep, PostgresDbContext postgres) : base(rep, new OwnerByPayMapper())
+    private readonly OwnerByPayMapper _mapper = new ();
+    public OwnerMaxBonusPayController(OwnerByPayRep rep, PostgresDbContext postgres)
     {
+        _rep = rep;
         _postgres = postgres;
 
     }
+    [HttpGet("{id:int}")]
+    [Authorize(Policy = PolicyNames.OwnerRead)]
+    public async Task<OwnerMaxBonusPay?> GetById([FromRoute][Required]int id, CancellationToken ct)
+    {
+        return await _rep.GetAsync(id, ct);
+    }
+
+    [HttpGet]
+    [Authorize(Policy = PolicyNames.OwnerRead)]
+    public async Task<OwnerMaxBonusPay[]> GetAll(CancellationToken ct)
+    {
+        return await _rep.GetAll().ToArrayAsync(ct);
+    }
+
+    [HttpPost]
+    [Authorize(Policy = PolicyNames.OwnerWrite)]
+    public async Task<OwnerMaxBonusPay> Add([Required]OwnerMaxBonusPay entity, CancellationToken ct)
+    {
+        return await _rep.AddAsync(entity, ct);
+    }
+
+    [HttpPatch]
+    [Authorize(Policy = PolicyNames.OwnerWrite)]
+    public async Task Update([Required]OwnerByPayDto dto, CancellationToken ct)
+    {
+        var entity = await _rep.GetAsync(dto.Id, ct);
+        if (entity == null) throw new CrudNotFoundException();
+        _mapper.Map(dto, entity);
+        await _rep.UpdateAsync(entity, ct);
+    }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = PolicyNames.OwnerWrite)]
+    public async Task DeleteById([FromRoute][Required]int id, CancellationToken ct)
+    {
+        await _rep.DeleteAsync(id, ct);
+    }
 
     [HttpGet("{ownerId:int}")]
-    [Authorize(Policy = PolicyNames.BonusServiceRead)]
+    [Authorize(Policy = PolicyNames.OwnerRead)]
     public async Task<OwnerMaxBonusPay?> GetByOwnerId([FromRoute][Required]int ownerId, CancellationToken ct)
     {
         return await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x=> x.OwnerId == ownerId, ct);

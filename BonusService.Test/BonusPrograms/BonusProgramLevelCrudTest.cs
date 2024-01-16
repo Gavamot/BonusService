@@ -69,6 +69,8 @@ public class BonusProgramLevelCrudTest : BonusTestApi
             AwardSum = 44,
             BonusProgramId = bp.Id,
             Level = 5,
+            LastUpdated = DateTimeOffset.UtcNow,
+            Id = 0,
         };
         var bp1 = await api.BonusLevelsAddAsync(newItem1);
 

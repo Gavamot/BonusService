@@ -48,7 +48,9 @@ public class BonusProgramCrudTest : BonusTestApi
             ExecutionCron = "* * * * * 1",
             FrequencyType = FrequencyTypes.Month,
             FrequencyValue = 10,
-            BonusProgramType = BonusProgramType.SpendMoney
+            BonusProgramType = BonusProgramType.SpendMoney,
+            LastUpdated = DateTimeOffset.UtcNow,
+            Id = 0,
         };
 
         BonusApi.BonusProgram newBonusProgram2 = new()
@@ -61,7 +63,9 @@ public class BonusProgramCrudTest : BonusTestApi
             ExecutionCron = "* * * 3 2 1",
             FrequencyType = FrequencyTypes.Day,
             FrequencyValue = 24,
-            BonusProgramType = BonusProgramType.ChargedByCapacity
+            BonusProgramType = BonusProgramType.ChargedByCapacity,
+            LastUpdated = DateTimeOffset.UtcNow,
+            Id = 0,
         };
 
 

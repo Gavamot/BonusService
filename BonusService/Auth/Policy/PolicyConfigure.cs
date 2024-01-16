@@ -13,6 +13,8 @@ public static class PolicyNames
     public const string BonusServiceWrite = nameof(BonusServiceWrite);
     public const string BonusServiceExecute = nameof(BonusServiceExecute);
     public const string PersonRead = nameof(PersonRead);
+    public const string OwnerRead = nameof(OwnerRead);
+    public const string OwnerWrite = nameof(OwnerWrite);
 }
 
 public static class PolicyConfigure
@@ -23,12 +25,15 @@ public static class PolicyConfigure
         new (PolicyNames.BonusServiceRead, Read(ClaimsNames.BonusService)),
         new (PolicyNames.BonusServiceWrite, Write(ClaimsNames.BonusService)),
         new (PolicyNames.BonusServiceExecute, Execute(ClaimsNames.BonusService)),
+        new (PolicyNames.OwnerRead, Read(ClaimsNames.Owner)),
+        new (PolicyNames.OwnerWrite, Write(ClaimsNames.Owner)),
     };
 
     public static class ClaimsNames
     {
         public const string BonusService = nameof(BonusService);
         public const string Person = nameof(Person);
+        public const string Owner = nameof(Owner);
     }
 
     public static void AddBonusServicePolices(AuthorizationOptions options)

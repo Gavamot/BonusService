@@ -1,3 +1,4 @@
+using System.ComponentModel;
 namespace BonusService.Common.Postgres.Entity;
 
 public class OwnerMaxBonusPay : IForeignCatalogEntity
