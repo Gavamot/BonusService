@@ -18,37 +18,39 @@
         <PackageReference Include="Gavamot.Hangfire.Console" Version="1.0.0" />
         <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
         <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.13" />
-        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.13">
+        <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.15">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="6.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+        <PackageReference Include="Microsoft.AspNetCore.OData" Version="8.2.3" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="NLog.DiagnosticSource" Version="5.2.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
-        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
-        <PackageReference Include="Hangfire.Core" Version="1.8.6" />
-        <PackageReference Include="Hangfire.NetCore" Version="1.8.6" />
-        <PackageReference Include="Hangfire.PostgreSql" Version="1.20.4" />
+        <PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
+        <PackageReference Include="Hangfire.Core" Version="1.8.7" />
+        <PackageReference Include="Hangfire.NetCore" Version="1.8.7" />
+        <PackageReference Include="Hangfire.PostgreSql" Version="1.20.5" />
         <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-        <PackageReference Include="NLog" Version="5.2.7" />
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
-        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.7" />
+        <PackageReference Include="NLog" Version="5.2.8" />
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.8" />
+        <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
+        <PackageReference Include="OData.Swagger" Version="1.0.0" />
         <PackageReference Include="Riok.Mapperly" Version="3.3.0" />
         <PackageReference Include="SwaggerExampleAttrLib" Version="0.1.23" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="7.0.12" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.0" />
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
         <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="8.101.1.3" />

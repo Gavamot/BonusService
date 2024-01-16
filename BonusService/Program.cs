@@ -5,11 +5,15 @@ using BonusService.Auth;
 using BonusService.BonusPrograms;
 using BonusService.Common;
 using BonusService.Common.Postgres;
+using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using NLog.Web;
 
 
@@ -71,7 +75,13 @@ services.AddControllers().AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-});
+}).AddOData(opt =>
+
+    opt.AddRouteComponents("api/odata/transaction", GetEdmModel())
+        .Filter().Select().Expand().SetMaxTop(100).Count().OrderBy().EnableQueryFeatures()
+    );
+
+
 
 services.AddBonusServices(configuration);
 
@@ -100,6 +110,8 @@ app.UseJwtAuthorization();
 app.UseHttpsRedirection();
 app.MapControllers();
 
+app.UseODataRouteDebug();
+
 app.ApplyPostgresMigrations();
 
 if (BonusService.Program.IsNotAppTest())
@@ -111,6 +123,13 @@ if (BonusService.Program.IsNotAppTest())
 
 app.Run();
 
+static IEdmModel GetEdmModel()
+{
+    ODataConventionModelBuilder builder = new();
+    var entitySet = builder.EntitySet<Transaction>("transaction");
+    entitySet.EntityType.HasKey(entity => entity.Id);
+    return builder.GetEdmModel();
+}
 
 namespace BonusService
 {

@@ -2,6 +2,7 @@ using System.Reflection;
 using BonusService.Common.Swagger;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
+using OData.Swagger.Services;
 using SwaggerExampleAttrLib;
 using Swashbuckle.AspNetCore.Filters;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -35,6 +36,7 @@ public static class SwaggerExt
         services.AddDateOnlyTimeOnlyStringConverters();
         services.AddFluentValidationRulesToSwagger();
         services.AddEndpointsApiExplorer();
+
         services.AddSwaggerGen(
             c =>
             {
@@ -88,5 +90,7 @@ public static class SwaggerExt
                     }
                 });
             });
+
+        services.AddOdataSwaggerSupport();
     }
 }
