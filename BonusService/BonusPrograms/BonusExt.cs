@@ -2,6 +2,7 @@ using BonusService.Balance.OwnerByPayCrud;
 using BonusService.BonusPrograms.BonusProgramCrud;
 using BonusService.BonusPrograms.BonusProgramLevelsCrud;
 using BonusService.BonusPrograms.ChargedByCapacityBonus;
+using BonusService.BonusPrograms.ChargedByStationsBonus;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 namespace BonusService.BonusPrograms;
 
@@ -16,6 +17,7 @@ public static class BonusExt
         services.AddScoped<IBonusProgramsRunner, BonusProgramsRunner>();
         services.AddScoped<SpendMoneyBonusJob>();
         services.AddScoped<ChargedByCapacityBonusJob>();
+        services.AddScoped<ChargedByStationsBonusJob>();
         return services;
     }
 }

@@ -68,6 +68,7 @@ public static class AuthExtensions
 
     public static void UseJwtAuthorization(this IApplicationBuilder app)
     {
+        if(Program.IsNswagBuild()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var identitySettings = scope.ServiceProvider.GetRequiredService<IOptions<IdentitySettings>>();
         var jwtKeyFromSettings = identitySettings.Value.TokenSettings.SecretKey;

@@ -33,6 +33,9 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=68701fcf_002Ddd71_002D4d0f_002Db88e_002D25a5c46cee95/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TwoActiveProgram" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ab38cd0c_002D0e0c_002D4e50_002Db45a_002Da2c6338a8fe7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="BonusProgramTest1" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFile&gt;96F22065-273D-49AF-8D21-807BA1D20C62/d:BonusPrograms/f:ChargedByCapacityBonusJob_MonthOnlyTest.cs&lt;/ProjectFile&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=be05c80a_002Dd96f_002D4b3f_002Db585_002Da9cbe748da89/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetById" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;ProjectFolder&gt;96F22065-273D-49AF-8D21-807BA1D20C62/d:BonusPrograms&lt;/ProjectFolder&gt;&#xD;
 &lt;/SessionState&gt;</s:String>

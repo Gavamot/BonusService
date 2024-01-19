@@ -68,6 +68,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static int OwnerId2 = 3;
         public readonly static int OwnerId3 = 4;
 
+        public const string Station1 = nameof(Station1);
+        public const string Station2 = nameof(Station2);
+        public const string Station3 = nameof(Station3);
+
         public const long SumLevel2 = 1_000_00;
         public const long SumLevel3 = 3_000_00;
         public const long Sum2000 = 20_00;
