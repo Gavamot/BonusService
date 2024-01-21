@@ -43,7 +43,7 @@ public class LoadTest : BonusTestApi
 
 
 
-    [Fact(Skip = "Long execution")]
+    [Fact(Skip = "Long execution не работает надо починить")]
     public void AddManySessions()
     {
         var faker = new MongoSessionFaker();

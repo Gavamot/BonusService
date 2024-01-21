@@ -38,7 +38,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             // Времянка пока юонусные программы захардкоженны
             using var scope1 = serviceProvider.CreateScope();
             var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
+            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == Q.BonusProgramId1);
             if (bp == null)
             {
                 bp = BonusProgramSeed.Get();
