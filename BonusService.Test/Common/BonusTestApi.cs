@@ -111,7 +111,8 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
             {
-                calculatedPayment = payment
+                calculatedPayment = payment,
+                calculatedConsume = payment
             },
             chargeEndTime = date,
             status = MongoSessionStatus.Paid,

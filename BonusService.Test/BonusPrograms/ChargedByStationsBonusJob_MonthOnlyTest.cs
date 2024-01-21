@@ -95,6 +95,7 @@ public class ChargedByStationsBonusJob_MonthOnlyTest : BonusTestApi
     {
         var job = GetService<ChargedByStationsBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
+        postgres.Transactions.Should().BeEmpty();
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
