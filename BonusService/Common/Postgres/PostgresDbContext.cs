@@ -49,9 +49,9 @@ public class PostgresDbContext : DbContext
     public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {
         return this.BonusPrograms
-            .AsNoTracking()
             .Include(x => x.ProgramLevels)
-            .FirstOrDefaultAsync(x => x.IsDeleted == false, ct);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false, ct);
     }
 
 

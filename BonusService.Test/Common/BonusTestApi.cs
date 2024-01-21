@@ -42,7 +42,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             if (bp == null)
             {
                 bp = BonusProgramSeed.Get();
-                bp.Id = 0;
+                bp.Id = Q.BonusProgramId1;
                 postgres.BonusPrograms.Add(bp);
                 postgres.SaveChanges();
             }

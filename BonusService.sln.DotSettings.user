@@ -3,6 +3,11 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=04954834_002Ddadb_002D4d99_002Dafd4_002D8039fa93ee84/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="MonthlySumBonusJobTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=08feaa8e_002D1fe1_002D4978_002Dba0f_002Df004326c1f4b/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Add" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net8.0::BonusService.Test.BonusProgramLevelCrudTest.Add&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=108f041c_002D33cb_002D4e9d_002D9522_002Dd6b31eecb85d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="EmptyCalculationForPeriod_EmptyResultHistoryAdded" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
@@ -21,10 +26,8 @@
     &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net7.0::BonusService.Test.BonusPrograms.BonusProgramAchievementTest.AnotherDateNotCounting_OnlySumCurrentMonth&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=50ddb7c3_002Dcb92_002D440f_002Db516_002Db74be39cc713/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ChargedByStationsBonusJob_MonthOnlyTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net8.0::BonusService.Test.BonusPrograms.ChargedByStationsBonusJob_MonthOnlyTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=50ddb7c3_002Dcb92_002D440f_002Db516_002Db74be39cc713/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ChargedByStationsBonusJob_MonthOnlyTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=516cca67_002D6400_002D4a11_002D9bac_002Dac99d431699e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="Level1ByUpperBorder_ReturnZero" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Solution /&gt;&#xD;

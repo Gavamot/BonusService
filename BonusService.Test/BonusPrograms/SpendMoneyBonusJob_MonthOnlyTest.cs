@@ -19,7 +19,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
     public MonthlySumBonusJob_MonthOnlyTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
+        bonusProgram = postgres.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
     }
 
     private readonly DateTimeOffset bonusIntervalStart = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
@@ -67,7 +67,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
     {
         transaction.Type.Should().Be(TransactionType.Auto);
         transaction.Description.Should().NotBeEmpty();
-        transaction.BonusProgramId.Should().Be(1);
+        transaction.BonusProgramId.Should().Be(bonusProgram.Id);
         transaction.OwnerId.Should().BeNull();
         transaction.EzsId.Should().BeNull();
         transaction.TransactionId.Should().NotBeEmpty();
@@ -80,7 +80,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         history.ExecTimeStart.Should().Be(bonusIntervalStart);
         history.ExecTimeEnd.Should().Be(bonusIntervalEnd);
         history.BankId.Should().Be(1);
-        history.BonusProgramId.Should().Be(1);
+        history.BonusProgramId.Should().Be(bonusProgram.Id);
         history.LastUpdated.Should().NotBe(default);
     }
 
@@ -333,7 +333,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
-        bonusProgramHistory.BonusProgramId.Should().Be(1);
+        bonusProgramHistory.BonusProgramId.Should().Be(bonusProgram.Id);
         bonusProgramHistory.ClientBalancesCount.Should().Be(2);
         bonusProgramHistory.TotalBonusSum.Should().Be(
             (user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100) +
