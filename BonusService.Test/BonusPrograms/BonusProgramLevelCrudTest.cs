@@ -11,7 +11,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
     private BonusProgram bp;
     public BonusProgramLevelCrudTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bp = postgres.BonusPrograms.Include(x=>x.ProgramLevels).First(x => x.Id == 1);
+        bp = postgres.BonusPrograms.Include(x=>x.ProgramLevels).First(x => x.Id == Q.BonusProgramId1);
     }
 
     private void AssertAreEquals(BonusService.Common.Postgres.Entity.BonusProgramLevel actual, BonusApi.BonusProgramLevel expected)
@@ -76,7 +76,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
 
         // TODO Дописать Тесты !
 
-        using var scope = CreateScope();
+        using var serviceScope = CreateScope();
         var items = base.scope.ServiceProvider.GetRequiredService<PostgresDbContext>().BonusProgramsLevels.ToArray();
         items.Length.Should().Be(ProgramLevelsCount + 1);
         var dbItem = items.First(x => x.Id == bp1.Id);

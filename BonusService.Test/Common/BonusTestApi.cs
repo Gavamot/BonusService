@@ -38,11 +38,11 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             // Времянка пока юонусные программы захардкоженны
             using var scope1 = serviceProvider.CreateScope();
             var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
-            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
+            var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == Q.BonusProgramId1);
             if (bp == null)
             {
                 bp = BonusProgramSeed.Get();
-                bp.Id = 0;
+                bp.Id = Q.BonusProgramId1;
                 postgres.BonusPrograms.Add(bp);
                 postgres.SaveChanges();
             }
@@ -67,6 +67,10 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         public readonly static int OwnerId1 = 2;
         public readonly static int OwnerId2 = 3;
         public readonly static int OwnerId3 = 4;
+
+        public const string Station1 = nameof(Station1);
+        public const string Station2 = nameof(Station2);
+        public const string Station3 = nameof(Station3);
 
         public const long SumLevel2 = 1_000_00;
         public const long SumLevel3 = 3_000_00;
@@ -107,7 +111,9 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             //_id = ObjectId.GenerateNewId(),
             operation = new MongoOperation()
             {
-                calculatedPayment = payment
+                calculatedPayment = payment,
+                calculatedConsume = payment,
+                cpName = Guid.NewGuid().ToString()
             },
             chargeEndTime = date,
             status = MongoSessionStatus.Paid,

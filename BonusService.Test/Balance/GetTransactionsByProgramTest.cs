@@ -8,12 +8,10 @@ public class GetTransactionsByProgramTest : BonusTestApi
 {
     public GetTransactionsByProgramTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        var bp = BonusProgramSeed.Get();
-        bp.Id = Q.BonusProgramId1;
         var bp2 = BonusProgramSeed.Get();
         bp2.Id = Q.BonusProgramId2;
 
-        postgres.BonusPrograms.AddRange(bp, bp2);
+        postgres.BonusPrograms.Add(bp2);
         postgres.SaveChanges();
     }
 

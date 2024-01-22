@@ -1,11 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
-using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
-using MongoDB.Driver.Core.Events;
-using MongoDB.Driver.Core.WireProtocol.Messages;
 namespace BonusService.Common;
 
 public static class MongoChargingClientType
@@ -119,6 +115,8 @@ public class MongoUser
 [BsonIgnoreExtraElements]
 public class MongoOperation
 {
+
+    public string? cpName { get; set; }
     public long? calculatedPayment { get; set; }
     public long? calculatedConsume { get; set; }
 }

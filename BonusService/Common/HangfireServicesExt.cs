@@ -43,6 +43,7 @@ public static class HangfireServicesExt
     {
         var conStr = configuration.GetHangfireConnectionString();
         //var delays = new [] { 1, 5, 10 };
+
         services.AddDbContext<HangfireDbContext>(opt => opt.UseNpgsql(conStr));
         services.AddHangfire((provider, config) =>
         {
@@ -120,7 +121,7 @@ public static class HangfireServicesExt
     public static void UseHangfire(this WebApplication app)
     {
         var scope = app.Services.CreateScope();
-        using var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        using var db = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
         db.Database.Migrate();
 
         var scopeFactory = scope.ServiceProvider.GetRequiredService<IServiceScopeFactory>();

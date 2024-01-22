@@ -11,11 +11,11 @@ public static class BonusProgramSeed
         // Времянка пока юонусные программы захардкоженны
         using var scope1 = serviceProvider.CreateScope();
         var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
-        var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == 1);
+        var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == BonusTestApi.Q.BonusProgramId1);
         if (bp == null)
         {
             bp = BonusProgramSeed.Get();
-            bp.Id = 0;
+            bp.Id = BonusTestApi.Q.BonusProgramId1;
             postgres.BonusPrograms.Add(bp);
             postgres.SaveChanges();
         }

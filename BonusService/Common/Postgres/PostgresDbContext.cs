@@ -18,7 +18,6 @@ public static class PostgresExt
 
     public static void ApplyPostgresMigrations(this IApplicationBuilder app)
     {
-        if(Program.IsNswagBuild()) return;
         using var scope = app.ApplicationServices.CreateScope();
         var ctx = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
         ctx.Database.Migrate();
@@ -50,9 +49,9 @@ public class PostgresDbContext : DbContext
     public Task<BonusProgram?> GetBonusProgramById(int id, CancellationToken ct = default)
     {
         return this.BonusPrograms
-            .AsNoTracking()
             .Include(x => x.ProgramLevels)
-            .FirstOrDefaultAsync(x => x.IsDeleted == false, ct);
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.IsDeleted == false, ct);
     }
 
 

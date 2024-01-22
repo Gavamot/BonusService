@@ -1,4 +1,5 @@
 using BonusService.BonusPrograms.ChargedByCapacityBonus;
+using BonusService.BonusPrograms.ChargedByStationsBonus;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
@@ -80,6 +81,10 @@ public class BonusProgramsRunner : IBonusProgramsRunner
         else if(bonusProgram.BonusProgramType == BonusProgramType.ChargedByCapacity)
         {
             _scheduler.AddOrUpdate<ChargedByCapacityBonusJob>(jobId, x => x.ExecuteAsync(null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
+        }
+        else if(bonusProgram.BonusProgramType == BonusProgramType.ChargedByStations)
+        {
+            _scheduler.AddOrUpdate<ChargedByStationsBonusJob>(jobId, x => x.ExecuteAsync(null, bonusProgram, _dateTimeService.GetNowUtc()), bonusProgram.ExecutionCron);
         }
         else
         {

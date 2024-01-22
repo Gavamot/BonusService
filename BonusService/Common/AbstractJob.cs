@@ -29,7 +29,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
             if (bonusProgram.IsActive(interval.from) == false)
                 throw new AggregateException($"Богнусная программа не актина с [{bonusProgram.DateStart} по {bonusProgram.DateStop}] дата расчет={interval}");
             if (bonusProgram.BonusProgramType != BonusProgramType)
-                throw new ArgumentException("Неверная связка в коде джобы и бонусной программы в бд. Обратитесь к разработчику сисетмы");
+                throw new ArgumentException("У бонусной программы не найденно уровней. Добавте хотябы 1");
             if (bonusProgram.ProgramLevels == null || bonusProgram.ProgramLevels.Count <= 0)
                 throw new ArgumentException("Бонусная программа не имеет уровней. Добавте хотябы 1 уровень для бонусной программы");
         }
@@ -69,7 +69,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
                 DurationMilliseconds = stopwatch.ElapsedMilliseconds,
                 ClientBalancesCount = bonusProgramJobResult.clientBalanceCount,
                 TotalBonusSum = bonusProgramJobResult.totalBonusSum,
-                LastUpdated = _dateTimeService.GetNowUtc(),
+                LastUpdated = now,
             };
 
             await _postgres.BonusProgramHistory.AddAsync(history);

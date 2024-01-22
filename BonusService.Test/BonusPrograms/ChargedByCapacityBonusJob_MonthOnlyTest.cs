@@ -1,4 +1,4 @@
-using BonusService.BonusPrograms.SpendMoneyBonus;
+using BonusService.BonusPrograms.ChargedByCapacityBonus;
 using BonusService.Common;
 using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
@@ -10,9 +10,14 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
 {
     private BonusProgram bonusProgram;
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
+    private const int BonusProgramId = 2;
     public ChargedByCapacityBonusJob_MonthOnlyTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
+        bonusProgram = BonusProgramSeed.Get();
+        bonusProgram.Id = BonusProgramId;
+        bonusProgram.BonusProgramType = BonusProgramType.ChargedByCapacity;
+        postgres.BonusPrograms.Add(bonusProgram);
+        postgres.SaveChanges();
     }
 
     private readonly DateTimeOffset bonusIntervalStart = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
@@ -28,7 +33,6 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
 
     private void AddNoiseSession()
     {
-
         var session = Q.CreateSession(new DateTime(1990, 1, 1));
         session.status = 44;
 
@@ -60,7 +64,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     {
         transaction.Type.Should().Be(TransactionType.Auto);
         transaction.Description.Should().NotBeEmpty();
-        transaction.BonusProgramId.Should().Be(1);
+        transaction.BonusProgramId.Should().Be(BonusProgramId);
         transaction.OwnerId.Should().BeNull();
         transaction.EzsId.Should().BeNull();
         transaction.TransactionId.Should().NotBeEmpty();
@@ -73,7 +77,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         history.ExecTimeStart.Should().Be(bonusIntervalStart);
         history.ExecTimeEnd.Should().Be(bonusIntervalEnd);
         history.BankId.Should().Be(1);
-        history.BonusProgramId.Should().Be(1);
+        history.BonusProgramId.Should().Be(BonusProgramId);
         history.LastUpdated.Should().NotBe(default);
     }
 
@@ -88,7 +92,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     [Fact]
     public async Task EmptySessions_EmptyResultHistoryAdded()
     {
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
         var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
@@ -99,7 +103,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     public async Task EmptyCalculationForPeriod_EmptyResultHistoryAdded()
     {
         AddNoiseSession();
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
         postgres.Transactions.Any().Should().BeFalse();
 
@@ -112,10 +116,10 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
     public async Task EmptyCalculationForPeriodTwiceExecution_EmptyResult2HistoryAdded()
     {
         AddNoiseSession();
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
-        var job2 = GetService<SpendMoneyBonusJob>();
+        var job2 = GetService<ChargedByCapacityBonusJob>();
         await job2.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Any().Should().BeFalse();
@@ -131,16 +135,16 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         //AddUnmatchedSessions();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart);
-        user1RusAccountSession1.operation.calculatedPayment = Q.SumLevel3;
+        user1RusAccountSession1.operation.calculatedConsume = Q.SumLevel3;
         MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart + TimeSpan.FromDays(27));
-        user1RusAccountSession2.operation.calculatedPayment = Q.Sum2000;
+        user1RusAccountSession2.operation.calculatedConsume = Q.Sum2000;
         await mongo.Sessions.InsertManyAsync(new []
         {
             user1RusAccountSession1,
             user1RusAccountSession2
         });
 
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         using var scope = CreateScope();
@@ -170,7 +174,9 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         AddNoiseSession();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel3);
+        user1RusAccountSession1.operation.calculatedConsume = Q.SumLevel2;
         MongoSession user1RusAccountSession2 = Q.CreateSession(bonusIntervalStart ,Q.SumLevel3);
+        user1RusAccountSession2.operation.calculatedConsume = Q.SumLevel2;
         user1RusAccountSession2.tariff.BankId = Q.BankIdKaz;
         mongo.Sessions.InsertMany(new []
         {
@@ -178,14 +184,14 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
             user1RusAccountSession2
         });
 
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Count().Should().Be(1);
 
         var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
-        tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 5 / 100);
+        tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
         ValidateTransactionCommonFields(tranUser1Rus);
 
 
@@ -194,7 +200,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
         bonusProgramHistory.ClientBalancesCount.Should().Be(1);
-        bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100);
+        bonusProgramHistory.TotalBonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value * 1 / 100);
     }
 
     [Fact]
@@ -203,12 +209,13 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         AddNoiseSession();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
+        user1RusAccountSession1.operation.calculatedConsume = Q.SumLevel2;
         mongo.Sessions.InsertMany(new []
         {
             user1RusAccountSession1
         });
 
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
 
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
@@ -238,13 +245,14 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         user2RusAccountSession1.user.clientLogin = Q.ClientLogin2;
         user2RusAccountSession1.user.clientNodeId = Q.PersonId2;
         user2RusAccountSession1.operation.calculatedPayment = Q.SumLevel2;
+        user2RusAccountSession1.operation.calculatedConsume = Q.SumLevel2;
         mongo.Sessions.InsertMany(new []
         {
             user1RusAccountSession1,
             user2RusAccountSession1
         });
 
-        var job = GetService<SpendMoneyBonusJob>();
+        var job = GetService<ChargedByCapacityBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         postgres.Transactions.Count().Should().Be(2);
@@ -265,7 +273,7 @@ public class ChargedByCapacityBonusJob_MonthOnlyTest : BonusTestApi
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
-        bonusProgramHistory.BonusProgramId.Should().Be(1);
+        bonusProgramHistory.BonusProgramId.Should().Be(BonusProgramId);
         bonusProgramHistory.ClientBalancesCount.Should().Be(2);
         bonusProgramHistory.TotalBonusSum.Should().Be(
             (user1RusAccountSession1.operation.calculatedPayment!.Value * 5 / 100) +
