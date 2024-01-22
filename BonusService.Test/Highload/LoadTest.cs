@@ -38,12 +38,12 @@ public class LoadTest : BonusTestApi
     private BonusProgram bonusProgram;
     public LoadTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(1).GetAwaiter().GetResult()!;
+        bonusProgram = postgres.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
     }
 
 
 
-    [Fact(Skip = "Long execution")]
+    [Fact(Skip = "Long execution не работает надо починить")]
     public void AddManySessions()
     {
         var faker = new MongoSessionFaker();

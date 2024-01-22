@@ -10,13 +10,13 @@ public class BonusProgramCrudTest : BonusTestApi
     private BonusProgram bp;
     public BonusProgramCrudTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bp = postgres.BonusPrograms.First(x => x.Id == 1);
+        bp = postgres.BonusPrograms.First(x => x.Id == Q.BonusProgramId1);
     }
 
     [Fact]
     public async Task GetById()
     {
-        var item1= await api.BonusProgramGetByIdAsync(1);
+        var item1= await api.BonusProgramGetByIdAsync(Q.BonusProgramId1);
         item1.Should().NotBeNull();
         item1.BankId.Should().Be(bp.BankId);
         item1.Name.Should().Be(bp.Name);
@@ -70,14 +70,13 @@ public class BonusProgramCrudTest : BonusTestApi
 
 
         var bp1 = await api.BonusProgramAddAsync(newBonusProgram1);
-
         var bp2 = await api.BonusProgramAddAsync(newBonusProgram2);
 
         // TODO Дописать Тесты !
 
         var items = postgres.BonusPrograms.ToArray();
         items.Length.Should().Be(3);
-        var item1 = items.First(x => x.Id == bp1.Id);
+        var item1 = items.First(x => x.Name == bp1.Name);
         item1.Name.Should().Be(newBonusProgram1.Name);
         item1.DateStart.Should().Be(newBonusProgram1.DateStart);
         item1.DateStop.Should().Be(newBonusProgram1.DateStop);
@@ -96,8 +95,8 @@ public class BonusProgramCrudTest : BonusTestApi
         });
 
 
-        using var scope = CreateScope();
-        var expected = scope.GetRequiredService<PostgresDbContext>().BonusPrograms.First(x => x.Id == 1);
+        using var serviceScope = CreateScope();
+        var expected = serviceScope.GetRequiredService<PostgresDbContext>().BonusPrograms.First(x => x.Id == Q.BonusProgramId1);
         expected.DateStart.Should().Be(newDateStart);
         expected.DateStop.Should().Be(bp.DateStop);
         expected.Description.Should().Be(bp.Description);
@@ -112,10 +111,10 @@ public class BonusProgramCrudTest : BonusTestApi
     public async Task Delete()
     {
         postgres.BonusPrograms.First().IsDeleted.Should().Be(false);
-        await api.BonusProgramDeleteByIdAsync(1);
-        using var scope = CreateScope();
-        var db = scope.GetRequiredService<PostgresDbContext>();
-        var expected = db.BonusPrograms.First(x => x.Id == 1);
+        await api.BonusProgramDeleteByIdAsync(Q.BonusProgramId1);
+        using var serviceScope = CreateScope();
+        var db = serviceScope.GetRequiredService<PostgresDbContext>();
+        var expected = db.BonusPrograms.First(x => x.Id == Q.BonusProgramId1);
         expected.IsDeleted.Should().Be(true);
         db.BonusPrograms.Count().Should().Be(1);
     }
@@ -124,7 +123,7 @@ public class BonusProgramCrudTest : BonusTestApi
     public async Task NotShowDeletedInGetAll()
     {
         postgres.BonusPrograms.First().IsDeleted.Should().Be(false);
-        await api.BonusProgramDeleteByIdAsync(1);
+        await api.BonusProgramDeleteByIdAsync(Q.BonusProgramId1);
         var bonusPrograms = await api.BonusProgramGetAllAsync();
         bonusPrograms.Should().BeEmpty();
     }
