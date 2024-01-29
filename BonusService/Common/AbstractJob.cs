@@ -12,10 +12,10 @@ namespace BonusService.Common;
 
 public record BonusProgramJobResult(Interval TimeExt, int clientBalanceCount, long totalBonusSum);
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext postgres, IDateTimeService dateTimeService)
+public abstract class AbstractBonusProgramJob(ILogger logger, BonusDbContext bonus, IDateTimeService dateTimeService)
 {
     protected readonly ILogger _logger = logger;
-    protected readonly PostgresDbContext _postgres = postgres;
+    protected readonly BonusDbContext Bonus = bonus;
     protected readonly IDateTimeService _dateTimeService = dateTimeService;
     protected abstract BonusProgramType BonusProgramType { get; }
     protected void Validate(BonusProgram? bonusProgram, Interval interval)
@@ -26,7 +26,7 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
                 throw new ArgumentException($"бонусной программы не задана");
             if (bonusProgram.IsDeleted)
                 throw new ArgumentException($"BonusProgram.Id = {bonusProgram.Id} попытка начислить бонусы по удаленной бонусной программе");
-            if (bonusProgram.IsActive(interval.from) == false)
+            if ((bonusProgram as IHaveActivePeriod).IsActive(interval.from) == false)
                 throw new AggregateException($"Богнусная программа не актина с [{bonusProgram.DateStart} по {bonusProgram.DateStop}] дата расчет={interval}");
             if (bonusProgram.BonusProgramType != BonusProgramType)
                 throw new ArgumentException("У бонусной программы не найденно уровней. Добавте хотябы 1");
@@ -72,8 +72,8 @@ public abstract class AbstractBonusProgramJob(ILogger logger, PostgresDbContext 
                 LastUpdated = now,
             };
 
-            await _postgres.BonusProgramHistory.AddAsync(history);
-            await _postgres.SaveChangesAsync();
+            await Bonus.BonusProgramHistory.AddAsync(history);
+            await Bonus.SaveChangesAsync();
             var json = JsonSerializer.Serialize(history,new JsonSerializerOptions()
             {
                 ReferenceHandler = ReferenceHandler.IgnoreCycles

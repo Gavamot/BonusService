@@ -39,21 +39,21 @@ public abstract class CrudDto <TEntity> : IHaveId<int> where TEntity : IHaveDate
 public abstract class DbEntityRep<T> : IDbEntityRep<T>
     where T : class, IHaveId<int>, IHaveDateOfChange
 {
-    protected readonly PostgresDbContext _postgres;
+    protected readonly BonusDbContext Bonus;
     protected  readonly IDateTimeService _dateTimeService;
 
-    protected DbEntityRep(PostgresDbContext postgres,
+    protected DbEntityRep(BonusDbContext bonus,
         IDateTimeService dateTimeService)
     {
-        _postgres = postgres;
+        Bonus = bonus;
         _dateTimeService = dateTimeService;
     }
     public virtual async Task<T> AddAsync(T entity, CancellationToken cs)
     {
         entity.Id = default; // ! Id должно быть по дефолту чтобы двигалась последовательность
         entity.LastUpdated = _dateTimeService.GetNowUtc();
-        await _postgres.Set<T>().AddAsync(entity, cs);
-        await _postgres.SaveChangesAsync(cs);
+        await Bonus.Set<T>().AddAsync(entity, cs);
+        await Bonus.SaveChangesAsync(cs);
         return entity;
     }
 
@@ -64,14 +64,14 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
             throw new ArgumentException("Удаление через update не возможно воспользуйтесь операций Delete");
         }
         entity.LastUpdated = _dateTimeService.GetNowUtc();
-        var res = _postgres.Update(entity);
-        await _postgres.SaveChangesAsync(ct);
+        var res = Bonus.Update(entity);
+        await Bonus.SaveChangesAsync(ct);
         return res.Entity;
     }
 
     public virtual async Task DeleteAsync(int id, CancellationToken cs)
     {
-        var entity = await _postgres.Set<T>().FirstOrDefaultAsync(e => e.Id == id, cs);
+        var entity = await Bonus.Set<T>().FirstOrDefaultAsync(e => e.Id == id, cs);
         if(entity == null) return;
         if (entity is IDeletable dbEntity)
         {
@@ -81,17 +81,17 @@ public abstract class DbEntityRep<T> : IDbEntityRep<T>
         }
         else
         {
-            _postgres.Set<T>().Remove(entity);
+            Bonus.Set<T>().Remove(entity);
         }
-        await _postgres.SaveChangesAsync(cs);
+        await Bonus.SaveChangesAsync(cs);
     }
     public virtual async Task<T?> GetAsync(int id, CancellationToken cs)
     {
-        return await _postgres.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cs);
+        return await Bonus.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cs);
     }
     public virtual IQueryable<T> GetAll()
     {
-        var res = _postgres.Set<T>().AsNoTracking();
+        var res = Bonus.Set<T>().AsNoTracking();
         if (typeof(T).GetInterface(nameof(IDeletable)) != null)
         {
             res  = ((IQueryable<IDeletable>)res).Where(x => x.IsDeleted == false).Cast<T>();

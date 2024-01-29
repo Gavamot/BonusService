@@ -31,7 +31,7 @@ public class GetBalanceAllTest : BonusTestApi
     [Fact]
     public async Task ManyTransactionOneBalance_ReturnListWithOneBalanceWithSumOfTransactions()
     {
-        await postgres.Transactions.AddRangeAsync(new Transaction()
+        await Bonus.Transactions.AddRangeAsync(new Transaction()
         {
             BonusSum = Q.Sum1000,
             BankId = Q.BankIdRub,
@@ -54,7 +54,7 @@ public class GetBalanceAllTest : BonusTestApi
             TransactionId = Q.GetRandomTransactionId(),
             Type = TransactionType.Manual,
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(1);
@@ -66,7 +66,7 @@ public class GetBalanceAllTest : BonusTestApi
     [Fact]
     public async Task ManyTransactionManuBalancesOnlyPositive_ReturnListWithOneBalancesWithSumOfTheyTransactions()
     {
-        await postgres.Transactions.AddRangeAsync(new Transaction()
+        await Bonus.Transactions.AddRangeAsync(new Transaction()
             {
                 BonusSum = Q.Sum1000,
                 BankId = Q.BankIdRub,
@@ -89,7 +89,7 @@ public class GetBalanceAllTest : BonusTestApi
                 TransactionId = Q.GetRandomTransactionId(),
                 Type = TransactionType.Manual,
             });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(2);
@@ -105,7 +105,7 @@ public class GetBalanceAllTest : BonusTestApi
     [Fact]
     public async Task ManyTransactionManuBalances_ReturnListWithOneBalancesWithSumOfTheyTransactions()
     {
-        await postgres.Transactions.AddRangeAsync(new Transaction()
+        await Bonus.Transactions.AddRangeAsync(new Transaction()
             {
                 BonusSum = Q.Sum1000,
                 BankId = Q.BankIdRub,
@@ -136,7 +136,7 @@ public class GetBalanceAllTest : BonusTestApi
                 TransactionId = Q.GetRandomTransactionId(),
                 Type = TransactionType.Manual,
             });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var balances =  await api.BalanceGetAllAsync(Q.PersonId1);
         balances.Items.Count.Should().Be(2);

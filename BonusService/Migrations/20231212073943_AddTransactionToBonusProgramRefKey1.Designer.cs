@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BonusService.Migrations
 {
-    [DbContext(typeof(PostgresDbContext))]
+    [DbContext(typeof(BonusDbContext))]
     [Migration("20231212073943_AddTransactionToBonusProgramRefKey1")]
     partial class AddTransactionToBonusProgramRefKey1
     {

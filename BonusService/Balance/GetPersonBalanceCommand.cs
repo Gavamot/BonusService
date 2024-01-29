@@ -12,14 +12,14 @@ public sealed record GetBalanceByBankIdRequest([Required]string PersonId, [Requi
 
 public sealed class GetBalanceByBankIdCommand : IRequestHandler<GetBalanceByBankIdRequest, long>
 {
-    private readonly PostgresDbContext _postgres;
-    public GetBalanceByBankIdCommand(PostgresDbContext postgres)
+    private readonly BonusDbContext _bonus;
+    public GetBalanceByBankIdCommand(BonusDbContext bonus)
     {
-        _postgres = postgres;
+        _bonus = bonus;
     }
     public async ValueTask<long> Handle(GetBalanceByBankIdRequest request, CancellationToken ct)
     {
-        var res = await _postgres.Transactions
+        var res = await _bonus.Transactions
             .Where(x => x.PersonId == request.PersonId && x.BankId == request.BankId)
             .SumAsync(x=> x.BonusSum, ct);
         return res;
@@ -30,14 +30,14 @@ public record GetPersonBalanceResponseDto([Required]BalanceResponseItemDto[] ite
 
 public sealed class GetPersonBalanceCommand : IRequestHandler<GetPersonBalanceRequest, GetPersonBalanceResponseDto>
 {
-    private readonly PostgresDbContext _postgres;
-    public GetPersonBalanceCommand(PostgresDbContext postgres)
+    private readonly BonusDbContext _bonus;
+    public GetPersonBalanceCommand(BonusDbContext bonus)
     {
-        _postgres = postgres;
+        _bonus = bonus;
     }
     public async ValueTask<GetPersonBalanceResponseDto> Handle(GetPersonBalanceRequest request, CancellationToken ct)
     {
-        var res = await _postgres.Transactions
+        var res = await _bonus.Transactions
             .Where(x => x.PersonId == request.PersonId)
             .GroupBy(x=> x.BankId)
             .Select(x=> new BalanceResponseItemDto(x.Key, x.Sum(y=>y.BonusSum)))

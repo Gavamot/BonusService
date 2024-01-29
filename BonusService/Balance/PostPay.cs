@@ -39,12 +39,12 @@ public sealed record PayRequestDto([Required]string PersonId, [Required]int Bank
 
 public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IMediator _mediator;
     private readonly ILogger<PayCommand> _logger;
-    public PayCommand(PostgresDbContext postgres, IMediator mediator, ILogger<PayCommand> logger)
+    public PayCommand(BonusDbContext bonus, IMediator mediator, ILogger<PayCommand> logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _mediator = mediator;
         _logger = logger;
     }
@@ -53,7 +53,7 @@ public sealed class PayCommand : ICommandHandler<PayRequestDto, long>
     {
         Transaction transaction = new PayDtoMapper().FromDto(command);
         transaction.Type = TransactionType.Payment;
-        var owner = await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x => x.OwnerId == command.OwnerId, ct);
+        var owner = await _bonus.OwnerMaxBonusPays.FirstOrDefaultAsync(x => x.OwnerId == command.OwnerId, ct);
         var percentages = owner?.MaxBonusPayPercentages ?? 100;
         var bonusSum = (command.Payment * percentages) / 100;
         transaction.BonusSum = bonusSum;

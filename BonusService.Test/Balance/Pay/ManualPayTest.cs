@@ -31,7 +31,7 @@ public class ManualPayTest : BonusTestApi
         var res = await api.BalancePayManualAsync(request);
         res.Should().Be(0L);
 
-        var isTransactionExist = await postgres.Transactions.AnyAsync();
+        var isTransactionExist = await Bonus.Transactions.AnyAsync();
         isTransactionExist.Should().BeFalse();
     }
 
@@ -56,7 +56,7 @@ public class ManualPayTest : BonusTestApi
     {
         await InitPayIfBalanceLessThenTransaction(Q.Sum500, Q.Sum1000);
 
-        var transaction = await postgres.Transactions.SingleAsync(x => x.TransactionId == Q.TransactionId1);
+        var transaction = await Bonus.Transactions.SingleAsync(x => x.TransactionId == Q.TransactionId1);
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
         transaction.Type.Should().Be(TransactionType.Manual);
@@ -73,7 +73,7 @@ public class ManualPayTest : BonusTestApi
     public async Task PayIfBalanceLessThenTransaction_InDatabaseOnly2Transactions()
     {
         await InitPayIfBalanceLessThenTransaction(Q.Sum500, Q.Sum1000);
-        var transactionCount = await postgres.Transactions.CountAsync();
+        var transactionCount = await Bonus.Transactions.CountAsync();
         transactionCount.Should().Be(2);
     }
 
@@ -81,7 +81,7 @@ public class ManualPayTest : BonusTestApi
     public async Task PayIfBalanceLessThenTransaction_PayOnlyBalanceInDataBaseCorrectTransaction()
     {
         await InitPayIfBalanceLessThenTransaction(Q.Sum500, Q.Sum1000);
-        var transaction = await postgres.Transactions.SingleAsync(x => x.TransactionId == Q.TransactionId2);
+        var transaction = await Bonus.Transactions.SingleAsync(x => x.TransactionId == Q.TransactionId2);
         transaction.TransactionId.Should().Be(Q.TransactionId2);
         transaction.Description.Should().Be(Q.Description1);
         transaction.Type.Should().Be(TransactionType.Manual);
@@ -98,7 +98,7 @@ public class ManualPayTest : BonusTestApi
     public async Task PayIfBalanceLessThenTransaction_InDataBaseTotalTransactionsSumIsZero()
     {
         await InitPayIfBalanceLessThenTransaction(Q.Sum500, Q.Sum1000);
-        var balance = await postgres.Transactions.SumAsync(x => x.BonusSum);
+        var balance = await Bonus.Transactions.SumAsync(x => x.BonusSum);
         balance.Should().Be(0);
     }
 
@@ -118,7 +118,7 @@ public class ManualPayTest : BonusTestApi
 
         var res =  await api.BalancePayManualAsync(request);
         res.Should().Be(0);
-        var balance = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
+        var balance = await Bonus.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         balance.Should().BeNull();
     }
 
@@ -137,10 +137,10 @@ public class ManualPayTest : BonusTestApi
 
         var res =  await api.BalancePayManualAsync(request);
         res.Should().Be(Q.Sum1000);
-        var transaction = await postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
+        var transaction = await Bonus.Transactions.FirstOrDefaultAsync(x => x.TransactionId == request.TransactionId);
         transaction.Should().NotBeNull();
         transaction.BonusSum.Should().Be(Q.Sum1000 *-1);
-        var balance= await postgres.Transactions.SumAsync(x => x.BonusSum);
+        var balance= await Bonus.Transactions.SumAsync(x => x.BonusSum);
         balance.Should().Be(0);
     }
 

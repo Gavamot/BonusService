@@ -14,6 +14,14 @@ public interface IForeignCatalogEntity : IDbEntity<int>
     // В реализации будут поля для ключа в сторонней базе и какието расширения
 }
 
+public interface IHaveActivePeriod
+{
+    DateTimeOffset DateStart { get; set; }
+    DateTimeOffset DateStop { get; set; }
+    bool IsActive(DateTimeOffset now) => DateStart <= now && DateStop > now;
+    bool IsActive(Interval now) => IsActive(now.from) || IsActive(now.to);
+}
+
 /// <summary>
 ///  Справочники
 /// </summary>

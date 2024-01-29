@@ -11,13 +11,13 @@ namespace BonusService.Balance;
 public sealed record PayTransactionRequest(Transaction transaction) : ICommand<long>;
 public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, long>
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IMediator _mediator;
     private readonly IDateTimeService _dateTimeService;
     private readonly ILogger<PayCommand> _logger;
-    public PayCommonCommand(PostgresDbContext postgres, IMediator mediator, IDateTimeService dateTimeService, ILogger<PayCommand> logger)
+    public PayCommonCommand(BonusDbContext bonus, IMediator mediator, IDateTimeService dateTimeService, ILogger<PayCommand> logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _mediator = mediator;
         _dateTimeService = dateTimeService;
         _logger = logger;
@@ -25,7 +25,7 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
     public async ValueTask<long> Handle(PayTransactionRequest command, CancellationToken ct)
     {
         var transaction = command.transaction;
-        var oldTransaction = await _postgres.Transactions.FirstOrDefaultAsync(x => x.TransactionId == transaction.TransactionId, cancellationToken: ct);
+        var oldTransaction = await _bonus.Transactions.FirstOrDefaultAsync(x => x.TransactionId == transaction.TransactionId, cancellationToken: ct);
         if (oldTransaction != null) return oldTransaction.BonusSum;
         var request = new GetBalanceByBankIdRequest(transaction.PersonId, transaction.BankId);
         var bonusBalance = await _mediator.Send(request, ct);
@@ -38,8 +38,8 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
         }
         transaction.BonusSum = bonusSum * -1;
         transaction.LastUpdated = _dateTimeService.GetNowUtc();
-        await _postgres.Transactions.AddAsync(transaction, ct);
-        await _postgres.SaveChangesAsync(ct);
+        await _bonus.Transactions.AddAsync(transaction, ct);
+        await _bonus.SaveChangesAsync(ct);
 
         var transactionJson = JsonSerializer.Serialize(transaction);
         _logger.LogInformation("Было списанно со счета пользователя {BonusSum}, транзакция = {Transaction}", transaction.BonusSum, transactionJson);

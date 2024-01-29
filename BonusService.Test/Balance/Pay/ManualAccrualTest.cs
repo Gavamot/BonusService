@@ -28,7 +28,7 @@ public class ManualAccrualTest : BonusTestApi
             TransactionId = Q.TransactionId1,
         };
         await api.BalanceAccrualManualAsync(request);
-        var transaction = await postgres.Transactions.SingleAsync();
+        var transaction = await Bonus.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
         transaction.Type.Should().Be(TransactionType.Manual);
@@ -66,7 +66,7 @@ public class ManualAccrualTest : BonusTestApi
 
         await api.BalanceAccrualManualAsync(request);
 
-        var transaction = await postgres.Transactions.SingleAsync();
+        var transaction = await Bonus.Transactions.SingleAsync();
         transaction.TransactionId.Should().Be(Q.TransactionId1);
         transaction.Description.Should().Be(Q.Description1);
         transaction.Type.Should().Be(TransactionType.Manual);
@@ -106,7 +106,7 @@ public class ManualAccrualTest : BonusTestApi
 
         await api.BalanceAccrualManualAsync(request2);
 
-        var transactions = await postgres.Transactions.ToArrayAsync();
+        var transactions = await Bonus.Transactions.ToArrayAsync();
         transactions.Should().HaveCount(2);
 
         var transaction = transactions.Single(x => x.TransactionId == Q.TransactionId1);

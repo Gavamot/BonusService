@@ -27,7 +27,12 @@ public enum TransactionType
     /// <summary>
     /// Консолидация оборотов по бонусному счету
     /// </summary>
-    Shrink
+    Shrink,
+
+    /// <summary>
+    /// По событию (например день регистрация нового пользователя)
+    /// </summary>
+    Event
 }
 
 public class Transaction : IDocumentEntity, IBalanceKey

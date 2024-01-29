@@ -35,14 +35,10 @@ public enum BonusProgramType
     /// <summary>
     /// потрачено Х денег
     /// </summary>
-    SpendMoney,
-    /// <summary>
-    /// день рождения
-    /// </summary>
-    Birthday
+    SpendMoney
 }
 
-public class BonusProgram : ICatalogEntity, IDeletable
+public class BonusProgram : ICatalogEntity, IDeletable, IHaveActivePeriod
 {
     public int Id { get; set; }
     public string Name { get; set; }
@@ -69,7 +65,4 @@ public class BonusProgram : ICatalogEntity, IDeletable
     [SwaggerSchema(ReadOnly = true, Nullable = true)]
     [SwaggerExclude]
     public List<BonusProgramHistory> BonusProgramHistory { get; set; } = new List<BonusProgramHistory>();
-
-    public bool IsActive(DateTimeOffset now) => DateStart <= now && DateStop > now;
-    public bool IsActive(Interval now) => IsActive(now.from) || IsActive(now.to);
 }

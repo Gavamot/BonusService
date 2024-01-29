@@ -21,19 +21,19 @@ public sealed class ExecuteBonusProgramJobRequestValidator : AbstractValidator<E
 
 public sealed class ExecuteBonusProgramJobCommand: ICommandHandler<ExecuteBonusProgramJobRequest>
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IBackgroundJobClient _jobClient;
     private readonly ILogger<ExecuteBonusProgramJobCommand> _logger;
-    public ExecuteBonusProgramJobCommand(PostgresDbContext postgres, IBackgroundJobClient jobClient, ILogger<ExecuteBonusProgramJobCommand> logger)
+    public ExecuteBonusProgramJobCommand(BonusDbContext bonus, IBackgroundJobClient jobClient, ILogger<ExecuteBonusProgramJobCommand> logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _jobClient = jobClient;
         _logger = logger;
     }
 
     public async ValueTask<Unit> Handle(ExecuteBonusProgramJobRequest command, CancellationToken ct)
     {
-        var bonusProgram = await _postgres.GetBonusProgramById(command.BonusProgramId, ct);
+        var bonusProgram = await _bonus.GetBonusProgramById(command.BonusProgramId, ct);
         if (bonusProgram == default) throw new ArgumentException("Бонусная программа не найдена или удалена");
 
         if (bonusProgram.BonusProgramType == BonusProgramType.SpendMoney)

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace BonusService.Migrations
 {
-    [DbContext(typeof(PostgresDbContext))]
+    [DbContext(typeof(BonusDbContext))]
     [Migration("20231226092731_StopDateNotNull")]
     partial class StopDateNotNull
     {

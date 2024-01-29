@@ -10,9 +10,9 @@ public abstract class AccumulateByIntervalBonusJob : AbstractBonusProgramJob
     private readonly MongoDbContext _mongo;
     public AccumulateByIntervalBonusJob(
         MongoDbContext mongo,
-        PostgresDbContext postgres,
+        BonusDbContext bonus,
         IDateTimeService dateTimeService,
-        ILogger<AccumulateByIntervalBonusJob> logger) : base(logger, postgres, dateTimeService)
+        ILogger<AccumulateByIntervalBonusJob> logger) : base(logger, bonus, dateTimeService)
     {
         _mongo = mongo;
     }
@@ -100,7 +100,7 @@ public abstract class AccumulateByIntervalBonusJob : AbstractBonusProgramJob
             totalBonusSum += transaction.BonusSum;
 
             if (transactions.Count < 4096) continue;
-            await _postgres.Transactions.BulkInsertAsync(transactions, options =>
+            await Bonus.Transactions.BulkInsertAsync(transactions, options =>
             {
                 options.InsertIfNotExists = true;
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;
@@ -112,7 +112,7 @@ public abstract class AccumulateByIntervalBonusJob : AbstractBonusProgramJob
 
         if (transactions.Any())
         {
-            await _postgres.Transactions.BulkInsertAsync(transactions, options =>
+            await Bonus.Transactions.BulkInsertAsync(transactions, options =>
             {
                 options.InsertIfNotExists = true;
                 options.ColumnPrimaryKeyExpression = x => x.TransactionId;

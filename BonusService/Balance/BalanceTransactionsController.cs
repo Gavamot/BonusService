@@ -62,10 +62,10 @@ public sealed class GetBalanceByBankIdDtoValidator : AbstractValidator<BalanceTr
 
 public sealed class GetBalanceTransactionCommand : IRequestHandler<BalanceTransactionRequest, BalanceTransactionResponse>
 {
-    private readonly PostgresDbContext _postgres;
-    public GetBalanceTransactionCommand(PostgresDbContext postgres)
+    private readonly BonusDbContext _bonus;
+    public GetBalanceTransactionCommand(BonusDbContext bonus)
     {
-        _postgres = postgres;
+        _bonus = bonus;
     }
 
     public async ValueTask<BalanceTransactionResponse> Handle(BalanceTransactionRequest request, CancellationToken ct)
@@ -79,7 +79,7 @@ public sealed class GetBalanceTransactionCommand : IRequestHandler<BalanceTransa
 
         var start = request.DateFrom.ToDateTimeOffset();
         var end = request.DateTo.ToDateTimeOffset();
-        var dbQuery = _postgres.Transactions.Where(x => x.PersonId == request.PersonId
+        var dbQuery = _bonus.Transactions.Where(x => x.PersonId == request.PersonId
             && x.BankId == request.BankId
             && x.LastUpdated >= start
             && x.LastUpdated < end);

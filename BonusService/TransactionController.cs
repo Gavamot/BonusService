@@ -9,8 +9,8 @@ namespace BonusService;
 //[Authorize]
 public class TransactionController : ODataController
 {
-    private readonly PostgresDbContext _db;
-    public TransactionController(PostgresDbContext db)
+    private readonly BonusDbContext _db;
+    public TransactionController(BonusDbContext db)
     {
         _db = db;
 

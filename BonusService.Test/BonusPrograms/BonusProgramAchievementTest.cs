@@ -20,7 +20,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     private BonusProgram bonus;
     public BonusProgramAchievementTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonus = postgres.BonusPrograms.Include(x => x.ProgramLevels)
+        bonus = Bonus.BonusPrograms.Include(x => x.ProgramLevels)
             .Include(x=>x.BonusProgramHistory)
             .First();
     }
@@ -66,7 +66,7 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task ChargedByCapacityBonusAndSpendMoneyProgram_CalculationForCharged()
     {
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         await AddActiveChargedByCapacityBonusProgram();
         var sessions = new []
         {
@@ -110,8 +110,8 @@ public class BonusProgramAchievementTest : BonusTestApi
     [Fact]
     public async Task ChargedByCapacityBonusProgram_CalculationForCharged()
     {
-        postgres.BonusPrograms.RemoveRange(postgres.BonusPrograms.ToArray());
-        await postgres.SaveChangesAsync();
+        Bonus.BonusPrograms.RemoveRange(Bonus.BonusPrograms.ToArray());
+        await Bonus.SaveChangesAsync();
         await AddActiveChargedByCapacityBonusProgram();
         var sessions = new []
         {

@@ -28,7 +28,7 @@ public partial class BonusProgramMapper : IUpdateMapper<BonusProgramDto, BonusPr
 
 public class BonusProgramRep : DbEntityRep<BonusProgram>
 {
-    public BonusProgramRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
+    public BonusProgramRep(BonusDbContext bonus, IDateTimeService dateTimeService) : base(bonus, dateTimeService)
     {
     }
 }
@@ -38,7 +38,7 @@ public class BonusProgramRep : DbEntityRep<BonusProgram>
 [Route("[controller]/[action]")]
 public sealed partial class BonusProgramController : CrudController<BonusProgram, BonusProgramDto>
 {
-    public BonusProgramController(PostgresDbContext db, BonusProgramRep rep) : base(rep, new BonusProgramMapper())
+    public BonusProgramController(BonusDbContext db, BonusProgramRep rep) : base(rep, new BonusProgramMapper())
     {
 
     }

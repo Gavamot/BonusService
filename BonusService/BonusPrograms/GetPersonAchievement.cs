@@ -73,16 +73,16 @@ public sealed record BonusProgramAchievementRequest([Required]string PersonId) :
 
 public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgramAchievementRequest, BonusProgramAchievementResponse>
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IMediator _mediator;
     private readonly IDateTimeService _dateTimeService;
 
     public BonusProgramAchievementCommand(
-        PostgresDbContext postgres,
+        BonusDbContext bonus,
         IMediator mediator,
         IDateTimeService dateTimeService)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _mediator = mediator;
         _dateTimeService = dateTimeService;
     }
@@ -98,7 +98,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
     public async ValueTask<BonusProgramAchievementResponse> Handle(BonusProgramAchievementRequest request, CancellationToken ct)
     {
         var now = _dateTimeService.GetNowUtc();
-        var bonusPrograms = await _postgres.GetActiveBonusPrograms(now).ToArrayAsync(ct);
+        var bonusPrograms = await _bonus.GetActiveBonusPrograms(now).ToArrayAsync(ct);
         List<BonusProgramAchievementResponseItem> items = new();
         var mapper = new BonusProgramDtoMapper();
 
@@ -107,7 +107,7 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
             try
             {
                 var interval = Interval.GetFromNowToFutureDateInterval(bonusProgram.FrequencyType, bonusProgram.FrequencyValue, now);
-                if(bonusProgram.IsActive(interval) == false) continue;
+                if((bonusProgram as IHaveActivePeriod).IsActive(interval) == false) continue;
                 var sum = await CalculateAchievementSumAsync(request.PersonId, bonusProgram, interval);
                 items.Add(new()
                 {
@@ -119,7 +119,6 @@ public sealed class BonusProgramAchievementCommand : IRequestHandler<BonusProgra
             {
                 // Пока реализованны не все варианты
             }
-
         }
         return new BonusProgramAchievementResponse(items.ToArray());
     }

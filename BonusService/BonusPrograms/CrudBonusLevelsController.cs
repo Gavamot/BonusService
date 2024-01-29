@@ -48,7 +48,7 @@ public partial class BonusProgramLevelMapper : IUpdateMapper<BonusProgramLevelDt
 
 public class BonusProgramLevelRep : DbEntityRep<BonusProgramLevel>
 {
-    public BonusProgramLevelRep(PostgresDbContext postgres, IDateTimeService dateTimeService) : base(postgres, dateTimeService)
+    public BonusProgramLevelRep(BonusDbContext bonus, IDateTimeService dateTimeService) : base(bonus, dateTimeService)
     {
     }
 }
@@ -58,8 +58,8 @@ public class BonusProgramLevelRep : DbEntityRep<BonusProgramLevel>
 [Route("[controller]/[action]")]
 public sealed class BonusLevelsController : CrudController<BonusProgramLevel, BonusProgramLevelDto>
 {
-    private readonly PostgresDbContext _db;
-    public BonusLevelsController(BonusProgramLevelRep rep, PostgresDbContext db) : base(rep, new BonusProgramLevelMapper())
+    private readonly BonusDbContext _db;
+    public BonusLevelsController(BonusProgramLevelRep rep, BonusDbContext db) : base(rep, new BonusProgramLevelMapper())
     {
         _db = db;
     }

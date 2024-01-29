@@ -37,7 +37,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
         {
             // Времянка пока юонусные программы захардкоженны
             using var scope1 = serviceProvider.CreateScope();
-            var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
+            var postgres = scope1.ServiceProvider.GetRequiredService<BonusDbContext>();
             var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == Q.BonusProgramId1);
             if (bp == null)
             {
@@ -132,7 +132,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
 
     protected async Task InitTransactionTran1Person1BankRub(long bonusBalance)
     {
-        await postgres.Transactions.AddAsync(new Transaction()
+        await Bonus.Transactions.AddAsync(new Transaction()
         {
             BonusSum = bonusBalance,
             BankId = Q.BankIdRub,
@@ -142,7 +142,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             Type = TransactionType.Manual,
             UserName = Q.UserName
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
     }
 
     protected HttpClient CreateHttpClient()
@@ -157,7 +157,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     protected readonly IServiceScope scope;
     protected T GetService<T>() where T : notnull => scope.GetRequiredService<T>();
     protected IServiceScope CreateScope() => server.Services.CreateScope();
-    protected readonly PostgresDbContext postgres;
+    protected readonly BonusDbContext Bonus;
     protected readonly MongoDbContext mongo;
     protected IBackgroundJobClientV2 jobClient;
     protected readonly HangfireDbContext hangfireDb;
@@ -170,9 +170,9 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
             ReturnsNextFromSequence(Q.DateTimeSequence);
 
         scope = CreateScope();
-        postgres = scope.GetRequiredService<PostgresDbContext>();
-        postgres.Database.EnsureDeleted();
-        postgres.Database.Migrate();
+        Bonus = scope.GetRequiredService<BonusDbContext>();
+        Bonus.Database.EnsureDeleted();
+        Bonus.Database.Migrate();
         BonusProgramSeed.AddPostgresSeed(server.Services);
 
         //InfraHelper.CreateMongoDatabase(this.server.DbName).GetAwaiter().GetResult();
@@ -198,7 +198,7 @@ public class BonusTestApi : IClassFixture<FakeApplicationFactory<Program>>, IAsy
     }
     async Task IAsyncLifetime.DisposeAsync()
     {
-        await postgres.Database.EnsureDeletedAsync();
+        await Bonus.Database.EnsureDeletedAsync();
         var hangfire = scope.ServiceProvider.GetRequiredService<HangfireDbContext>();
         await hangfire.Database.EnsureDeletedAsync();
         await mongo.Database.DropCollectionAsync(MongoDbContext.SessionCollection);

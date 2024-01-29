@@ -18,12 +18,12 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     [Fact]
     public async Task GetById()
     {
-        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        Bonus.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
         {
             new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10},
             new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20}
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var ow1= await api.OwnerMaxBonusPayGetByIdAsync(1);
         ow1.OwnerId.Should().Be(Q.OwnerId1);
@@ -39,12 +39,12 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     [Fact]
     public async Task GetByOwnerId()
     {
-        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        Bonus.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
         {
             new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10},
             new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20}
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var ow1= await api.OwnerMaxBonusPayGetByOwnerIdAsync(Q.OwnerId1);
         ow1.OwnerId.Should().Be(Q.OwnerId1);
@@ -60,12 +60,12 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     [Fact]
     public async Task GetAll()
     {
-        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        Bonus.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
         {
             new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10},
             new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20}
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var owners= await api.OwnerMaxBonusPayGetAllAsync();
         owners.Count.Should().Be(2);
@@ -89,8 +89,8 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         owner.MaxBonusPayPercentages.Should().Be(20);
         owner.LastUpdated.Should().Be(Q.DateTimeSequence.First());
 
-        postgres.OwnerMaxBonusPays.Count().Should().Be(1);
-        var entity = postgres.OwnerMaxBonusPays.First();
+        Bonus.OwnerMaxBonusPays.Count().Should().Be(1);
+        var entity = Bonus.OwnerMaxBonusPays.First();
         entity.Id.Should().BePositive();
         entity.OwnerId.Should().Be(Q.OwnerId1);
         entity.MaxBonusPayPercentages.Should().Be(20);
@@ -100,14 +100,14 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     [Fact]
     public async Task Update()
     {
-        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        Bonus.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
         {
             new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10},
             new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20}
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
-        var id = postgres.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
+        var id = Bonus.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
 
         await api.OwnerMaxBonusPayUpdateAsync(new OwnerByPayDto()
         {
@@ -116,7 +116,7 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
         });
 
         using var scope = CreateScope();
-        var newPostgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var newPostgres = scope.ServiceProvider.GetRequiredService<BonusDbContext>();
 
         newPostgres.OwnerMaxBonusPays.Count().Should().Be(2);
         var updatedOwner = await newPostgres.OwnerMaxBonusPays.FirstAsync(x => x.Id == id);
@@ -129,20 +129,20 @@ public class OwnerMaxBonusPayCrudTest : BonusTestApi
     public async Task Delete()
     {
         var date = new DateTimeOffset(2000, 1, 1, 1, 1, 1, new TimeSpan(0));
-        postgres.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
+        Bonus.OwnerMaxBonusPays.AddRange(new OwnerMaxBonusPay[]
         {
             new(){ OwnerId = Q.OwnerId1, MaxBonusPayPercentages = 10, LastUpdated = date},
             new(){ OwnerId = Q.OwnerId2, MaxBonusPayPercentages = 20, LastUpdated = date + new TimeSpan(1, 1, 1, 1)}
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
 
-        var id = postgres.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
+        var id = Bonus.OwnerMaxBonusPays.Single(x => x.OwnerId == Q.OwnerId2).Id;
 
         await api.OwnerMaxBonusPayDeleteByIdAsync(id);
 
         using var scope = CreateScope();
-        var newPostgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var newPostgres = scope.ServiceProvider.GetRequiredService<BonusDbContext>();
 
         newPostgres.OwnerMaxBonusPays.Count().Should().Be(1);
         var updatedOwner = await newPostgres.OwnerMaxBonusPays.FirstAsync(x => x.OwnerId == Q.OwnerId1);

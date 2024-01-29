@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BonusService.Migrations
 {
     [DbContext(typeof(BonusDbContext))]
-    [Migration("20231211134345_Init")]
-    partial class Init
+    [Migration("20240129132113_userEvents")]
+    partial class userEvents
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -42,8 +42,10 @@ namespace BonusService.Migrations
                     b.Property<DateTimeOffset>("DateStart")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("DateStop")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateTimeOffset>("DateStop")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(9999, 12, 31, 23, 59, 59, 999, DateTimeKind.Unspecified).AddTicks(9999), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -150,6 +152,40 @@ namespace BonusService.Migrations
                     b.ToTable("BonusProgramsLevels");
                 });
 
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.EventReward", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BankId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("DateStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("DateStop")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Reward")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type", "BankId")
+                        .IsUnique();
+
+                    b.ToTable("EventRewards");
+                });
+
             modelBuilder.Entity("BonusService.Common.Postgres.Entity.OwnerMaxBonusPay", b =>
                 {
                     b.Property<int>("Id")
@@ -224,6 +260,8 @@ namespace BonusService.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BonusProgramId");
+
                     b.HasIndex("TransactionId")
                         .IsUnique();
 
@@ -283,6 +321,8 @@ namespace BonusService.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BonusProgramId");
+
                     b.ToTable("TransactionHistory");
                 });
 
@@ -306,6 +346,24 @@ namespace BonusService.Migrations
                         .IsRequired();
 
                     b.Navigation("BonusProgram");
+                });
+
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.Transaction", b =>
+                {
+                    b.HasOne("BonusService.Common.Postgres.Entity.BonusProgram", "BonusProgram")
+                        .WithMany()
+                        .HasForeignKey("BonusProgramId");
+
+                    b.Navigation("BonusProgram");
+                });
+
+            modelBuilder.Entity("BonusService.Common.Postgres.Entity.TransactionHistory", b =>
+                {
+                    b.HasOne("BonusService.Common.Postgres.Entity.BonusProgram", "Program")
+                        .WithMany()
+                        .HasForeignKey("BonusProgramId");
+
+                    b.Navigation("Program");
                 });
 
             modelBuilder.Entity("BonusService.Common.Postgres.Entity.BonusProgram", b =>

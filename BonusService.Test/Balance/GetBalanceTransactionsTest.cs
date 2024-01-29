@@ -36,9 +36,9 @@ public class BalanceGetTransactionsTest : BonusTestApi
 
     private void AddNoiseTransaction()
     {
-        postgres.Transactions.AddRange(GetTransactionPerson2(Q.IntervalMoth1Start),
+        Bonus.Transactions.AddRange(GetTransactionPerson2(Q.IntervalMoth1Start),
             GetTransactionPerson2(Q.IntervalMoth1Start + TimeSpan.FromDays(1)));
-        postgres.SaveChanges();
+        Bonus.SaveChanges();
     }
 
     [Fact]
@@ -65,8 +65,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
         t1.BankId = Q.BankIdKaz;
         var t2 = GetTransactionPerson1(Q.IntervalMoth1Start + TimeSpan.FromDays(1));
         t2.BankId = Q.BankIdKaz;
-        postgres.Transactions.AddRange(t1, t2);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(t1, t2);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 10, default, default);
         balance.Count.Should().Be(0);
         balance.Items.Should().BeEmpty();
@@ -77,8 +77,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
     {
         var t1 = GetTransactionPerson1(Q.IntervalMoth1Start - TimeSpan.FromHours(1));
         var t2 = GetTransactionPerson1(Q.IntervalMoth1End + TimeSpan.FromHours(1));
-        postgres.Transactions.AddRange(t1, t2);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(t1, t2);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 10, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(0);
         balance.Items.Should().BeEmpty();
@@ -90,8 +90,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
         var t1 = GetTransactionPerson1(Q.IntervalMoth1Start);
         var t2 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var items = new [] { t1, t2 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 10, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(2);
         balance.Items.Count.Should().Be(2);
@@ -107,8 +107,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
         var t2 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 1, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(1);
@@ -135,8 +135,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
         var t2 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 2, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(2);
@@ -159,8 +159,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
         var t2 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransactionPerson1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 2, 3, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(0);
@@ -171,8 +171,8 @@ public class BalanceGetTransactionsTest : BonusTestApi
     {
         var t1 = GetTransactionPerson1(Q.IntervalMoth1Start);
         var items = new [] { t1};
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BalanceGetTransactionsAsync(Q.PersonId1, Q.BankIdRub, 1, 1, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         var item = balance.Items!.First();
         CheckTransaction(t1, item);

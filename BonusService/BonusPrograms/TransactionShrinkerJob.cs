@@ -18,16 +18,16 @@ public sealed partial class TransactionHistoryMapper
 /// </summary>
 public class TransactionShrinkerJob : AbstractJob
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IDateTimeService _dateTimeService;
     public override string Name => $"[Shrinker]";
 
     public TransactionShrinkerJob(
-        PostgresDbContext postgres,
+        BonusDbContext bonus,
         IDateTimeService dateTimeService,
         ILogger<TransactionShrinkerJob> logger) : base(logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _dateTimeService = dateTimeService;
     }
 
@@ -47,7 +47,7 @@ public class TransactionShrinkerJob : AbstractJob
         _logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Начат процесс консолидации транзакций на {curDay} с размером партиции {chunkSize}", curDay, chunkSize);
         do
         {
-            var transactions = await _postgres.Transactions.Where(x => x.LastUpdated < curDay)
+            var transactions = await _bonus.Transactions.Where(x => x.LastUpdated < curDay)
                 .Skip(cur).Take(chunkSize).AsNoTracking().ToArrayAsync();
 
             consolidationLength = transactions.Length;
@@ -55,10 +55,10 @@ public class TransactionShrinkerJob : AbstractJob
 
             var consolidation = transactions.GroupBy(x => new { x.PersonId, x.BankId })
                 .Select(x => new { x.Key.PersonId, x.Key.BankId, BonusSum = x.Sum(y => y.BonusSum) }).ToArray();
-            await using var transactionDb = await _postgres.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
+            await using var transactionDb = await _bonus.Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
             try
             {
-                await _postgres.Transactions.BulkInsertAsync(consolidation.Select(x => new Transaction()
+                await _bonus.Transactions.BulkInsertAsync(consolidation.Select(x => new Transaction()
                 {
                     PersonId = x.PersonId,
                     BankId = x.BankId,
@@ -73,9 +73,9 @@ public class TransactionShrinkerJob : AbstractJob
                     EzsId = null,
                 }));
                 var mapper = new TransactionHistoryMapper();
-                await _postgres.TransactionHistory.BulkInsertAsync(transactions.Where(x => x.Type != TransactionType.Shrink)
+                await _bonus.TransactionHistory.BulkInsertAsync(transactions.Where(x => x.Type != TransactionType.Shrink)
                     .Select(x => mapper.FromTransaction(x)));
-                await _postgres.BulkDeleteAsync(transactions);
+                await _bonus.BulkDeleteAsync(transactions);
                 _logger.LogInformation(AppEvents.TransactionShrinkerEvent, "Даннные успешно сконсолидированы({consolidationLength}->{consolidation}) на {curDay} итерация {iteration} с размером партиции {chunkSize}", consolidationLength, consolidation, curDay, i, chunkSize);
                 i++;
                 await transactionDb.CommitAsync();

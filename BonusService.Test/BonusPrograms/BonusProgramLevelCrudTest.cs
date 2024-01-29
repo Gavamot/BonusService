@@ -11,7 +11,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
     private BonusProgram bp;
     public BonusProgramLevelCrudTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bp = postgres.BonusPrograms.Include(x=>x.ProgramLevels).First(x => x.Id == Q.BonusProgramId1);
+        bp = Bonus.BonusPrograms.Include(x=>x.ProgramLevels).First(x => x.Id == Q.BonusProgramId1);
     }
 
     private void AssertAreEquals(BonusService.Common.Postgres.Entity.BonusProgramLevel actual, BonusApi.BonusProgramLevel expected)
@@ -77,7 +77,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
         // TODO Дописать Тесты !
 
         using var serviceScope = CreateScope();
-        var items = base.scope.ServiceProvider.GetRequiredService<PostgresDbContext>().BonusProgramsLevels.ToArray();
+        var items = base.scope.ServiceProvider.GetRequiredService<BonusDbContext>().BonusProgramsLevels.ToArray();
         items.Length.Should().Be(ProgramLevelsCount + 1);
         var dbItem = items.First(x => x.Id == bp1.Id);
         dbItem.Name.Should().Be(newItem1.Name);
@@ -101,7 +101,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
         await api.BonusLevelsUpdateAsync(newBonusLevel);
 
         using var scope = CreateScope();
-        var expected = scope.GetRequiredService<PostgresDbContext>().BonusProgramsLevels.First(x => x.Id == 1);
+        var expected = scope.GetRequiredService<BonusDbContext>().BonusProgramsLevels.First(x => x.Id == 1);
         expected.Level.Should().Be(newBonusLevel.Level);
         expected.AwardSum.Should().Be(newBonusLevel.AwardSum);
         expected.Condition.Should().Be(oldLevel.Condition);
@@ -118,7 +118,7 @@ public class BonusProgramLevelCrudTest : BonusTestApi
         await api.BonusLevelsDeleteByIdAsync(f.Id);
 
         using var scope = CreateScope();
-        var newPostgres = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var newPostgres = scope.ServiceProvider.GetRequiredService<BonusDbContext>();
 
         newPostgres.BonusProgramsLevels.Count().Should().Be(ProgramLevelsCount - 1);
         newPostgres.BonusProgramsLevels.Any(x=>x.Id == f.Id).Should().BeFalse();

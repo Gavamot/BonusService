@@ -1,9 +1,14 @@
+using System.Reflection;
 using BonusService.Balance.OwnerByPayCrud;
 using BonusService.BonusPrograms.BonusProgramCrud;
 using BonusService.BonusPrograms.BonusProgramLevelsCrud;
 using BonusService.BonusPrograms.ChargedByCapacityBonus;
 using BonusService.BonusPrograms.ChargedByStationsBonus;
+using BonusService.BonusPrograms.Events;
 using BonusService.BonusPrograms.SpendMoneyBonus;
+using MassTransit;
+using UserProfileService;
+using UserProfileService.Events;
 namespace BonusService.BonusPrograms;
 
 public static class BonusExt
@@ -18,6 +23,8 @@ public static class BonusExt
         services.AddScoped<SpendMoneyBonusJob>();
         services.AddScoped<ChargedByCapacityBonusJob>();
         services.AddScoped<ChargedByStationsBonusJob>();
+
+        services.AddBonusEventServices(configuration);
         return services;
     }
 }

@@ -35,8 +35,8 @@ public partial class OwnerByPayMapper : IUpdateMapper<OwnerByPayDto, OwnerMaxBon
 
 public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 {
-    public OwnerByPayRep(PostgresDbContext postgres, IDateTimeService dateTimeService)
-        : base(postgres, dateTimeService)
+    public OwnerByPayRep(BonusDbContext bonus, IDateTimeService dateTimeService)
+        : base(bonus, dateTimeService)
     {
 
     }
@@ -51,12 +51,12 @@ public class OwnerByPayRep : DbEntityRep<OwnerMaxBonusPay>
 public sealed class OwnerMaxBonusPayController : ICrudController<OwnerMaxBonusPay, OwnerByPayDto>
 {
     private readonly OwnerByPayRep _rep;
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly OwnerByPayMapper _mapper = new ();
-    public OwnerMaxBonusPayController(OwnerByPayRep rep, PostgresDbContext postgres)
+    public OwnerMaxBonusPayController(OwnerByPayRep rep, BonusDbContext bonus)
     {
         _rep = rep;
-        _postgres = postgres;
+        _bonus = bonus;
 
     }
     [HttpGet("{id:int}")]
@@ -101,6 +101,6 @@ public sealed class OwnerMaxBonusPayController : ICrudController<OwnerMaxBonusPa
     [Authorize(Policy = PolicyNames.OwnerRead)]
     public async Task<OwnerMaxBonusPay?> GetByOwnerId([FromRoute][Required]int ownerId, CancellationToken ct)
     {
-        return await _postgres.OwnerMaxBonusPays.FirstOrDefaultAsync(x=> x.OwnerId == ownerId, ct);
+        return await _bonus.OwnerMaxBonusPays.FirstOrDefaultAsync(x=> x.OwnerId == ownerId, ct);
     }
 }

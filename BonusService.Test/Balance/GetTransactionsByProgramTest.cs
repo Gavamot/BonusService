@@ -11,8 +11,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
         var bp2 = BonusProgramSeed.Get();
         bp2.Id = Q.BonusProgramId2;
 
-        postgres.BonusPrograms.Add(bp2);
-        postgres.SaveChanges();
+        Bonus.BonusPrograms.Add(bp2);
+        Bonus.SaveChanges();
     }
 
     private Transaction GetTransaction(int bonusProgramId, DateTimeOffset date) => new()
@@ -36,9 +36,9 @@ public class GetTransactionsByProgramTest : BonusTestApi
 
     private void AddNoiseTransaction()
     {
-        postgres.Transactions.AddRange(GetTransaction2(Q.IntervalMoth1Start),
+        Bonus.Transactions.AddRange(GetTransaction2(Q.IntervalMoth1Start),
             GetTransaction2(Q.IntervalMoth1Start + TimeSpan.FromDays(1)));
-        postgres.SaveChanges();
+        Bonus.SaveChanges();
     }
 
     [Fact]
@@ -65,8 +65,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
         t1.BankId = Q.BankIdKaz;
         var t2 = GetTransaction1(Q.IntervalMoth1Start + TimeSpan.FromDays(1));
         t2.BankId = Q.BankIdKaz;
-        postgres.Transactions.AddRange(t1, t2);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(t1, t2);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 10, default, default);
         balance.Count.Should().Be(2);
     }
@@ -76,8 +76,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
     {
         var t1 = GetTransaction1(Q.IntervalMoth1Start - TimeSpan.FromHours(1));
         var t2 = GetTransaction1( Q.IntervalMoth1End + TimeSpan.FromHours(1));
-        postgres.Transactions.AddRange(t1, t2);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(t1, t2);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 10, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(0);
         balance.Items.Should().BeEmpty();
@@ -89,9 +89,9 @@ public class GetTransactionsByProgramTest : BonusTestApi
         var t1 = GetTransaction1(Q.IntervalMoth1Start);
         var t2 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var items = new [] { t1, t2 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
-        var a = await postgres.Transactions.ToArrayAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
+        var a = await Bonus.Transactions.ToArrayAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 10, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(2);
         balance.Items.Count.Should().Be(2);
@@ -106,8 +106,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
         var t2 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 1, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(1);
@@ -134,8 +134,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
         var t2 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 2, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(2);
@@ -158,8 +158,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
         var t2 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(1));
         var t3 = GetTransaction1(Q.IntervalMoth1End - TimeSpan.FromHours(4));
         var items = new [] { t1, t2, t3 };
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 2, 3, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         balance.Count.Should().Be(3);
         balance.Items.Count.Should().Be(0);
@@ -170,8 +170,8 @@ public class GetTransactionsByProgramTest : BonusTestApi
     {
         var t1 = GetTransaction1(Q.IntervalMoth1Start);
         var items = new [] { t1};
-        postgres.Transactions.AddRange(items);
-        await postgres.SaveChangesAsync();
+        Bonus.Transactions.AddRange(items);
+        await Bonus.SaveChangesAsync();
         var balance =  await api.BonusProgramGetTransactionsByProgramAsync(Q.BonusProgramId1, 1, 1, Q.IntervalMoth1Start, Q.IntervalMoth1End);
         var item = balance.Items!.First();
         CheckTransaction(t1, item);

@@ -32,11 +32,11 @@ public record class GetTransactionsByProgramRequest([Required][property: Example
 
 public sealed class ExecuteBonusProgramJobCommand: IRequestHandler<GetTransactionsByProgramRequest, BalanceTransactionResponse>
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly ILogger<ExecuteBonusProgramJobCommand> _logger;
-    public ExecuteBonusProgramJobCommand(PostgresDbContext postgres, ILogger<ExecuteBonusProgramJobCommand> logger)
+    public ExecuteBonusProgramJobCommand(BonusDbContext bonus, ILogger<ExecuteBonusProgramJobCommand> logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _logger = logger;
     }
 
@@ -52,7 +52,7 @@ public sealed class ExecuteBonusProgramJobCommand: IRequestHandler<GetTransactio
 
         var start = request.DateFrom.ToDateTimeOffset();
         var end = request.DateTo.ToDateTimeOffset();
-        var dbQuery = _postgres.Transactions.Where(x =>
+        var dbQuery = _bonus.Transactions.Where(x =>
             x.BonusProgramId == request.BonusProgramId
             && x.LastUpdated >= start
             && x.LastUpdated < end);

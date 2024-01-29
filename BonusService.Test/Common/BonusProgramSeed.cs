@@ -10,7 +10,7 @@ public static class BonusProgramSeed
     {
         // Времянка пока юонусные программы захардкоженны
         using var scope1 = serviceProvider.CreateScope();
-        var postgres = scope1.ServiceProvider.GetRequiredService<PostgresDbContext>();
+        var postgres = scope1.ServiceProvider.GetRequiredService<BonusDbContext>();
         var bp = postgres.BonusPrograms.FirstOrDefault(x => x.Id == BonusTestApi.Q.BonusProgramId1);
         if (bp == null)
         {

@@ -27,7 +27,7 @@ public class GetBalanceTest : BonusTestApi
     [Fact]
     public async Task ManyTransactionOneBalance_ReturnListWithOneBalanceWithSumOfTransactions()
     {
-        await postgres.Transactions.AddRangeAsync(new Transaction()
+        await Bonus.Transactions.AddRangeAsync(new Transaction()
             {
                 BonusSum = Q.Sum1000,
                 BankId = Q.BankIdRub,
@@ -50,7 +50,7 @@ public class GetBalanceTest : BonusTestApi
                 TransactionId = Q.GetRandomTransactionId(),
                 Type = TransactionType.Manual,
             });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var balance =  await api.BalanceGetAsync(Q.PersonId1, Q.BankIdRub);
         balance.Should().Be(Q.Sum500 + Q.Sum1000 + Q.Sum2000);

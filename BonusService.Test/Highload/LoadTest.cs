@@ -1,11 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using AutoBogus;
-using BonusService.BonusPrograms;
 using BonusService.BonusPrograms.SpendMoneyBonus;
 using BonusService.Common;
 using BonusService.Test.Common;
-using FluentAssertions;
-using Hangfire.Server;
 using BonusProgram = BonusService.Common.Postgres.Entity.BonusProgram;
 namespace BonusService.Test;
 
@@ -17,6 +14,7 @@ public sealed class MongoSessionFaker : AutoFaker<MongoSession>
     public static readonly long [] sums = new long [] { 1_00, 100_00, 500_00, 300_00, 700_00, 990_00, 4500_00 };
     public MongoSessionFaker()
     {
+        this.
         RuleFor(x => x.status, x => x.PickRandom(MongoSessionStatus.GetAll()));
         RuleFor(fake => fake.chargeEndTime, fake => fake.Date.Between(from, to));
         RuleFor(x => x.tariff, x => new MongoTariff() { BankId = x.PickRandom(BonusTestApi.Q.AllBanks) });
@@ -38,7 +36,7 @@ public class LoadTest : BonusTestApi
     private BonusProgram bonusProgram;
     public LoadTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
+        bonusProgram = Bonus.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
     }
 
 
@@ -58,7 +56,7 @@ public class LoadTest : BonusTestApi
         job.ExecuteAsync(null, bonusProgram, Q.TimeExtMoth1.from.UtcDateTime).GetAwaiter().GetResult();
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-        var res = postgres.Transactions.Count();
+        var res = Bonus.Transactions.Count();
         res.Should().BeGreaterThan(0);
     }
 }

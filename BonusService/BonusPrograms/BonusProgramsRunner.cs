@@ -17,17 +17,17 @@ public interface IBonusProgramsRunner
 }
 public class BonusProgramsRunner : IBonusProgramsRunner
 {
-    private readonly PostgresDbContext _postgres;
+    private readonly BonusDbContext _bonus;
     private readonly IRecurringJobManagerV2 _scheduler;
     private readonly IDateTimeService _dateTimeService;
     private readonly ILogger<BonusProgramsRunner> _logger;
     public BonusProgramsRunner(
-        PostgresDbContext postgres,
+        BonusDbContext bonus,
         IRecurringJobManagerV2 scheduler,
         IDateTimeService dateTimeService,
         ILogger<BonusProgramsRunner> logger)
     {
-        _postgres = postgres;
+        _bonus = bonus;
         _dateTimeService = dateTimeService;
         _logger = logger;
         _scheduler = scheduler;
@@ -53,7 +53,7 @@ public class BonusProgramsRunner : IBonusProgramsRunner
     }
     public async Task InitAsync()
     {
-       var bonusPrograms = await _postgres.GetBonusPrograms().ToArrayAsync();
+       var bonusPrograms = await _bonus.GetBonusPrograms().ToArrayAsync();
        foreach (var bonusProgram in bonusPrograms)
        {
            try

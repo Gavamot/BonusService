@@ -35,14 +35,14 @@ public class PayTest : BonusTestApi
     [Fact]
     public async Task HavePositiveBalanceForAnotherBalancesButPayedIsZero_ZeroBonusPay()
     {
-        await postgres.Transactions.AddRangeAsync(new []
+        await Bonus.Transactions.AddRangeAsync(new []
         {
             Q.CreateTransaction(Q.PersonId1),
             Q.CreateTransaction(Q.PersonId1),
             Q.CreateTransaction(Q.PersonId2),
 
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
@@ -59,13 +59,13 @@ public class PayTest : BonusTestApi
     [Fact]
     public async Task HaveEnoughSumOnDifferentBalancesButNotEnoughOnPayBalance_PayAllFromPayBalanceOnly()
     {
-        await postgres.Transactions.AddRangeAsync(new []
+        await Bonus.Transactions.AddRangeAsync(new []
         {
             Q.CreateTransaction(Q.PersonId1, Q.BankIdRub, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId1, Q.BankIdKaz, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
@@ -78,7 +78,7 @@ public class PayTest : BonusTestApi
         });
         payed.Should().Be(Q.Sum1000);
 
-        var transaction = postgres.Transactions.Single(x => x.BonusSum == Q.Sum1000 * -1);
+        var transaction = Bonus.Transactions.Single(x => x.BonusSum == Q.Sum1000 * -1);
         transaction.BankId.Should().Be(Q.BankIdRub);
         transaction.PersonId.Should().Be(Q.PersonId1);
         transaction.OwnerId.Should().Be(Q.OwnerId1);
@@ -96,13 +96,13 @@ public class PayTest : BonusTestApi
     [Fact]
     public async Task HaveMoreSumBalanceRub_PayRubBalanceOnlyStayBonusesBeforePay()
     {
-        await postgres.Transactions.AddRangeAsync(new []
+        await Bonus.Transactions.AddRangeAsync(new []
         {
             Q.CreateTransaction(Q.PersonId1, Q.BankIdRub, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId1, Q.BankIdKaz, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
@@ -115,21 +115,21 @@ public class PayTest : BonusTestApi
         });
         payed.Should().Be(Q.Sum500);
 
-        var rest = postgres.Transactions.Where(x=> x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub).Sum(x=> x.BonusSum);
+        var rest = Bonus.Transactions.Where(x=> x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub).Sum(x=> x.BonusSum);
         rest.Should().Be(Q.Sum500);
     }
 
     [Fact]
     public async Task PayBonusesWithOwnerDoNotPay_ReturnZeroNoPayTransactions()
     {
-        postgres.Transactions.AddRange(new []
+        Bonus.Transactions.AddRange(new []
         {
             Q.CreateTransaction(Q.PersonId1, Q.BankIdRub, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId1, Q.BankIdKaz, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
 
-        postgres.OwnerMaxBonusPays.AddRange(new (){
+        Bonus.OwnerMaxBonusPays.AddRange(new (){
             OwnerId = Q.OwnerId2,
             MaxBonusPayPercentages = 10
         },
@@ -143,7 +143,7 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = 50
             });
 
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
@@ -156,7 +156,7 @@ public class PayTest : BonusTestApi
         });
         payed.Should().Be(0);
 
-        var isPayedTransactionExist = postgres.Transactions.Any(x=> x.BonusSum <= 0);
+        var isPayedTransactionExist = Bonus.Transactions.Any(x=> x.BonusSum <= 0);
         isPayedTransactionExist.Should().BeFalse();
     }
 
@@ -166,14 +166,14 @@ public class PayTest : BonusTestApi
     [InlineData(10, 100, 5, 0)]
     public async Task NotEnoughToPayWithPercentages_MustReturnZeroNoAnyTransactions(long payX, long BalanceY, int PercentagesZ, long SpendN)
     {
-        postgres.Transactions.AddRange(new []
+        Bonus.Transactions.AddRange(new []
         {
             Q.CreateTransaction(Q.PersonId1, Q.BankIdRub, BalanceY),
             Q.CreateTransaction(Q.PersonId1, Q.BankIdKaz, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
 
-        postgres.OwnerMaxBonusPays.AddRange(new()
+        Bonus.OwnerMaxBonusPays.AddRange(new()
             {
                 OwnerId = Q.OwnerId2,
                 MaxBonusPayPercentages = 10
@@ -188,7 +188,7 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = 50
             });
 
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
         var payed = await api.BalancePayAsync(new PayRequestDto()
         {
             Description = Q.Description1,
@@ -201,9 +201,9 @@ public class PayTest : BonusTestApi
         });
         payed.Should().Be(SpendN);
 
-        var spendTransactions = postgres.Transactions.Where(x => x.BonusSum <= 0).Sum(x => x.BonusSum);
+        var spendTransactions = Bonus.Transactions.Where(x => x.BonusSum <= 0).Sum(x => x.BonusSum);
         spendTransactions.Should().Be(SpendN);
-        postgres.Transactions.Any(x => x.BonusSum == SpendN*-1).Should().BeFalse();
+        Bonus.Transactions.Any(x => x.BonusSum == SpendN*-1).Should().BeFalse();
     }
 
     [Theory]
@@ -212,14 +212,14 @@ public class PayTest : BonusTestApi
     [InlineData(1000, 500, 20, 200)]
     public async Task PayFromSumXPersonHasYBonusesWithZPercentages_MustPayN(long payX, long BalanceY, int PercentagesZ, long SpendN)
     {
-        postgres.Transactions.AddRange(new []
+        Bonus.Transactions.AddRange(new []
         {
             Q.CreateTransaction(Q.PersonId1, Q.BankIdRub, BalanceY),
             Q.CreateTransaction(Q.PersonId1, Q.BankIdKaz, Q.Sum1000),
             Q.CreateTransaction(Q.PersonId2, Q.BankIdRub, Q.Sum1000),
         });
 
-        postgres.OwnerMaxBonusPays.AddRange(new()
+        Bonus.OwnerMaxBonusPays.AddRange(new()
             {
                 OwnerId = Q.OwnerId2,
                 MaxBonusPayPercentages = 10
@@ -234,7 +234,7 @@ public class PayTest : BonusTestApi
                 MaxBonusPayPercentages = 50
             });
 
-        await postgres.SaveChangesAsync();
+        await Bonus.SaveChangesAsync();
 
         var payed = await  api.BalancePayAsync(new PayRequestDto()
         {
@@ -248,9 +248,9 @@ public class PayTest : BonusTestApi
         });
         payed.Should().Be(SpendN);
 
-        var spendTransactions = postgres.Transactions.Where(x => x.BonusSum <= 0).Sum(x => x.BonusSum);
+        var spendTransactions = Bonus.Transactions.Where(x => x.BonusSum <= 0).Sum(x => x.BonusSum);
         spendTransactions.Should().Be(SpendN*-1);
-        var transaction = postgres.Transactions.Single(x => x.BonusSum == SpendN*-1);
+        var transaction = Bonus.Transactions.Single(x => x.BonusSum == SpendN*-1);
         transaction.OwnerId.Should().Be(Q.OwnerId1);
         transaction.PersonId.Should().Be(Q.PersonId1);
         transaction.EzsId.Should().Be(Q.EzsId1);

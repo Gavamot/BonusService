@@ -19,7 +19,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
     private string jobId => $"bonusProgram_{bonusProgram.Id}";
     public MonthlySumBonusJob_MonthOnlyTest(FakeApplicationFactory<Program> server) : base(server)
     {
-        bonusProgram = postgres.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
+        bonusProgram = Bonus.GetBonusProgramById(Q.BonusProgramId1).GetAwaiter().GetResult()!;
     }
 
     private readonly DateTimeOffset bonusIntervalStart = new (2023, 11, 1, 0, 0, 0, new TimeSpan(0));
@@ -97,7 +97,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
     {
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
     }
@@ -108,9 +108,9 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         AddNoiseSession();
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
-        postgres.Transactions.Any().Should().BeFalse();
+        Bonus.Transactions.Any().Should().BeFalse();
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         CheckEmptyHistory(bonusProgramHistories);
     }
@@ -125,9 +125,9 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         var job2 = GetService<SpendMoneyBonusJob>();
         await job2.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
-        postgres.Transactions.Any().Should().BeFalse();
+        Bonus.Transactions.Any().Should().BeFalse();
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(2);
         CheckEmptyHistory(bonusProgramHistories);
     }
@@ -151,7 +151,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
         using var scope = CreateScope();
-        var newPostgres = scope.GetRequiredService<PostgresDbContext>();
+        var newPostgres = scope.GetRequiredService<BonusDbContext>();
 
         // 2 PaymentCalc
         newPostgres.Transactions.Count().Should().Be(1);
@@ -188,15 +188,15 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
-        postgres.Transactions.Count().Should().Be(1);
+        Bonus.Transactions.Count().Should().Be(1);
 
-        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        var tranUser1Rus = Bonus.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 5 / 100);
         ValidateTransactionCommonFields(tranUser1Rus);
 
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
@@ -219,15 +219,15 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
 
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
-        postgres.Transactions.Count().Should().Be(1);
+        Bonus.Transactions.Count().Should().Be(1);
 
-        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        var tranUser1Rus = Bonus.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
         ValidateTransactionCommonFields(tranUser1Rus);
 
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
@@ -251,8 +251,8 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
     public async Task ChargedByCapacityBonusJob_SessionsFrom1Person_SecondLevelCalculated()
     {
         AddNoiseSession();
-        postgres.BonusPrograms.RemoveRange(postgres.BonusPrograms.ToArray());
-        await postgres.SaveChangesAsync();
+        Bonus.BonusPrograms.RemoveRange(Bonus.BonusPrograms.ToArray());
+        await Bonus.SaveChangesAsync();
         var bp = await AddActiveChargedByCapacityBonusProgram();
 
         MongoSession user1RusAccountSession1 = Q.CreateSession(bonusIntervalStart, Q.SumLevel2);
@@ -268,9 +268,9 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
 
         await job.ExecuteAsync(null, bp, dateOfJobExecution);
 
-        postgres.Transactions.Count().Should().Be(1);
+        Bonus.Transactions.Count().Should().Be(1);
 
-        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        var tranUser1Rus = Bonus.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * level3.AwardPercent / 100);
 
@@ -282,7 +282,7 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         tranUser1Rus.TransactionId.Should().NotBeEmpty();
         tranUser1Rus.LastUpdated.Should().NotBe(default);
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
 
@@ -315,21 +315,21 @@ public class MonthlySumBonusJob_MonthOnlyTest : BonusTestApi
         var job = GetService<SpendMoneyBonusJob>();
         await job.ExecuteAsync(null, bonusProgram, dateOfJobExecution);
 
-        postgres.Transactions.Count().Should().Be(2);
+        Bonus.Transactions.Count().Should().Be(2);
 
-        var tranUser1Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
+        var tranUser1Rus = Bonus.Transactions.First(x => x.PersonId == Q.PersonId1 && x.BankId == Q.BankIdRub);
 
         tranUser1Rus.BonusBase.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser1Rus.BonusSum.Should().Be(user1RusAccountSession1.operation.calculatedPayment!.Value  * 5 / 100);
         ValidateTransactionCommonFields(tranUser1Rus);
 
-        var tranUser2Rus = postgres.Transactions.First(x => x.PersonId == Q.PersonId2 && x.BankId == Q.BankIdRub);
+        var tranUser2Rus = Bonus.Transactions.First(x => x.PersonId == Q.PersonId2 && x.BankId == Q.BankIdRub);
 
         tranUser2Rus.BonusBase.Should().Be(user2RusAccountSession1.operation.calculatedPayment!.Value);
         tranUser2Rus.BonusSum.Should().Be(user2RusAccountSession1.operation.calculatedPayment!.Value  * 1 / 100);
         ValidateTransactionCommonFields(tranUser2Rus, user2RusAccountSession1.user.clientLogin);
 
-        var bonusProgramHistories = postgres.BonusProgramHistory.ToArray();
+        var bonusProgramHistories = Bonus.BonusProgramHistory.ToArray();
         bonusProgramHistories.Length.Should().Be(1);
         var bonusProgramHistory = bonusProgramHistories.First();
         ValidateBonusProgramHistoryCommonFields(bonusProgramHistory);
