@@ -1,9 +1,9 @@
 using BonusService.Common.Postgres.Entity;
 using MassTransit;
 using UserProfileService.Events;
-namespace BonusService.BonusPrograms.Events;
 
-class UserDataCommittedEventConsumer(IEventRewardService rewardService) :IConsumer<UserDataCommittedEvent>
+namespace BonusService.BonusPrograms.Events;
+public class UserDataCommittedEventConsumer(IEventRewardService rewardService) :IConsumer<UserDataCommittedEvent>
 {
     public Task Consume(ConsumeContext<UserDataCommittedEvent> context)
     {

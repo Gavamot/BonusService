@@ -14,8 +14,8 @@ public sealed class PayCommonCommand: ICommandHandler<PayTransactionRequest, lon
     private readonly BonusDbContext _bonus;
     private readonly IMediator _mediator;
     private readonly IDateTimeService _dateTimeService;
-    private readonly ILogger<PayCommand> _logger;
-    public PayCommonCommand(BonusDbContext bonus, IMediator mediator, IDateTimeService dateTimeService, ILogger<PayCommand> logger)
+    private readonly ILogger<PayCommonCommand> _logger;
+    public PayCommonCommand(BonusDbContext bonus, IMediator mediator, IDateTimeService dateTimeService, ILogger<PayCommonCommand> logger)
     {
         _bonus = bonus;
         _mediator = mediator;

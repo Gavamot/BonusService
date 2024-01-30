@@ -23,7 +23,7 @@ public sealed class GetTransactionsByProgramRequestValidator : AbstractValidator
     }
 }
 
-public record class GetTransactionsByProgramRequest([Required][property: Example(1)]int BonusProgramId,
+public record GetTransactionsByProgramRequest([Required][property: Example(1)]int BonusProgramId,
     [DefaultValue(1)][property: Example(1)]int Page = 1,
     [DefaultValue(10)][property: Example(10)]int Limit = 10,
     [DefaultValue(null)]DateOnly @DateFrom = default,
@@ -33,11 +33,9 @@ public record class GetTransactionsByProgramRequest([Required][property: Example
 public sealed class ExecuteBonusProgramJobCommand: IRequestHandler<GetTransactionsByProgramRequest, BalanceTransactionResponse>
 {
     private readonly BonusDbContext _bonus;
-    private readonly ILogger<ExecuteBonusProgramJobCommand> _logger;
-    public ExecuteBonusProgramJobCommand(BonusDbContext bonus, ILogger<ExecuteBonusProgramJobCommand> logger)
+    public ExecuteBonusProgramJobCommand(BonusDbContext bonus)
     {
         _bonus = bonus;
-        _logger = logger;
     }
 
     public async ValueTask<BalanceTransactionResponse> Handle(GetTransactionsByProgramRequest request, CancellationToken ct)
@@ -73,7 +71,7 @@ public sealed class ExecuteBonusProgramJobCommand: IRequestHandler<GetTransactio
 [ApiController]
 [Authorize]
 [Route("[controller]/[action]")]
-public sealed partial class BonusProgramController : ControllerBase
+public sealed class BonusProgramController : ControllerBase
 {
     /// <summary>
     /// выдает список транзакций по конкретной бонусной программе. https://rnd.sitronics.com/jira/browse/EZSPLAT-394

@@ -10,7 +10,7 @@ public interface IEventRewardService
     Task AccrueEventReward(EventTypes type, string personId, Guid? correlationId);
 }
 
-public class EventRewardService(BonusDbContext db, IDateTimeService dateTimeService, ILogger<EventRewardService> logger, string correlationId) : IEventRewardService
+public class EventRewardService(BonusDbContext db, IDateTimeService dateTimeService, ILogger<EventRewardService> logger) : IEventRewardService
 {
     public async Task AccrueEventReward(EventTypes type, string personId, Guid? correlationId)
     {

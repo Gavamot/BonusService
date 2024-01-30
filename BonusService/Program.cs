@@ -8,16 +8,13 @@ using BonusService.Common.Postgres;
 using BonusService.Common.Postgres.Entity;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using MassTransit;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
 using NLog.Web;
-using UserProfileService.Events;
 
 
 // TOKEN -
@@ -123,19 +120,6 @@ if (BonusService.Program.IsNotAppTest())
     var runner = scope.ServiceProvider.GetRequiredService<IBonusProgramsRunner>();
     await runner.RestartAsync();
 }
-
-/*var rabbit = app.Services.GetService<IBus>();
-await rabbit.Publish(new RegistrationEvent("12345"));*/
-/*db.EventRewards.Add(new EventReward()
-{
-    Type = EventTypes.NewUserRegistration,
-    DateStart = new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero),
-    DateStop = new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero),
-    BankId = 1,
-    Reward = 100,
-    LastUpdated = new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero),
-});
-db.SaveChanges();*/
 
 app.Run();
 

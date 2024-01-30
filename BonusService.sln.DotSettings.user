@@ -39,7 +39,7 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=58155020_002Da3dc_002D491d_002Daf09_002Df767287be1fb/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="EmptyCalculationForPeriod_EmptyResultHistoryAdded #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=63099b42_002De2f3_002D4689_002Dbdf2_002D688bd5fd0919/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetTransactionsByProgramTest #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=63099b42_002De2f3_002D4689_002Dbdf2_002D688bd5fd0919/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetTransactionsByProgramTest #5" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=64dff863_002Dbc78_002D4cbd_002Da58f_002D36e2a10da72f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetAll" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
@@ -53,10 +53,8 @@
     &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net8.0::BonusService.Test.GetTransactionsByProgramTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=88cce7b8_002Dc83c_002D4743_002Dbc06_002D595dee8ac37e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GetTransactionsByProgramTest #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::96F22065-273D-49AF-8D21-807BA1D20C62::net8.0::BonusService.Test.GetTransactionsByProgramTest&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=88cce7b8_002Dc83c_002D4743_002Dbc06_002D595dee8ac37e/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="GetTransactionsByProgramTest #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="C:\dev\BonusService\BonusService.Test" Presentation="&amp;lt;BonusService.Test&amp;gt;" /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9bbaea2c_002Ddf01_002D47b1_002D995c_002De993697d5025/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ChargedByCapacityBonusJob_MonthOnlyTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
