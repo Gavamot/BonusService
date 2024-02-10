@@ -54,7 +54,6 @@
         <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
         <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
         <PackageReference Include="UserProfileService" Version="7.0.1" />
-        <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="8.101.2.1" />
     </ItemGroup>
 
     <PropertyGroup>
